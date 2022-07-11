@@ -1,6 +1,6 @@
 from time import time
 from traceback import print_last
-from CRAVER.server.database_scripts.lblogbookInterface import Prometheus
+from lblogbookInterface import Prometheus
 from dbInterface import Database
 from config import admin_user
 from datetime import datetime, timezone
