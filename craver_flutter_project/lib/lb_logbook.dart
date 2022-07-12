@@ -52,8 +52,7 @@ class HTMLDisplay extends StatelessWidget {
             onTap: () async {
               var url = Uri.parse(
                   "https://lblogbook.cern.ch/Shift/page${LbLogbook.currentPage}");
-              var urllaunchable = await canLaunchUrl(
-                  url); //canLaunch is from url_launcher package
+              var urllaunchable = await canLaunchUrl(url);
               if (urllaunchable) {
                 await launchUrl(url, mode: LaunchMode.externalApplication);
               } else {
