@@ -3,7 +3,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'data_getter.dart';
+import '../support/data_getter.dart';
+import '../support/warnig_and_errors.dart';
 import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -56,7 +57,9 @@ class HTMLDisplay extends StatelessWidget {
               if (urllaunchable) {
                 await launchUrl(url, mode: LaunchMode.externalApplication);
               } else {
-                print("URL can't be launched.");
+                //https://dart-lang.github.io/linter/lints/use_build_context_synchronously.html
+                //if (mounted) return; I'm unable to resolve this. TODO?
+                showAlertDialog(context, 'Unable to open browser!');
               }
             },
           ),

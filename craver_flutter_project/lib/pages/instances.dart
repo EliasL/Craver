@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'data_getter.dart';
+import '../support/data_getter.dart';
 
 class Instances extends StatefulWidget {
   const Instances({Key? key}) : super(key: key);

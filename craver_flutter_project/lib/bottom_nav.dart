@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'main_overview.dart';
-import 'lb_logbook.dart';
-import 'instances.dart';
-import 'alarms.dart';
+import 'pages/main_overview.dart';
+import 'pages/lb_logbook.dart';
+import 'pages/instances.dart';
+import 'pages/alarms.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
