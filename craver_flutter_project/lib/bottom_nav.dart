@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'pages/main_overview.dart';
+import 'pages/controll_panel.dart';
 import 'pages/lb_logbook.dart';
 import 'pages/instances.dart';
 import 'pages/alarms.dart';
@@ -12,12 +12,15 @@ class BottomNav extends StatefulWidget {
   _BottomNavState createState() => _BottomNavState();
 }
 
+enum PAGES { controllPanel, lbLogbook, instances, alarms }
+
 class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
   String title = 'CRAVER ${LbLogbook.currentPage}';
 
+  //The order in this list MUST match the order in PAGES
   static const List<Widget> _pages = <Widget>[
-    Main_overview(),
+    ControllPanel(),
     LbLogbook(),
     Instances(),
     Alarms(),
@@ -38,9 +41,8 @@ class _BottomNavState extends State<BottomNav> {
         title: ValueListenableBuilder(
             valueListenable: LbLogbook.currentPage,
             builder: (context, value, widget) {
-              //TODO here you can setState or whatever you need
               String title = 'CRAVER';
-              if (_selectedIndex == 1) {
+              if (_selectedIndex == PAGES.lbLogbook.index) {
                 title += ': Logbook - page ${LbLogbook.currentPage.value}';
               }
               return Text(title);
@@ -58,18 +60,12 @@ class _BottomNavState extends State<BottomNav> {
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.show_chart),
+            icon: Icon(Icons.speed),
             label: 'Data',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book),
             label: 'Logbook',
-            //TODO longpress: https://lblogbook.cern.ch/Shift/
-            //I give up. Problems with viewing in browser. Could not
-            //open in default browser (like chrome). Could not put
-            //gestureDetector on lable, and could not remove lable even
-            //with showSelectedLabels, showUnselectedLabels. It was just
-            // visual
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.cloud),
