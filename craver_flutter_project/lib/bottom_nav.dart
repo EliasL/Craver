@@ -19,6 +19,8 @@ class _BottomNavState extends State<BottomNav> {
   String title = 'CRAVER ${LbLogbook.currentPage}';
 
   //The order in this list MUST match the order in PAGES
+  //TODO: Make these pages build lazily when clicked on
+  //Not all pages at once when the app loads
   static const List<Widget> _pages = <Widget>[
     ControllPanel(),
     LbLogbook(),
