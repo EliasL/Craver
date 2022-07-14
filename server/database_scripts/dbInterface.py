@@ -68,6 +68,7 @@ class Database:
         field_names = [i[0] for i in self.cursor.description]
         result.insert(0,field_names)
         print(tabulate(result, headers='firstrow', tablefmt='fancy_grid'))
+        #Show if there are more rows than shown
         if len(result)-1 == min(rows,Database.max_rows):
             print('\t.\n\t.\n\t.')
     

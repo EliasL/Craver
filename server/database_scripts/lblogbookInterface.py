@@ -9,6 +9,9 @@ class LbLogbook:
 
     def get(self, page):
         url = f'http://10.128.97.87:8080/Shift/page{page}/elog.rdf'
+        # Perhaps this is silly, but I just prefer utf-8
+        # There is some performance to be gained here, but I just want everyting
+        # to be utf. TODO?
         xml = urllib.request.urlopen(url).read().decode('ISO-8859-1').encode('utf-8')
         return xml
 
