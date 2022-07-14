@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Main_overview extends StatelessWidget {
-  const Main_overview();
+class ControllPanel extends StatelessWidget {
+  const ControllPanel();
 
   @override
   Widget build(BuildContext context) {
