@@ -18,8 +18,10 @@ L = LbLogbook()
 # Example: /prometheus_query?command=up
 @app.route("/prometheus_query", methods = ['GET'])
 def get_prometheus_data():
+    # Convert arguments to dict
     args = request.args.to_dict()
 
+    # We extract command and time and leave the rest as they are
     command = args['command']
     del args['command']
     if 'time' in args:
@@ -39,4 +41,5 @@ def get_lblogbook_data():
 
 
 if __name__ == '__main__':
+    #Remember to disable debug sooner or later
     app.run(host="0.0.0.0", debug=True, port=8080)
