@@ -53,14 +53,24 @@ Future<dynamic> getPrometheus(String urlString) async {
   }
 }
 
-Future<dynamic> getLbLogbook({int page = 1}) async {
+Future<dynamic> getLbLogbook({int page = 1, int attempts=0}) async {
   var urlString = '$server/lblogbook?page=$page';
   final url = Uri.parse(urlString);
   final http.Response response;
   try {
     response = await http.get(url, headers: httpHeaders);
   } catch (e) {
-    throw Exception('This really needs to be fixed!');
+
+    //throw Exception('This really needs to be fixed!');
+    // This error seems to happen every now and then. I guiestimate
+    // the rate to be about 1/30. I think we can get away with just retrying
+    // after a second or something. 
+    if(attempts>20){
+      return null; //Not tested. TODO make a gracefull error. This will probably crash.
+    }
+    await Future.delayed(const Duration(seconds: 1));
+    return getLbLogbook(page: page, attempts: attempts+1); 
+    
   }
   if (response.statusCode == 200) {
     var temp = utf8.decode(response.bodyBytes);
