@@ -25,7 +25,7 @@ class _BottomNavState extends State<BottomNav> {
   //The order in this list MUST match the order in PAGES
   //TODO: Make these pages build lazily when clicked on
   //Not all pages at once when the app loads
-  static const List<Widget> _pages = <Widget>[
+  static List<Widget> _pages = <Widget>[
     ControllPanel(),
     LbLogbook(),
     Instances(),
