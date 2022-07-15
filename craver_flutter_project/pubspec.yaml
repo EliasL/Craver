@@ -41,6 +41,9 @@ dependencies:
   html: ^0.15.0
   timeago: ^3.2.2
   background_fetch: ^1.1.0
+  flutter_local_notifications: ^9.7.0
+  flutter_native_timezone: ^2.0.0
+  rxdart: ^0.27.4
 
 dev_dependencies:
   flutter_test:
