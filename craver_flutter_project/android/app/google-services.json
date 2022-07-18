@@ -29,6 +29,13 @@
             {
               "client_id": "516633852667-tdt2trfd9saqi3me8s2h82a4c9crn3ko.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "516633852667-f1e6kutefla7t2ee5jv3ghktrjgh1vd4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.craverFlutterProject"
+              }
             }
           ]
         }

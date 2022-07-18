@@ -1,16 +1,18 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'bottom_nav.dart';
-import 'pages/alarms.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'pages/alarms.dart';
 //Base:
 //https://blog.logrocket.com/how-to-build-a-bottom-navigation-bar-in-flutter/
 
 void main() async {
-  initi_notifications();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
 }
 

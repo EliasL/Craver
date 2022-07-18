@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,6 +43,16 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyC-PhMOVob9gGeQslo7Q4ApStorxNw3_mU',
+    appId: '1:516633852667:web:e07c5cd39addc0660d8e5e',
+    messagingSenderId: '516633852667',
+    projectId: 'craver-testing',
+    authDomain: 'craver-testing.firebaseapp.com',
+    storageBucket: 'craver-testing.appspot.com',
+    measurementId: 'G-3TEPC26QYW',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCfKKLqT6S32Ri43DiU_DVOAltAgXAR9UA',
     appId: '1:516633852667:android:216c5804d71a4d480d8e5e',
@@ -58,6 +62,16 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyAB59JGho4WTTfBrXiVQ1_2kOEOpfHY1ac',
+    appId: '1:516633852667:ios:832764fde5aa77ec0d8e5e',
+    messagingSenderId: '516633852667',
+    projectId: 'craver-testing',
+    storageBucket: 'craver-testing.appspot.com',
+    iosClientId: '516633852667-f1e6kutefla7t2ee5jv3ghktrjgh1vd4.apps.googleusercontent.com',
+    iosBundleId: 'com.example.craverFlutterProject',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAB59JGho4WTTfBrXiVQ1_2kOEOpfHY1ac',
     appId: '1:516633852667:ios:832764fde5aa77ec0d8e5e',
     messagingSenderId: '516633852667',

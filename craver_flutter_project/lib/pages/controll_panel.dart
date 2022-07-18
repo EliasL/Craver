@@ -15,7 +15,7 @@ class ControllPanel extends StatelessWidget {
   ControllPanel({Key? key}) : super(key: key);
 
   final Timer timer = Timer.periodic(
-      const Duration(milliseconds: 100), (Timer t) => updateValue(t));
+      const Duration(milliseconds: 100000), (Timer t) => updateValue(t));
 
   @override
   Widget build(BuildContext context) {
