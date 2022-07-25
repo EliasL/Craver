@@ -71,11 +71,6 @@ void initi_notifications() async {
   notificationAppLaunchDetails = !kIsWeb && Platform.isLinux
       ? null
       : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-  String initialRoute = NotificationHomePage.routeName;
-  if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
-    selectedNotificationPayload = notificationAppLaunchDetails!.payload;
-    initialRoute = SecondPage.routeName;
-  }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
@@ -127,83 +122,6 @@ void initi_notifications() async {
     selectedNotificationPayload = payload;
     selectNotificationSubject.add(payload);
   });
-}
-
-Future<void> main() async {
-  // needed if you intend to initialize in the `main` function
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await _configureLocalTimeZone();
-
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails = !kIsWeb &&
-          Platform.isLinux
-      ? null
-      : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-  String initialRoute = NotificationHomePage.routeName;
-  if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
-    selectedNotificationPayload = notificationAppLaunchDetails!.payload;
-    initialRoute = SecondPage.routeName;
-  }
-
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('app_icon');
-
-  /// Note: permissions aren't requested here just to demonstrate that can be
-  /// done later
-  final IOSInitializationSettings initializationSettingsIOS =
-      IOSInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
-          onDidReceiveLocalNotification: (
-            int id,
-            String? title,
-            String? body,
-            String? payload,
-          ) async {
-            didReceiveLocalNotificationSubject.add(
-              ReceivedNotification(
-                id: id,
-                title: title,
-                body: body,
-                payload: payload,
-              ),
-            );
-          });
-  const MacOSInitializationSettings initializationSettingsMacOS =
-      MacOSInitializationSettings(
-    requestAlertPermission: false,
-    requestBadgePermission: false,
-    requestSoundPermission: false,
-  );
-  final LinuxInitializationSettings initializationSettingsLinux =
-      LinuxInitializationSettings(
-    defaultActionName: 'Open notification',
-    defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
-  );
-  final InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: initializationSettingsIOS,
-    macOS: initializationSettingsMacOS,
-    linux: initializationSettingsLinux,
-  );
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String? payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: $payload');
-    }
-    selectedNotificationPayload = payload;
-    selectNotificationSubject.add(payload);
-  });
-  runApp(
-    MaterialApp(
-      initialRoute: initialRoute,
-      routes: <String, WidgetBuilder>{
-        NotificationHomePage.routeName: (_) => NotificationHomePage(),
-        SecondPage.routeName: (_) => SecondPage(selectedNotificationPayload)
-      },
-    ),
-  );
 }
 
 Future<void> _configureLocalTimeZone() async {
@@ -213,228 +131,6 @@ Future<void> _configureLocalTimeZone() async {
   tz.initializeTimeZones();
   final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName!));
-}
-
-class PaddedElevatedButton extends StatelessWidget {
-  const PaddedElevatedButton({
-    required this.buttonText,
-    required this.onPressed,
-    Key? key,
-  }) : super(key: key);
-
-  final String buttonText;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-        child: ElevatedButton(
-          onPressed: onPressed,
-          child: Text(buttonText),
-        ),
-      );
-}
-
-class NotificationHomePage extends StatefulWidget {
-  const NotificationHomePage({
-    Key? key,
-  }) : super(key: key);
-
-  static const String routeName = '/';
-
-  bool get didNotificationLaunchApp =>
-      notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
-
-  @override
-  _NotificationHomePageState createState() => _NotificationHomePageState();
-}
-
-class _NotificationHomePageState extends State<NotificationHomePage> {
-  final TextEditingController _linuxIconPathController =
-      TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _requestPermissions();
-    _configureDidReceiveLocalNotificationSubject();
-    _configureSelectNotificationSubject();
-  }
-
-  void _requestPermissions() {
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            MacOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-  }
-
-  void _configureDidReceiveLocalNotificationSubject() {
-    didReceiveLocalNotificationSubject.stream
-        .listen((ReceivedNotification receivedNotification) async {
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) => CupertinoAlertDialog(
-          title: receivedNotification.title != null
-              ? Text(receivedNotification.title!)
-              : null,
-          content: receivedNotification.body != null
-              ? Text(receivedNotification.body!)
-              : null,
-          actions: <Widget>[
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              onPressed: () async {
-                Navigator.of(context, rootNavigator: true).pop();
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        SecondPage(receivedNotification.payload),
-                  ),
-                );
-              },
-              child: const Text('Ok'),
-            )
-          ],
-        ),
-      );
-    });
-  }
-
-  void _configureSelectNotificationSubject() {
-    selectNotificationSubject.stream.listen((String? payload) async {
-      await Navigator.pushNamed(context, '/secondPage');
-    });
-  }
-
-  @override
-  void dispose() {
-    didReceiveLocalNotificationSubject.close();
-    selectNotificationSubject.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Plugin example app'),
-          ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    PaddedElevatedButton(
-                      buttonText: 'Show plain notification with payload',
-                      onPressed: () async {
-                        await _showNotification();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-
-  Future<void> _showNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('your channel id', 'your channel name',
-            channelDescription: 'your channel description',
-            importance: Importance.max,
-            priority: Priority.high,
-            ticker: 'ticker');
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics,
-        payload: 'item x');
-  }
-}
-
-class SecondPage extends StatefulWidget {
-  const SecondPage(
-    this.payload, {
-    Key? key,
-  }) : super(key: key);
-
-  static const String routeName = '/secondPage';
-
-  final String? payload;
-
-  @override
-  State<StatefulWidget> createState() => SecondPageState();
-}
-
-class SecondPageState extends State<SecondPage> {
-  String? _payload;
-
-  @override
-  void initState() {
-    super.initState();
-    _payload = widget.payload;
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text('Second Screen with payload: ${_payload ?? ''}'),
-        ),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Go back!'),
-          ),
-        ),
-      );
-}
-
-class _InfoValueString extends StatelessWidget {
-  const _InfoValueString({
-    required this.title,
-    required this.value,
-    Key? key,
-  }) : super(key: key);
-
-  final String title;
-  final Object? value;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-        child: Text.rich(
-          TextSpan(
-            children: <InlineSpan>[
-              TextSpan(
-                text: '$title ',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextSpan(
-                text: '$value',
-              )
-            ],
-          ),
-        ),
-      );
 }
 
 // [Android-only] This "Headless Task" is run when the Android app
@@ -451,6 +147,23 @@ void backgroundFetchHeadlessTask(HeadlessTask task) async {
   }
   print('[BackgroundFetch] Headless event received.');
   // Do your work here...
+
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      'scheduled title',
+      'scheduled body',
+      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+      const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'full screen channel id', 'full screen channel name',
+              channelDescription: 'full screen channel description',
+              priority: Priority.high,
+              importance: Importance.high,
+              fullScreenIntent: true)),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime);
+
   BackgroundFetch.finish(taskId);
 }
 
@@ -490,18 +203,34 @@ class _AlarmsState extends State<Alarms> {
       print("[BackgroundFetch] Event received $taskId");
       setState(() {
         _events.insert(0, DateTime.now());
+        _status += 100;
       });
+
       const AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails('your channel id', 'your channel name',
-              channelDescription: 'your channel description',
-              importance: Importance.max,
-              priority: Priority.high,
-              ticker: 'ticker');
-      const NotificationDetails platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
+          AndroidNotificationDetails(
+        'flutterfcm',
+        'flutterfcm',
+        channelDescription: 'your other channel description',
+        playSound: true,
+        sound: RawResourceAndroidNotificationSound('slow_spring_board.mp3'),
+        priority: Priority.high,
+        importance: Importance.high,
+        fullScreenIntent: true,
+      );
+      const IOSNotificationDetails iOSPlatformChannelSpecifics =
+          IOSNotificationDetails(sound: 'slow_spring_board.aiff');
+
+      final NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics,
+      );
       await flutterLocalNotificationsPlugin.show(
-          0, 'plain title', 'plain body', platformChannelSpecifics,
-          payload: 'item x');
+        0,
+        'custom sound notification title 1',
+        'custom sound notification body 2',
+        platformChannelSpecifics,
+      );
+
       // IMPORTANT:  You must signal completion of your task or the OS can punish your app
       // for taking too long in the background.
       BackgroundFetch.finish(taskId);
@@ -510,10 +239,13 @@ class _AlarmsState extends State<Alarms> {
       // This task has exceeded its allowed running-time.  You must stop what you're doing and immediately .finish(taskId)
       print("[BackgroundFetch] TASK TIMEOUT taskId: $taskId");
       BackgroundFetch.finish(taskId);
+      setState(() {
+        _status += -5000;
+      });
     });
     print('[BackgroundFetch] configure success: $status');
     setState(() {
-      _status = status;
+      _status += 5;
     });
 
     // If the widget was removed from the tree while the asynchronous platform

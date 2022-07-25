@@ -42,8 +42,8 @@ class ControllPanel extends StatelessWidget {
             ],
           ),
         ),
-        body: TabBarView(
-          children: const [
+        body: const TabBarView(
+          children: [
             StatusPage(),
             DetailsPage(),
             SomethingPage(),
@@ -54,14 +54,144 @@ class ControllPanel extends StatelessWidget {
   }
 }
 
+class RadialGaugeWithNumbers extends StatefulWidget {
+  final double radius;
+  const RadialGaugeWithNumbers({Key? key, required this.radius})
+      : super(key: key);
+
+  @override
+  State<RadialGaugeWithNumbers> createState() => _RadialGaugeWithNumbersState();
+}
+
+class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
+  RadialGaugePointer fancyPointer(color, value) {
+    final double radius = widget.radius;
+    var colors;
+    switch (color) {
+      case 'blue':
+        colors = [
+          Color(Colors.blue[300]!.value),
+          Color(Colors.blue[300]!.value),
+          Color(Colors.blue[600]!.value),
+          Color(Colors.blue[600]!.value)
+        ];
+        break;
+      case 'red':
+        colors = [
+          Color(Colors.red[400]!.value),
+          Color(Colors.red[400]!.value),
+          Color(Colors.red[600]!.value),
+          Color(Colors.red[600]!.value),
+        ];
+        break;
+      default:
+        colors = [
+          Color(Colors.blue[300]!.value),
+          Color(Colors.blue[300]!.value),
+          Color(Colors.blue[600]!.value),
+          Color(Colors.blue[600]!.value)
+        ];
+    }
+
+    return RadialNeedlePointer(
+      minValue: -100,
+      maxValue: 100,
+      value: value,
+      thicknessStart: 20,
+      thicknessEnd: 0,
+      color: Colors.red,
+      length: radius,
+      knobRadiusAbsolute: 10,
+      gradient: LinearGradient(
+        colors: colors,
+        stops: [0, 0.5, 0.5, 1],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final double radius = widget.radius;
+        List<Widget> children = [];
+
+        double minValue = -100;
+        double maxValue = 100;
+        double interval = 20;
+        int ticksInBetween = 5;
+
+        var radialGauge = Positioned.fill(
+            top: 0,
+            left: 0,
+            child: ValueListenableBuilder(
+                valueListenable: ControllPanel.value,
+                builder: (context, value, widget) {
+                  return RadialGauge(
+                    axes: [
+                      // Main axis
+                      RadialGaugeAxis(
+                        minValue: minValue,
+                        maxValue: maxValue,
+                        minAngle: -150,
+                        maxAngle: 150,
+                        radius: radius,
+                        width: 0.2,
+                        color: Colors.transparent,
+                        ticks: [
+                          RadialTicks(
+                              interval: interval,
+                              alignment: RadialTickAxisAlignment.inside,
+                              color: Colors.blue,
+                              length: 0.2,
+                              children: [
+                                RadialTicks(
+                                  ticksInBetween: ticksInBetween,
+                                  length: 0.1,
+                                  color: Colors.grey[500]!,
+                                ),
+                              ])
+                        ],
+                        pointers: [
+                          fancyPointer('blue', ControllPanel.value.value),
+                          fancyPointer('red', ControllPanel.value.value + 20)
+                        ],
+                      ),
+                    ],
+                  );
+                }));
+
+        children.add(radialGauge);
+
+        // Now we add the numbers...
+        int nrOfValues = ((maxValue - minValue) / interval).round();
+        for (var i = 0; i < nrOfValues; i++) {
+          var width = constraints.maxWidth;
+          var height = constraints.maxHeight;
+          var widthR = width / 2;
+          var heightR = height / 2;
+          children.add(Positioned(
+            top: cos(i * 2 * pi / nrOfValues) * heightR * radius + heightR,
+            left: sin(i * 2 * pi / nrOfValues) * widthR * radius + widthR,
+            child: Text("test"),
+          ));
+        }
+
+        return Stack(
+          children: children,
+        );
+      },
+    );
+  }
+}
+
 class StatusPage extends StatefulWidget {
   const StatusPage({Key? key}) : super(key: key);
 
   @override
   State<StatusPage> createState() => _StatusPageState();
-  //In order to put a listener to update the app title
-  //CRAVER: Logbook page 1, we need to use this
-  static var currentPage = ValueNotifier<int>(1);
 }
 
 class _StatusPageState extends State<StatusPage> {
@@ -69,77 +199,10 @@ class _StatusPageState extends State<StatusPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ValueListenableBuilder(
-              valueListenable: ControllPanel.value,
-              builder: (context, value, widget) {
-                return RadialGauge(
-                  axes: [
-                    RadialGaugeAxis(
-                      minValue: -100,
-                      maxValue: 100,
-                      minAngle: -150,
-                      maxAngle: 150,
-                      radius: 0.6,
-                      width: 0.2,
-                      color: Colors.transparent,
-                      ticks: [
-                        RadialTicks(
-                            interval: 20,
-                            alignment: RadialTickAxisAlignment.inside,
-                            color: Colors.blue,
-                            length: 0.2,
-                            children: [
-                              RadialTicks(
-                                  ticksInBetween: 5,
-                                  length: 0.1,
-                                  color: Colors.grey[500]!),
-                            ])
-                      ],
-                      pointers: [
-                        RadialNeedlePointer(
-                          minValue: -100,
-                          maxValue: 100,
-                          value: ControllPanel.value.value,
-                          thicknessStart: 20,
-                          thicknessEnd: 0,
-                          color: Colors.blue,
-                          length: 0.6,
-                          knobRadiusAbsolute: 10,
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(Colors.blue[300]!.value),
-                              Color(Colors.blue[300]!.value),
-                              Color(Colors.blue[600]!.value),
-                              Color(Colors.blue[600]!.value)
-                            ],
-                            stops: [0, 0.5, 0.5, 1],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: clear,
-      //   child: Icon(Icons.clear_all),
-      // ),
+    return const RadialGaugeWithNumbers(
+      radius: 0.55,
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class DetailsPage extends StatefulWidget {
@@ -175,7 +238,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       maxAngle: 0,
                       radius: 0.15,
                       width: 0.05,
-                      offset: Offset(-0.2, -0.1),
+                      offset: const Offset(-0.2, -0.1),
                       color: Colors.red[300],
                       pointers: [
                         RadialNeedlePointer(
@@ -200,7 +263,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       maxAngle: 90,
                       radius: 0.15,
                       width: 0.05,
-                      offset: Offset(0.2, -0.1),
+                      offset: const Offset(0.2, -0.1),
                       color: Colors.green[300],
                       pointers: [
                         RadialNeedlePointer(
@@ -276,6 +339,6 @@ class SomethingPage extends StatefulWidget {
 class _SomethingPageState extends State<SomethingPage> {
   @override
   Widget build(BuildContext context) {
-    return CircularProgressIndicator();
+    return const CircularProgressIndicator();
   }
 }

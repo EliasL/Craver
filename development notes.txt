@@ -52,3 +52,7 @@ When installing python libraries, you might run into ModuleNotFoundError: No mod
 Use: pip3 install mysql-connector, not just mysql.
 
 Also, you should reference the pip in the venv, not just pip3, ie.:craver/venv/bin/pip3 install mysql-connector
+
+
+When adding custom sounds to the project, you need to add them several places. Once for ios and once from android. Also ios does not support mp3.
+See local notifications library for custom sound example
