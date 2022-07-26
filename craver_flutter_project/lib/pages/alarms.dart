@@ -33,6 +33,7 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 final BehaviorSubject<String?> selectNotificationSubject =
     BehaviorSubject<String?>();
 
+// I have no idea if i need to change this or not TODO
 const MethodChannel platform =
     MethodChannel('dexterx.dev/flutter_local_notifications_example');
 
@@ -212,7 +213,7 @@ class _AlarmsState extends State<Alarms> {
         'flutterfcm',
         channelDescription: 'your other channel description',
         playSound: true,
-        sound: RawResourceAndroidNotificationSound('slow_spring_board.mp3'),
+        sound: RawResourceAndroidNotificationSound('slow_spring_board'),
         priority: Priority.high,
         importance: Importance.high,
         fullScreenIntent: true,

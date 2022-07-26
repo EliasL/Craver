@@ -6,7 +6,7 @@ import 'package:gauges/gauges.dart';
 import 'dart:math';
 
 void updateValue(Timer t) {
-  ControllPanel.value.value = sin(t.tick * 2 * pi / 200) * 100;
+  ControllPanel.value.value = sin(t.tick * 2 * pi / 200) * 4 + 3;
 }
 
 class ControllPanel extends StatelessWidget {
@@ -118,10 +118,30 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
         final double radius = widget.radius;
         List<Widget> children = [];
 
-        double minValue = -100;
-        double maxValue = 100;
-        double interval = 20;
-        int ticksInBetween = 5;
+        double minValue = -1;
+        double maxValue = 8;
+        double minAngle = -150;
+        double maxAngle = 150;
+        double interval = 1;
+        int ticksInBetween = (8 * radius).round();
+
+        double textx = 30;
+        double texty = 15;
+
+        double tickLength = 0.2;
+        double tickLengthSmall = 0.1;
+
+        double numberOffsett = 0.08;
+
+        var superScript = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+        String toSuper(int i) {
+          //Must be -9=<i<=9
+          if (i < 0) {
+            return '⁻${superScript[i.abs()]}';
+          } else {
+            return superScript[i];
+          }
+        }
 
         var radialGauge = Positioned.fill(
             top: 0,
@@ -135,28 +155,28 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
                       RadialGaugeAxis(
                         minValue: minValue,
                         maxValue: maxValue,
-                        minAngle: -150,
-                        maxAngle: 150,
+                        minAngle: minAngle,
+                        maxAngle: maxAngle,
                         radius: radius,
-                        width: 0.2,
+                        width: tickLength,
                         color: Colors.transparent,
                         ticks: [
                           RadialTicks(
                               interval: interval,
                               alignment: RadialTickAxisAlignment.inside,
                               color: Colors.blue,
-                              length: 0.2,
+                              length: tickLength,
                               children: [
                                 RadialTicks(
                                   ticksInBetween: ticksInBetween,
-                                  length: 0.1,
+                                  length: tickLengthSmall,
                                   color: Colors.grey[500]!,
                                 ),
                               ])
                         ],
                         pointers: [
                           fancyPointer('blue', ControllPanel.value.value),
-                          fancyPointer('red', ControllPanel.value.value + 20)
+                          fancyPointer('red', ControllPanel.value.value + 1)
                         ],
                       ),
                     ],
@@ -167,19 +187,41 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
 
         // Now we add the numbers...
         int nrOfValues = ((maxValue - minValue) / interval).round();
-        for (var i = 0; i < nrOfValues; i++) {
+        for (var i = 0; i <= nrOfValues; i++) {
           var width = constraints.maxWidth;
           var height = constraints.maxHeight;
           var widthR = width / 2;
           var heightR = height / 2;
-          children.add(Positioned(
-            top: cos(i * 2 * pi / nrOfValues) * heightR * radius + heightR,
-            left: sin(i * 2 * pi / nrOfValues) * widthR * radius + widthR,
-            child: Text("test"),
-          ));
+
+          // We're not going to cover the whole circle, only the parts between
+          // min and max angle
+          var radiansToCover = 2 * pi * ((maxAngle - minAngle) / 360);
+          var offsett = (-90 - minAngle) / 360 * 2 * pi;
+
+          children.add(
+            Positioned(
+                top: cos(-i * radiansToCover / nrOfValues + offsett - pi / 2) *
+                        widthR *
+                        (radius + tickLength + numberOffsett) +
+                    heightR -
+                    texty / 2,
+                left: sin(-i * radiansToCover / nrOfValues + offsett - pi / 2) *
+                        widthR *
+                        (radius + tickLength + numberOffsett) +
+                    widthR -
+                    textx / 2 +
+                    7,
+                // +7 for shifting back so that exponent doesn't count for centering,
+                child: SizedBox(
+                  width: textx,
+                  height: texty,
+                  child: Text("10${toSuper(i - 1)}"),
+                )),
+          );
         }
 
         return Stack(
+          alignment: Alignment.center,
           children: children,
         );
       },
@@ -199,8 +241,15 @@ class _StatusPageState extends State<StatusPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const RadialGaugeWithNumbers(
-      radius: 0.55,
+    return Stack(
+      children: const [
+        RadialGaugeWithNumbers(
+          radius: 0.2,
+        ),
+        RadialGaugeWithNumbers(
+          radius: 0.6,
+        ),
+      ],
     );
   }
 }
