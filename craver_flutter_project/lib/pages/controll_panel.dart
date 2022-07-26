@@ -1,9 +1,11 @@
 import 'dart:async';
-
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 import 'package:gauges/gauges.dart';
 import 'dart:math';
+
+import 'package:intl/intl.dart';
 
 void updateValue(Timer t) {
   ControllPanel.value.value = sin(t.tick * 2 * pi / 200) * 4 + 3;
@@ -56,7 +58,15 @@ class ControllPanel extends StatelessWidget {
 
 class RadialGaugeWithNumbers extends StatefulWidget {
   final double radius;
-  const RadialGaugeWithNumbers({Key? key, required this.radius})
+  final double minValue;
+  final double maxValue;
+  final bool useExp;
+  const RadialGaugeWithNumbers(
+      {Key? key,
+      required this.radius,
+      required this.minValue,
+      required this.maxValue,
+      required this.useExp})
       : super(key: key);
 
   @override
@@ -111,27 +121,39 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
     );
   }
 
+  // get the text size
+  Size _textSize(String text) {
+    final TextPainter textPainter = TextPainter(
+        text: TextSpan(text: text),
+        maxLines: 1,
+        textDirection: ui.TextDirection.ltr)
+      ..layout(minWidth: 0, maxWidth: double.infinity);
+    return textPainter.size;
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final double radius = widget.radius;
+        final bool useExp = widget.useExp;
         List<Widget> children = [];
 
-        double minValue = -1;
-        double maxValue = 8;
+        double minValue = widget.minValue;
+        double maxValue = widget.maxValue;
+        double rangeValue = maxValue - minValue;
         double minAngle = -150;
         double maxAngle = 150;
-        double interval = 1;
+        double rangeAngle = maxAngle - minAngle;
+        int displayedNumberOfValues = 10;
+        int nrOfValues = displayedNumberOfValues - 1;
+        double interval = rangeValue / nrOfValues;
         int ticksInBetween = (8 * radius).round();
-
-        double textx = 30;
-        double texty = 15;
 
         double tickLength = 0.2;
         double tickLengthSmall = 0.1;
 
-        double numberOffsett = 0.08;
+        double numberOffsett = 0.02;
 
         var superScript = '⁰¹²³⁴⁵⁶⁷⁸⁹';
         String toSuper(int i) {
@@ -186,7 +208,6 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
         children.add(radialGauge);
 
         // Now we add the numbers...
-        int nrOfValues = ((maxValue - minValue) / interval).round();
         for (var i = 0; i <= nrOfValues; i++) {
           var width = constraints.maxWidth;
           var height = constraints.maxHeight;
@@ -195,27 +216,44 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
 
           // We're not going to cover the whole circle, only the parts between
           // min and max angle
-          var radiansToCover = 2 * pi * ((maxAngle - minAngle) / 360);
-          var offsett = (-90 - minAngle) / 360 * 2 * pi;
+          var radiansToCover = 2 * pi * (rangeAngle / 360);
+          var offsett = (180 - minAngle) / 360 * 2 * pi;
+          var theta = -i * radiansToCover / nrOfValues + offsett;
+          var f1 = NumberFormat('##.#');
+          var f2 = NumberFormat.compact(); //NumberFormat('####');
+          String value;
+          if (useExp) {
+            value = "10${toSuper(i - 1)}";
+          } else {
+            double number = minValue + i * rangeValue / nrOfValues;
+            if (number.abs() < 100) {
+              value = f1.format(number);
+            } else {
+              value = f2.format(number);
+            }
+          }
+          var textSize = _textSize(value);
+          double textx = textSize.width;
+          double texty = textSize.height;
 
           children.add(
             Positioned(
-                top: cos(-i * radiansToCover / nrOfValues + offsett - pi / 2) *
+                top: cos(theta) *
                         widthR *
                         (radius + tickLength + numberOffsett) +
                     heightR -
-                    texty / 2,
-                left: sin(-i * radiansToCover / nrOfValues + offsett - pi / 2) *
+                    texty / 2 -
+                    texty / 2 * -cos(theta),
+                left: sin(theta) *
                         widthR *
                         (radius + tickLength + numberOffsett) +
                     widthR -
-                    textx / 2 +
-                    7,
-                // +7 for shifting back so that exponent doesn't count for centering,
+                    textx / 2 -
+                    textx / 2 * -sin(theta),
                 child: SizedBox(
                   width: textx,
                   height: texty,
-                  child: Text("10${toSuper(i - 1)}"),
+                  child: Text(value),
                 )),
           );
         }
@@ -245,9 +283,15 @@ class _StatusPageState extends State<StatusPage> {
       children: const [
         RadialGaugeWithNumbers(
           radius: 0.2,
+          minValue: -1,
+          maxValue: 8,
+          useExp: true,
         ),
         RadialGaugeWithNumbers(
           radius: 0.6,
+          minValue: 0.01,
+          maxValue: 8293847997987,
+          useExp: false,
         ),
       ],
     );
