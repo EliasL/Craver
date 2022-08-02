@@ -9,7 +9,7 @@ import 'package:vector_math/vector_math.dart' as math;
 import 'package:intl/intl.dart';
 
 void updateValue(Timer t) {
-  ControllPanel.value.value = sin(t.tick * 2 * pi / 200) * 4 + 3;
+  ControllPanel.value.value = (sin(t.tick * 2 * pi / 200) * 400000 + 3).abs();
 }
 
 class ControllPanel extends StatelessWidget {
@@ -45,12 +45,15 @@ class ControllPanel extends StatelessWidget {
             ],
           ),
         ),
-        body: const TabBarView(
-          children: [
-            StatusPage(),
-            DetailsPage(),
-            SomethingPage(),
-          ],
+        body: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: TabBarView(
+            children: [
+              StatusPage(),
+              DetailsPage(),
+              SomethingPage(),
+            ],
+          ),
         ),
       ),
     );
@@ -70,6 +73,7 @@ class RadialGaugeWithNumbers extends StatefulWidget {
   final double maxValue;
   final bool useExp;
   final String descreption;
+  final String units;
   const RadialGaugeWithNumbers({
     Key? key,
     required this.radius,
@@ -77,6 +81,7 @@ class RadialGaugeWithNumbers extends StatefulWidget {
     required this.maxValue,
     required this.useExp,
     this.descreption = '',
+    this.units = '',
   }) : super(key: key);
 
   @override
@@ -131,6 +136,8 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
     );
   }
 
+  static double log10(num x) => log(x) / ln10;
+
   static String toSuper(int i) {
     const String superScript = '⁰¹²³⁴⁵⁶⁷⁸⁹';
     //Must be -9=<i<=9
@@ -153,165 +160,178 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final double radius = widget.radius;
-        final bool useExp = widget.useExp;
-        String description = widget.descreption;
-        if (description != '') description += ": ";
-        List<Widget> children = [];
+    return Flexible(
+      fit: FlexFit.tight,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final double radius = widget.radius;
+          final bool useExp = widget.useExp;
+          String description = widget.descreption;
+          if (description != '') description += ": ";
+          final String units = widget.units;
+          List<Widget> children = [];
 
-        double minValue = widget.minValue;
-        double maxValue = widget.maxValue;
-        double rangeValue = maxValue - minValue;
-        double minAngle = -150;
-        double maxAngle = 150;
-        double offsett = math.radians(180 - minAngle); // We need a offsett :/
-        double rangeAngle = maxAngle - minAngle;
-        int displayedNumberOfValues = 10;
-        int nrOfValues = displayedNumberOfValues - 1;
-        double interval = rangeValue / nrOfValues;
-        int ticksInBetween = (8 * radius).round();
+          double minValue = widget.minValue;
+          double maxValue = widget.maxValue;
+          double rangeValue = maxValue - minValue;
+          double minAngle = -150;
+          double maxAngle = 150;
+          double offsett = math.radians(180 - minAngle); // We need a offsett :/
+          double rangeAngle = maxAngle - minAngle;
+          int displayedNumberOfValues = 10;
+          int nrOfValues = displayedNumberOfValues - 1;
+          double interval = rangeValue / nrOfValues;
+          int ticksInBetween = (8 * radius).round();
 
-        double tickLength = 0.2;
-        double tickLengthSmall = 0.1;
+          double tickLength = 0.2;
+          double tickLengthSmall = 0.1;
 
-        double numberOffsett = 0.02;
+          double numberOffsett = 0.02;
 
-        var radialGauge = Positioned.fill(
-            top: 0,
-            left: 0,
-            child: ValueListenableBuilder(
-                valueListenable: ControllPanel.value,
-                builder: (context, value, widget) {
-                  return RadialGauge(
-                    axes: [
-                      // Main axis
-                      RadialGaugeAxis(
-                        minValue: minValue,
-                        maxValue: maxValue,
-                        minAngle: minAngle,
-                        maxAngle: maxAngle,
-                        radius: radius,
-                        width: tickLength,
-                        color: Colors.transparent,
-                        ticks: [
-                          RadialTicks(
-                              interval: interval,
-                              alignment: RadialTickAxisAlignment.inside,
-                              color: Colors.blue,
-                              length: tickLength,
-                              children: [
-                                RadialTicks(
-                                  ticksInBetween: ticksInBetween,
-                                  length: tickLengthSmall,
-                                  color: Colors.grey[500]!,
-                                ),
-                              ])
-                        ],
-                        pointers: [
-                          fancyPointer('blue', ControllPanel.value.value),
-                          fancyPointer('red', ControllPanel.value.value + 1)
-                        ],
-                      ),
-                    ],
-                  );
-                }));
+          var radialGauge = Positioned.fill(
+              top: 0,
+              left: 0,
+              child: ValueListenableBuilder(
+                  valueListenable: ControllPanel.value,
+                  builder: (context, value, widget) {
+                    if (useExp) {
+                      value = log10(value as double);
+                    } else {
+                      value = value as double;
+                    }
+                    return RadialGauge(
+                      axes: [
+                        // Main axis
+                        RadialGaugeAxis(
+                          minValue: minValue,
+                          maxValue: maxValue,
+                          minAngle: minAngle,
+                          maxAngle: maxAngle,
+                          radius: radius,
+                          width: tickLength,
+                          color: Colors.transparent,
+                          ticks: [
+                            RadialTicks(
+                                interval: interval,
+                                alignment: RadialTickAxisAlignment.inside,
+                                color: Colors.blue,
+                                length: tickLength,
+                                children: [
+                                  RadialTicks(
+                                    ticksInBetween: ticksInBetween,
+                                    length: tickLengthSmall,
+                                    color: Colors.grey[500]!,
+                                  ),
+                                ])
+                          ],
+                          pointers: [
+                            fancyPointer('blue', value),
+                            fancyPointer('red', value + 1)
+                          ],
+                        ),
+                      ],
+                    );
+                  }));
 
-        children.add(radialGauge);
+          children.add(radialGauge);
 
-        // Now we add the numbers...
+          // Now we add the numbers...
 
-        var width = constraints.maxWidth;
-        var height = constraints.maxHeight;
-        var widthR = width / 2;
-        var heightR = height / 2;
+          var width = constraints.maxWidth;
+          var height = constraints.maxHeight;
+          var widthR = width / 2;
+          var heightR = height / 2;
 
-        // We're not going to cover the whole circle, only the parts between
-        // min and max angle
-        var radiansToCover = math.radians(rangeAngle);
-        var smallFormat = NumberFormat('##.#');
-        var compactFormat = NumberFormat.compact(); //NumberFormat('####');
+          // We're not going to cover the whole circle, only the parts between
+          // min and max angle
+          var radiansToCover = math.radians(rangeAngle);
+          var smallFormat = NumberFormat('##.#');
+          var compactFormat = NumberFormat.compact(); //NumberFormat('####');
 
-        //Create text values
-        var textSize = _textSize('value');
-        double textx = textSize.width;
-        double texty = textSize.height;
+          //Create text values
+          var textSize = _textSize('value');
+          double textx = textSize.width;
+          double texty = textSize.height;
 
-        for (var i = 0; i <= nrOfValues; i++) {
-          String value;
-          if (useExp) {
-            value = "10${toSuper(i - 1)}";
-          } else {
-            double number = minValue + i * rangeValue / nrOfValues;
-            if (number.abs() < 100) {
-              value = smallFormat.format(number);
+          for (var i = 0; i <= nrOfValues; i++) {
+            String value;
+            if (useExp) {
+              value = "10${toSuper(i - 1)}";
             } else {
-              value = compactFormat.format(number);
+              double number = minValue + i * rangeValue / nrOfValues;
+              if (number.abs() < 100) {
+                value = smallFormat.format(number);
+              } else {
+                value = compactFormat.format(number);
+              }
             }
+
+            //Update text values
+            textSize = _textSize(value);
+            textx = textSize.width;
+            texty = textSize.height;
+
+            var theta = -i * radiansToCover / nrOfValues + offsett;
+            children.add(
+              Positioned(
+                top: heightR + //Center of guage
+                    cos(theta) *
+                        widthR *
+                        (radius +
+                            tickLength +
+                            numberOffsett) + //outside of ticks
+                    texty / 2 * (-1 + cos(theta)), //Center text
+                left: widthR + //Center of guage
+                    sin(theta) *
+                        widthR *
+                        (radius +
+                            tickLength +
+                            numberOffsett) + //outside of ticks
+                    textx / 2 * (-1 + sin(theta)), //Center text
+                child: Text(
+                  value,
+                  style: TextStyle(color: Colors.grey[400]),
+                ),
+              ),
+            );
           }
 
-          //Update text values
-          textSize = _textSize(value);
-          textx = textSize.width;
-          texty = textSize.height;
+          var minTheta = math.radians(-minAngle) + pi;
+          var maxTheta = math.radians(-maxAngle) + pi;
+          var R = radius + tickLengthSmall / 2;
+          // Find the size of the box we can fit between the gaues
+          // Assume that it is symetric around the 0 degree axis.
+          // The length of the box is then
 
-          var theta = -i * radiansToCover / nrOfValues + offsett;
-          children.add(
-            Positioned(
+          var A = widthR + //Center of guage
+              sin(minTheta) * widthR * R;
+          var B = widthR + //Center of guage
+              sin(maxTheta) * widthR * R;
+          var lengthOfBox = B - A;
+
+          // Finally we'll add the number at the bottom to show the real value numerically
+          children.add(Positioned(
               top: heightR + //Center of guage
-                  cos(theta) *
-                      widthR *
-                      (radius + tickLength + numberOffsett) + //outside of ticks
-                  texty / 2 * (-1 + cos(theta)), //Center text
+                  cos(minTheta) * widthR * R,
               left: widthR + //Center of guage
-                  sin(theta) *
-                      widthR *
-                      (radius + tickLength + numberOffsett) + //outside of ticks
-                  textx / 2 * (-1 + sin(theta)), //Center text
-              child: Text(
-                value,
-                style: TextStyle(color: Colors.grey[400]),
-              ),
-            ),
+                  sin(minTheta) * widthR * R,
+              child: ValueListenableBuilder(
+                  valueListenable: ControllPanel.value,
+                  builder: (context, double value, widget) {
+                    return SizedBox(
+                        width: lengthOfBox,
+                        child: Text(
+                          '$description${compactFormat.format(value)}$units',
+                          textAlign: ui.TextAlign.center,
+                        ));
+                  })));
+
+          return Stack(
+            alignment: Alignment.center,
+            children: children,
           );
-        }
-
-        var minTheta = math.radians(-minAngle) + pi;
-        var maxTheta = math.radians(-maxAngle) + pi;
-        var R = radius + tickLengthSmall / 2;
-        // Find the size of the box we can fit between the gaues
-        // Assume that it is symetric around the 0 degree axis.
-        // The length of the box is then
-
-        var A = widthR + //Center of guage
-            sin(minTheta) * widthR * R;
-        var B = widthR + //Center of guage
-            sin(maxTheta) * widthR * R;
-        var lengthOfBox = B - A;
-
-        // Finally we'll add the number at the bottom to show the real value numerically
-        children.add(Positioned(
-            top: heightR + //Center of guage
-                cos(minTheta) * widthR * R,
-            left: widthR + //Center of guage
-                sin(minTheta) * widthR * R,
-            child: ValueListenableBuilder(
-                valueListenable: ControllPanel.value,
-                builder: (context, double value, widget) {
-                  return SizedBox(
-                      width: lengthOfBox,
-                      child: Text(
-                        '$description${compactFormat.format(value)}',
-                        textAlign: ui.TextAlign.center,
-                      ));
-                })));
-
-        return Stack(
-          alignment: Alignment.center,
-          children: children,
-        );
-      },
+        },
+      ),
     );
   }
 }
@@ -328,20 +348,42 @@ class _StatusPageState extends State<StatusPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: const [
-        RadialGaugeWithNumbers(
-          radius: 0.6,
-          minValue: 0,
-          maxValue: 6,
-          useExp: false,
-          descreption: 'Particles',
+    return Column(
+      children: [
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              RadialGaugeWithNumbers(
+                radius: 0.55,
+                minValue: 0,
+                maxValue: 6,
+                useExp: true,
+                units: 'Hz',
+              ),
+              Expanded(
+                child: Text(
+                  'Test ',
+                  textAlign: ui.TextAlign.center,
+                ),
+              ),
+            ],
+          ),
         ),
-        RadialGaugeWithNumbers(
-          radius: 0.2,
-          minValue: -1,
-          maxValue: 8,
-          useExp: true,
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              RadialGaugeWithNumbers(
+                radius: 0.55,
+                minValue: 0,
+                maxValue: 6,
+                useExp: true,
+                units: 'Hz',
+              ),
+              Expanded(child: Text('Testing')),
+            ],
+          ),
         ),
       ],
     );
@@ -363,105 +405,12 @@ class _DetailsPageState extends State<DetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-          //child: Icon(Icons.call_made_outlined, size: 350),
-          child: Column(
-        children: [
-          ValueListenableBuilder(
-              valueListenable: ControllPanel.value,
-              builder: (context, value, widget) {
-                return RadialGauge(
-                  axes: [
-                    // Left axis
-                    RadialGaugeAxis(
-                      minValue: -100,
-                      maxValue: 0,
-                      minAngle: -150,
-                      maxAngle: 0,
-                      radius: 0.15,
-                      width: 0.05,
-                      offset: const Offset(-0.2, -0.1),
-                      color: Colors.red[300],
-                      pointers: [
-                        RadialNeedlePointer(
-                          value: -100 - ControllPanel.value.value,
-                          thickness: 4.0,
-                          knobColor: Colors.transparent,
-                          length: 0.2,
-                        ),
-                      ],
-                      ticks: [
-                        RadialTicks(
-                            alignment: RadialTickAxisAlignment.below,
-                            ticksInBetween: 10,
-                            length: 0.05)
-                      ],
-                    ),
-                    // Left axis
-                    RadialGaugeAxis(
-                      minValue: -100,
-                      maxValue: 0,
-                      minAngle: 0,
-                      maxAngle: 90,
-                      radius: 0.15,
-                      width: 0.05,
-                      offset: const Offset(0.2, -0.1),
-                      color: Colors.green[300],
-                      pointers: [
-                        RadialNeedlePointer(
-                          value: -100 + ControllPanel.value.value,
-                          thickness: 4.0,
-                          knobColor: Colors.transparent,
-                          length: 0.2,
-                        ),
-                      ],
-                      ticks: [
-                        RadialTicks(
-                            alignment: RadialTickAxisAlignment.above,
-                            ticksInBetween: 10,
-                            length: 0.05)
-                      ],
-                    ),
-                    // Main axis
-                    RadialGaugeAxis(
-                      minValue: -100,
-                      maxValue: 0,
-                      minAngle: -150,
-                      maxAngle: 150,
-                      radius: 0.6,
-                      width: 0.2,
-                      color: Colors.lightBlue[200],
-                      ticks: [
-                        RadialTicks(
-                            interval: 50,
-                            alignment: RadialTickAxisAlignment.inside,
-                            color: Colors.black,
-                            length: 0.2,
-                            children: [
-                              RadialTicks(
-                                ticksInBetween: 5,
-                                length: 0.1,
-                                color: Colors.blueGrey,
-                              ),
-                            ])
-                      ],
-                      pointers: [
-                        RadialNeedlePointer(
-                          value: ControllPanel.value.value,
-                          thicknessStart: 20,
-                          thicknessEnd: 0,
-                          color: Colors.lightBlue[200]!,
-                          length: 0.6,
-                          knobRadiusAbsolute: 10,
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              }),
-        ],
-      )),
+    return const RadialGaugeWithNumbers(
+      radius: 0.55,
+      minValue: 0,
+      maxValue: 6,
+      useExp: true,
+      units: 'Hz',
     );
   }
 
