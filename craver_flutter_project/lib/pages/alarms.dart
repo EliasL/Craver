@@ -63,6 +63,7 @@ NotificationAppLaunchDetails? notificationAppLaunchDetails;
 /// Please download the complete example app from the GitHub repository where
 /// all the setup has been done
 ///
+/// CRAVER has been built on this project, so it should be okay...
 
 void initi_notifications() async {
   WidgetsFlutterBinding.ensureInitialized();
