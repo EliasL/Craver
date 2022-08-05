@@ -21,12 +21,9 @@ class HTMLDisplay extends StatelessWidget {
     var authors = data[1];
     var dates = data[2];
     return ListView.builder(
-      // Let the ListView know how many items it needs to build.
       controller: ScrollController(),
       itemCount: texts.length,
       shrinkWrap: true,
-      // Provide a builder function. This is where the magic happens.
-      // Convert each item into a widget based on the type of item it is.
       itemBuilder: (context, index) {
         String author = authors[index];
         String text = texts[index];
@@ -39,6 +36,9 @@ class HTMLDisplay extends StatelessWidget {
         var date = dateFormat.parse(dateString);
         var age = DateTime.now().subtract(DateTime.now().difference(date));
         var ageString = timeago.format(age);
+
+        // Here we can choose to grey out some less important messages
+        // based on the author
         var automatedMessages = [
           //'Comments',
           'From Database',
@@ -46,6 +46,7 @@ class HTMLDisplay extends StatelessWidget {
           //'Run Control',
         ];
         bool important = !automatedMessages.contains(author);
+
         return Card(
             child: ListTile(
           title: GestureDetector(
@@ -58,7 +59,9 @@ class HTMLDisplay extends StatelessWidget {
                 await launchUrl(url, mode: LaunchMode.externalApplication);
               } else {
                 //https://dart-lang.github.io/linter/lints/use_build_context_synchronously.html
-                //if (mounted) return; I'm unable to resolve this. TODO?
+                //Aparently i'm not supposed to use contex in async function,
+                //I'm unable to resolve it... TODO?
+                //if (mounted) return;
                 showAlertDialog(context, 'Unable to open browser!');
               }
             },
@@ -128,6 +131,8 @@ class _LbLogbookState extends State<LbLogbook> {
     var dates = [];
 
     for (var i = 0; i < other.length; i += 5) {
+      // These numbers, 1 and 4, are just found from
+      // looking at the order of the responce from lblogbook
       dates.add(other[i + 1]);
       authors.add(other[i + 4]);
     }
@@ -143,8 +148,6 @@ class _LbLogbookState extends State<LbLogbook> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      // Center is a layout widget. It takes a single child and positions it
-      // in the middle of the parent.
       child: Column(
         children: [
           const SizedBox(height: 10),

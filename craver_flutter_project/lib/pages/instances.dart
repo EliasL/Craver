@@ -120,6 +120,7 @@ class InstanceColumn extends StatelessWidget {
             .toString();
         Icon icon;
 
+        // We want to make some of the instance names look prettier.
         List<String> badStrings = [
           '.lbdaq.cern.ch',
           ':9100',
@@ -128,12 +129,12 @@ class InstanceColumn extends StatelessWidget {
           '.cern.ch',
           'http://'
         ];
-
         String niceInstanceName = instanceName;
         for (String badString in badStrings) {
           niceInstanceName = niceInstanceName.replaceAll(badString, '');
         }
 
+        //Choose what icon to use depending on server status
         if (value == '1') {
           icon = const Icon(Icons.cloud_rounded);
         } else {

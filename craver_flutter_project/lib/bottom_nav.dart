@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'pages/controll_panel.dart';
 import 'pages/lb_logbook.dart';
@@ -19,7 +23,9 @@ class _BottomNavState extends State<BottomNav> {
   String title = 'CRAVER ${LbLogbook.currentPage}';
 
   //The order in this list MUST match the order in PAGES
-  static const List<Widget> _pages = <Widget>[
+  //TODO: Make these pages build lazily when clicked on
+  //Not all pages at once when the app loads
+  static List<Widget> _pages = <Widget>[
     ControllPanel(),
     LbLogbook(),
     Instances(),
