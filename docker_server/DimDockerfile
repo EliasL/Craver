@@ -1,0 +1,39 @@
+FROM python:3.7.13-slim-buster
+
+
+RUN apt-get update
+#RUN apt-get install gdb -y
+
+
+#http://dim.web.cern.ch/dim_unix.html
+ADD http://dim.web.cern.ch/dim_v20r33.zip dim.zip
+RUN apt-get install unzip
+RUN unzip -a dim.zip 
+RUN rm dim.zip
+RUN mv dim_v20r33 dim
+
+RUN cd dim
+WORKDIR /dim
+RUN apt-get install csh -y
+RUN apt-get install make -y
+RUN apt-get install gcc-4.8 -y
+RUN apt-get install g++ -y
+RUN apt-get install libmotif-common -y
+RUN apt-get install libmotif-dev -y
+RUN exec csh -c "setenv OS Linux; source .setup; make all"
+#libgcc8.5
+#modif2.3
+#python3.9
+#dic_info_service(service,  gauges[clean_name].set, timeout=10, default=-1)
+#RUN mkdir -p /app
+#WORKDIR /app
+#COPY requirements.txt requirements.txt
+#RUN pip install -r requirements.txt
+
+#COPY test.py test.py
+#COPY test2.py test2.py
+
+#ENV DIM_DNS_NODE=ecs04.lbdaq.cern.ch
+
+#CMD [ "python3", "test2.py"]
+

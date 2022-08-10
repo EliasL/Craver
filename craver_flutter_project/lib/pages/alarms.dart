@@ -137,22 +137,6 @@ void backgroundFetchHeadlessTask(HeadlessTask task) async {
   print('[BackgroundFetch] Headless event received.');
   // Do your work here...
 
-  await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      'scheduled title',
-      'scheduled body',
-      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
-      const NotificationDetails(
-          android: AndroidNotificationDetails(
-              'full screen channel id', 'full screen channel name',
-              channelDescription: 'full screen channel description',
-              priority: Priority.high,
-              importance: Importance.high,
-              fullScreenIntent: true)),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime);
-
   BackgroundFetch.finish(taskId);
 }
 
@@ -204,7 +188,6 @@ class _AlarmsState extends State<Alarms> {
         sound: RawResourceAndroidNotificationSound('slow_spring_board'),
         priority: Priority.high,
         importance: Importance.high,
-        fullScreenIntent: true,
       );
       const IOSNotificationDetails iOSPlatformChannelSpecifics =
           IOSNotificationDetails(sound: 'slow_spring_board.aiff');
@@ -232,6 +215,7 @@ class _AlarmsState extends State<Alarms> {
         _status += -5000;
       });
     });
+
     print('[BackgroundFetch] configure success: $status');
     setState(() {
       _status += 5;

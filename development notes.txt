@@ -56,3 +56,6 @@ Also, you should reference the pip in the venv, not just pip3, ie.:craver/venv/b
 
 When adding custom sounds to the project, you need to add them several places. Once for ios and once from android. Also ios does not support mp3.
 See local notifications library for custom sound example
+
+The server uses DIM. It was a bit problamatic to install.
+remeber to unzip with -a. Very important.

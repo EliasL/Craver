@@ -117,6 +117,9 @@ class _LbLogbookState extends State<LbLogbook> {
 
   _getData(int page) async {
     var rawData = await getLbLogbook(page: page);
+    if (rawData == null) {
+      return null;
+    }
     var textElements = rawData.getElementsByClassName('summary');
     var texts = textElements
         .map((e) => parse(e.innerHtml).documentElement!.text)
@@ -157,6 +160,11 @@ class _LbLogbookState extends State<LbLogbook> {
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.done:
+                    if (snapshot.data == null) {
+                      return Column(children: const [
+                        Flexible(child: CircularProgressIndicator())
+                      ]);
+                    }
                     return RefreshIndicator(
                         onRefresh: scrollUpRefresh,
                         child: Dismissible(
