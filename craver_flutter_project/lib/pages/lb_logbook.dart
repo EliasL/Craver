@@ -10,6 +10,11 @@ import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 
+String cleanUpText(String text) {
+  print(text.replaceAll('\n', ' '));
+  return text.replaceAll('\n', ' ');
+}
+
 class HTMLDisplay extends StatelessWidget {
   //This is NOT a general XML viewer, only for this specific use case.
   HTMLDisplay({Key? key, required this.data}) : super(key: key);
@@ -26,12 +31,10 @@ class HTMLDisplay extends StatelessWidget {
       shrinkWrap: true,
       itemBuilder: (context, index) {
         String author = authors[index];
-        String text = texts[index];
+        String text = cleanUpText(texts[index]);
         String dateString = dates[index];
 
-        // DEPRICATED Get everything except the timezone
         // TODO: ENSURE THAT TIMEZONE IS HANDELED
-        //var dateFormat = DateFormat('\nEEE, dd MMM yyyy HH:mm:ss');
         var dateFormat = DateFormat('dd-MMM-yyyy HH:mm');
         var date = dateFormat.parse(dateString);
         var age = DateTime.now().subtract(DateTime.now().difference(date));
@@ -50,7 +53,9 @@ class HTMLDisplay extends StatelessWidget {
         return Card(
             child: ListTile(
           title: GestureDetector(
-            child: Text(text),
+            child: SelectableText(
+              text,
+            ),
             onTap: () async {
               var url = Uri.parse(
                   "https://lblogbook.cern.ch/Shift/page${LbLogbook.currentPage}");
@@ -161,8 +166,13 @@ class _LbLogbookState extends State<LbLogbook> {
                 switch (snapshot.connectionState) {
                   case ConnectionState.done:
                     if (snapshot.data == null) {
-                      return Column(children: const [
-                        Flexible(child: CircularProgressIndicator())
+                      return Column(children: [
+                        Flexible(
+                          child: ElevatedButton(
+                            onPressed: refresh,
+                            child: const Text('Refresh'),
+                          ),
+                        )
                       ]);
                     }
                     return RefreshIndicator(

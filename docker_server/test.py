@@ -38,8 +38,9 @@ def create_gauges():
         clean_name = clean_service_name(service)
         gauges[clean_name] = Gauge(clean_name, 'Value coming from DIM')
         gauges[clean_name].set(-1)
-        logging.debug("Will try to fetch: %s" % service)
-        dic_info_service(service,  gauges[clean_name].set, timeout=10, default=-1)
+        logging.debug("Will try to fetch gauge: %s" % service)
+        logging.debug(gauges[clean_name].set)
+        dic_info_service(service,  logging.debug, timeout=10, default=-1)
 
 enums = {}
 def create_enums():
@@ -49,8 +50,9 @@ def create_enums():
         clean_name = clean_service_name(service[0])
         enums[clean_name] = Enum(clean_name, 'State coming from DIM', states=service[1])
         enums[clean_name].state("UNKNOWN")
-        logging.debug("Will try to fetch: %s" % service[0])
-        dic_info_service(service[0],  'C:7', enums[clean_name].state, timeout=10, default="UNKNOWN")
+        logging.debug("Will try to fetch enum: %s" % service[0])
+        logging.debug(enums[clean_name].state)
+        dic_info_service(service[0],  'C:7', logging.debug, timeout=10, default="UNKNOWN")
 
 def main():
     logging.info('Setting DIM DNS to %s' % DIM_DNS_NODE)

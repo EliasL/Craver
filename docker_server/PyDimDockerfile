@@ -13,10 +13,10 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
+COPY test.py test.py
+#COPY test2.py test2.py
 
-ADD database_scripts database_scripts 
-WORKDIR /app/database_scripts
+ENV DIM_DNS_NODE=ecs04.lbdaq.cern.ch
 
-EXPOSE 8080
-CMD [ "python3", "requestHandler.py"]
+CMD [ "python3", "test.py"]
 
