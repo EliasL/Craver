@@ -1,2 +1,2 @@
-docker image build -t test:latest2 .
-docker run -it -p 8080:8080 test:latest2
+docker image build -t craver_server:latest .
+docker run -it -p 8080:8080 --env-file env_vars.env craver_server:latest 

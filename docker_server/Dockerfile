@@ -1,13 +1,11 @@
 FROM python:3.7.13-slim-buster
 
+COPY .wgetrc .wgetrc
+ENV http_proxy=http://128.141.22.113:8080
+ENV https_proxy=http://128.141.22.113:8080
 
 RUN apt-get update
-#RUN apt-get install gdb -y
 
-
-#libgcc8.5
-#modif2.3
-#python3.9
 RUN mkdir -p /app
 WORKDIR /app
 COPY requirements.txt requirements.txt

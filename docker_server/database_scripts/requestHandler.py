@@ -4,6 +4,7 @@ from dbInterface import Database
 from config import client_user
 from lblogbookInterface import LbLogbook
 from prometheusInterface import Prometheus
+from controlPanelInterface import ControlPanel
 from flask import Flask, request
 import json
 import datetime
@@ -13,6 +14,7 @@ import datetime
 app = Flask(__name__)
 P = Prometheus()
 L = LbLogbook()
+C = ControlPanel()
 
 # Example: /prometheus_query?command=up&instance=aseb03.lbdaq.cern.ch&time=4
 # Example: /prometheus_query?command=up
@@ -38,6 +40,14 @@ def get_lblogbook_data():
     args = request.args.to_dict()
     page = args['page']
     return L.get(page)
+
+
+@app.route("/control_panel", methods = ['GET'])
+def get_control_panel_data():
+    
+    args = request.args.to_dict()
+    state = args['state']
+    return C.get(state)
 
 
 if __name__ == '__main__':
