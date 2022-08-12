@@ -158,6 +158,12 @@ class _AlarmsState extends State<Alarms> {
     initPlatformState();
   }
 
+  /// This is where you will define a function that will
+  /// be called in the background every 15 minutes.
+  /// Remember that if the batterysetting is set to
+  /// batterysaver, this function will probably only run while
+  /// the app is in the forground.
+
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     // Configure BackgroundFetch.
@@ -196,12 +202,13 @@ class _AlarmsState extends State<Alarms> {
         android: androidPlatformChannelSpecifics,
         iOS: iOSPlatformChannelSpecifics,
       );
-      await flutterLocalNotificationsPlugin.show(
+
+      /*await flutterLocalNotificationsPlugin.show(
         0,
         'custom sound notification title 1',
         'custom sound notification body 2',
         platformChannelSpecifics,
-      );
+      );*/
 
       // IMPORTANT:  You must signal completion of your task or the OS can punish your app
       // for taking too long in the background.

@@ -1,24 +1,131 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-
 import 'package:gauges/gauges.dart';
 import 'dart:math';
 import 'package:vector_math/vector_math.dart' as math;
-
 import 'package:intl/intl.dart';
+import 'dart:isolate';
 
-void updateValue(Timer t) {
-  ControllPanel.value.value = (sin(t.tick * 2 * pi / 200) * 400000 + 3).abs();
+import '../support/data_getter.dart';
+
+//https://stackoverflow.com/questions/58030337/valuelistenablebuilder-listen-to-more-than-one-value
+class ValueListenableBuilder2<A, B> extends StatelessWidget {
+  const ValueListenableBuilder2({
+    required this.first,
+    required this.second,
+    Key? key,
+    required this.builder,
+    this.child,
+  }) : super(key: key);
+
+  final ValueNotifier<A> first;
+  final ValueNotifier<B> second;
+  final Widget? child;
+  final Widget Function(BuildContext context, A a, B b, Widget? child) builder;
+
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<A>(
+        valueListenable: first,
+        builder: (_, a, __) {
+          return ValueListenableBuilder<B>(
+            valueListenable: second,
+            builder: (context, b, __) {
+              return builder(context, a, b, child);
+            },
+          );
+        },
+      );
 }
 
-class ControllPanel extends StatelessWidget {
-  static var value = ValueNotifier<double>(0);
+class Status {
+  ValueNotifier state;
+  String stateName;
+  Status(this.state, this.stateName);
+}
 
-  ControllPanel({Key? key}) : super(key: key);
+// This is to make the text more readable when used in the
+// getControlPanelState function eg.:
+// getControlPanelState(states['runType']);
+final fullStates = {
+  'state': "lbWeb/LHCb|LHCb_fsm_currentState",
+  'DAQState': "lbWeb/LHCb|LHCb_DAQ|LHCb_DAQ_fsm_currentState",
+  'DAIState': "lbWeb/LHCb|LHCb_DAI|LHCb_DAI_fsm_currentState",
+  'DCSState': "lbWeb/LHCb|LHCb_DCS|LHCb_DCS_fsm_currentState",
+  'EBState': "lbWeb/LHCb|LHCb_EB|LHCb_EB_fsm_currentState",
+  'HVState': "lbWeb/LHCb|LHCb_HV|LHCb_HV_fsm_currentState",
+  'TFCState': "lbWeb/LHCb|LHCb_TFC|LHCb_TFC_fsm_currentState",
+  'MonitoringState':
+      "lbWeb/LHCb|LHCb_Monitoring|LHCb_Monitoring_fsm_currentState",
+  'SDDAQState': "lbWeb/LHCb_DAQ|<SD>_DAQ|<SD>_DAQ_fsm_currentState",
+  'runType': "lbWeb/LHCb_RunInfo_general_runType",
+  'dataType': "lbWeb/LHCb_RunInfo_general_dataType",
+  'runNumber': "lbWeb/LHCb_RunInfo_general_runNumber",
+  'partId': "lbWeb/LHCb_RunInfo_general_partId",
+  'odinData': "lbWeb/LHCb_RunInfo_TFC_odinData",
+  'nTriggers': "lbWeb/LHCb_RunInfo_TFC_nTriggers",
+  'triggerRate': "lbWeb/LHCb_RunInfo_TFC_triggerRate",
+  'hltNTriggers': "lbWeb/LHCb_RunInfo_HLTFarm_hltNTriggers",
+  'hltRate': "lbWeb/LHCb_RunInfo_HLTFarm_hltRate",
+  'architecture': "lbWeb/LHCb_RunInfo_EB_architecture"
+};
 
-  final Timer timer = Timer.periodic(
-      const Duration(milliseconds: 100), (Timer t) => updateValue(t));
+void update(Status s) {
+  s.state.value = getControlPanelState(fullStates[s.stateName]!);
+}
+
+void slowUpdateValue(Timer t) {
+  Isolate.spawn(update, Status(ControlPanel.state, 'state'));
+  Isolate.spawn(update, Status(ControlPanel.DAQState, 'DAQState'));
+  Isolate.spawn(update, Status(ControlPanel.DAIState, 'DAIState'));
+  Isolate.spawn(update, Status(ControlPanel.EBState, 'EBState'));
+  Isolate.spawn(update, Status(ControlPanel.HVState, 'HVState'));
+  Isolate.spawn(update, Status(ControlPanel.TFCState, 'TFCState'));
+  Isolate.spawn(
+      update, Status(ControlPanel.MonitoringState, 'MonitoringState'));
+  Isolate.spawn(update, Status(ControlPanel.SDDAQState, 'SDDAQState'));
+  Isolate.spawn(update, Status(ControlPanel.runType, 'runType'));
+  Isolate.spawn(update, Status(ControlPanel.dataType, 'dataType'));
+  Isolate.spawn(update, Status(ControlPanel.runNumber, 'runNumber'));
+  Isolate.spawn(update, Status(ControlPanel.partId, 'partId'));
+  Isolate.spawn(update, Status(ControlPanel.odinData, 'odinData'));
+  Isolate.spawn(update, Status(ControlPanel.triggerRate, 'triggerRate'));
+  Isolate.spawn(update, Status(ControlPanel.hltNTriggers, 'hltNTriggers'));
+  Isolate.spawn(update, Status(ControlPanel.hltRate, 'hltRate'));
+  Isolate.spawn(update, Status(ControlPanel.architecture, 'architecture'));
+}
+
+void fastUpdateValue(Timer t) {
+  Isolate.spawn(update, Status(ControlPanel.nTriggers, 'nTriggers'));
+}
+
+class ControlPanel extends StatelessWidget {
+  //TODO redo this with enum to reduce copypaste
+  static final state = ValueNotifier('');
+  static final DAQState = ValueNotifier<String>('');
+  static final DAIState = ValueNotifier<String>('');
+  static final EBState = ValueNotifier<String>('');
+  static final HVState = ValueNotifier<String>('');
+  static final TFCState = ValueNotifier<String>('');
+  static final MonitoringState = ValueNotifier<String>('');
+  static final SDDAQState = ValueNotifier<String>('');
+  static final runType = ValueNotifier<String>('');
+  static final dataType = ValueNotifier<String>('');
+  static final runNumber = ValueNotifier<double>(0);
+  static final partId = ValueNotifier<double>(0);
+  static final odinData = ValueNotifier<double>(0);
+  static final nTriggers = ValueNotifier<double>(0);
+  static final triggerRate = ValueNotifier<double>(0);
+  static final hltNTriggers = ValueNotifier<double>(0);
+  static final hltRate = ValueNotifier<double>(0);
+  static final architecture = ValueNotifier<String>('');
+
+  ControlPanel({Key? key}) : super(key: key);
+
+  final Timer slowTimer = Timer.periodic(
+      const Duration(milliseconds: 700), (Timer t) => slowUpdateValue(t));
+  final Timer fastTimer = Timer.periodic(
+      const Duration(milliseconds: 100), (Timer t) => fastUpdateValue(t));
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +175,8 @@ class RadialGaugeWithNumbers extends StatefulWidget {
   /// I hope you don't have to try to understand the angles
   /// It's a bit of a pile of junk
   ///
+  final ValueNotifier gaugeValue1;
+  final ValueNotifier? gaugeValue2;
   final double radius;
   final double minValue;
   final double maxValue;
@@ -76,6 +185,8 @@ class RadialGaugeWithNumbers extends StatefulWidget {
   final String units;
   const RadialGaugeWithNumbers({
     Key? key,
+    required this.gaugeValue1,
+    this.gaugeValue2,
     required this.radius,
     required this.minValue,
     required this.maxValue,
@@ -164,6 +275,13 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
       fit: FlexFit.tight,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
+          final ValueNotifier gaugeValue1 = widget.gaugeValue1;
+          final ValueNotifier gaugeValue2;
+          if (widget.gaugeValue2 == null) {
+            gaugeValue2 = gaugeValue1;
+          } else {
+            gaugeValue2 = widget.gaugeValue2!;
+          }
           final double radius = widget.radius;
           final bool useExp = widget.useExp;
           String description = widget.descreption;
@@ -192,7 +310,7 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
               top: 0,
               left: 0,
               child: ValueListenableBuilder(
-                  valueListenable: ControllPanel.value,
+                  valueListenable: gaugeValue,
                   builder: (context, value, widget) {
                     if (useExp) {
                       value = log10(value as double);
@@ -316,8 +434,8 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
               left: widthR + //Center of guage
                   sin(minTheta) * widthR * R,
               child: ValueListenableBuilder(
-                  valueListenable: ControllPanel.value,
-                  builder: (context, double value, widget) {
+                  valueListenable: gaugeValue,
+                  builder: (context, value, widget) {
                     return SizedBox(
                         width: lengthOfBox,
                         child: Text(
@@ -353,8 +471,9 @@ class _StatusPageState extends State<StatusPage> {
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               RadialGaugeWithNumbers(
+                gaugeValue1: ControlPanel.nTriggers,
                 radius: 0.55,
                 minValue: 0,
                 maxValue: 6,
@@ -373,8 +492,9 @@ class _StatusPageState extends State<StatusPage> {
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               RadialGaugeWithNumbers(
+                gaugeValue1: ControlPanel.nTriggers,
                 radius: 0.55,
                 minValue: 0,
                 maxValue: 6,

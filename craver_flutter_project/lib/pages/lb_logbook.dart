@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
 import '../support/warnig_and_errors.dart';
@@ -50,32 +51,34 @@ class HTMLDisplay extends StatelessWidget {
         ];
         bool important = !automatedMessages.contains(author);
 
+        // https://github.com/flutter/flutter/issues/53797
+        // Tap gesture AND selectable text
         return Card(
-            child: ListTile(
-          title: GestureDetector(
-            child: SelectableText(
-              text,
-            ),
-            onTap: () async {
-              var url = Uri.parse(
-                  "https://lblogbook.cern.ch/Shift/page${LbLogbook.currentPage}");
-              var urllaunchable = await canLaunchUrl(url);
-              if (urllaunchable) {
-                await launchUrl(url, mode: LaunchMode.externalApplication);
-              } else {
-                //https://dart-lang.github.io/linter/lints/use_build_context_synchronously.html
-                //Aparently i'm not supposed to use contex in async function,
-                //I'm unable to resolve it... TODO?
-                //if (mounted) return;
-                showAlertDialog(context, 'Unable to open browser!');
-              }
-            },
+          child: ListTile(
+            title: SelectableText.rich(TextSpan(
+                text: text,
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () async {
+                    var url = Uri.parse(
+                        "https://lblogbook.cern.ch/Shift/page${LbLogbook.currentPage}");
+                    var urllaunchable = await canLaunchUrl(url);
+                    if (urllaunchable) {
+                      await launchUrl(url,
+                          mode: LaunchMode.externalApplication);
+                    } else {
+                      //https://dart-lang.github.io/linter/lints/use_build_context_synchronously.html
+                      //Aparently i'm not supposed to use contex in async function,
+                      //I'm unable to resolve it... TODO?
+                      //if (mounted) return;
+                      showAlertDialog(context, 'Unable to open browser!');
+                    }
+                  })),
+            isThreeLine: true,
+            enabled: important,
+            subtitle:
+                SelectableText('\nAuthor: $author\n$dateString - $ageString'),
           ),
-          isThreeLine: true,
-          enabled: important,
-          subtitle:
-              SelectableText('\nAuthor: $author\n$dateString - $ageString'),
-        ));
+        );
       },
     );
   }
@@ -100,9 +103,11 @@ class _LbLogbookState extends State<LbLogbook> {
   void initState() {
     data = _getData(LbLogbook.currentPage.value);
     super.initState();
-    //This updates the ages of the posts: 5 minutes ago -> 6 minutes ago
+    // This updates the ages of the posts: 5 minutes ago -> 6 minutes ago
+    // set update data to false if you want to optimize battery
+    // (Don't know how much it matters)
     timer = Timer.periodic(
-        const Duration(minutes: 1), (Timer t) => refresh(updateData: false));
+        const Duration(minutes: 1), (Timer t) => refresh(updateData: true));
   }
 
   Future refresh({updateData = true}) async {
