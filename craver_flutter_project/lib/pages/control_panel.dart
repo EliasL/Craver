@@ -2,12 +2,19 @@ import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:gauges/gauges.dart';
+import 'package:html/parser.dart';
 import 'dart:math';
 import 'package:vector_math/vector_math.dart' as math;
 import 'package:intl/intl.dart';
 import 'dart:isolate';
 
 import '../support/data_getter.dart';
+
+///
+///
+/// NOTE - A major concern with this control panel is to controll the color.
+/// The color of the pointer is not connected to the color of the number under
+/// the pointers, or the color of the text to the left. <- TODO
 
 //https://stackoverflow.com/questions/58030337/valuelistenablebuilder-listen-to-more-than-one-value
 class ValueListenableBuilder2<A, B> extends StatelessWidget {
@@ -38,94 +45,117 @@ class ValueListenableBuilder2<A, B> extends StatelessWidget {
       );
 }
 
-class Status {
-  ValueNotifier state;
-  String stateName;
-  Status(this.state, this.stateName);
-}
-
 // This is to make the text more readable when used in the
 // getControlPanelState function eg.:
-// getControlPanelState(states['runType']);
-final fullStates = {
-  'state': "lbWeb/LHCb|LHCb_fsm_currentState",
-  'DAQState': "lbWeb/LHCb|LHCb_DAQ|LHCb_DAQ_fsm_currentState",
-  'DAIState': "lbWeb/LHCb|LHCb_DAI|LHCb_DAI_fsm_currentState",
-  'DCSState': "lbWeb/LHCb|LHCb_DCS|LHCb_DCS_fsm_currentState",
-  'EBState': "lbWeb/LHCb|LHCb_EB|LHCb_EB_fsm_currentState",
-  'HVState': "lbWeb/LHCb|LHCb_HV|LHCb_HV_fsm_currentState",
-  'TFCState': "lbWeb/LHCb|LHCb_TFC|LHCb_TFC_fsm_currentState",
-  'MonitoringState':
-      "lbWeb/LHCb|LHCb_Monitoring|LHCb_Monitoring_fsm_currentState",
-  'SDDAQState': "lbWeb/LHCb_DAQ|<SD>_DAQ|<SD>_DAQ_fsm_currentState",
-  'runType': "lbWeb/LHCb_RunInfo_general_runType",
-  'dataType': "lbWeb/LHCb_RunInfo_general_dataType",
-  'runNumber': "lbWeb/LHCb_RunInfo_general_runNumber",
-  'partId': "lbWeb/LHCb_RunInfo_general_partId",
-  'odinData': "lbWeb/LHCb_RunInfo_TFC_odinData",
-  'nTriggers': "lbWeb/LHCb_RunInfo_TFC_nTriggers",
-  'triggerRate': "lbWeb/LHCb_RunInfo_TFC_triggerRate",
-  'hltNTriggers': "lbWeb/LHCb_RunInfo_HLTFarm_hltNTriggers",
-  'hltRate': "lbWeb/LHCb_RunInfo_HLTFarm_hltRate",
-  'architecture': "lbWeb/LHCb_RunInfo_EB_architecture"
-};
+// getControlPanelState(fullStates[STATES.runType]);
+// NB THIS MEANS THAT THE ORDER OF fullStates and STATES
+// MUST MATCH!
 
-void update(Status s) {
-  s.state.value = getControlPanelState(fullStates[s.stateName]!);
+const fullStates = [
+  "lbWeb/LHCb|LHCb_fsm_currentState",
+  "lbWeb/LHCb|LHCb_DAQ|LHCb_DAQ_fsm_currentState",
+  "lbWeb/LHCb|LHCb_DAI|LHCb_DAI_fsm_currentState",
+  "lbWeb/LHCb|LHCb_DCS|LHCb_DCS_fsm_currentState",
+  "lbWeb/LHCb|LHCb_EB|LHCb_EB_fsm_currentState",
+  "lbWeb/LHCb|LHCb_HV|LHCb_HV_fsm_currentState",
+  "lbWeb/LHCb|LHCb_TFC|LHCb_TFC_fsm_currentState",
+  "lbWeb/LHCb|LHCb_Monitoring|LHCb_Monitoring_fsm_currentState",
+  "lbWeb/LHCb_DAQ|<SD>_DAQ|<SD>_DAQ_fsm_currentState",
+  "lbWeb/LHCb_RunInfo_general_runType",
+  "lbWeb/LHCb_RunInfo_general_dataType", //10
+  "lbWeb/LHCb_RunInfo_general_runNumber", //11
+  "lbWeb/LHCb_RunInfo_general_partId", //12
+  "lbWeb/LHCb_RunInfo_TFC_odinData", //13
+  "lbWeb/LHCb_RunInfo_TFC_nTriggers", //14
+  "lbWeb/LHCb_RunInfo_TFC_triggerRate",
+  "lbWeb/LHCb_RunInfo_HLTFarm_hltNTriggers",
+  "lbWeb/LHCb_RunInfo_HLTFarm_hltRate",
+  "lbWeb/LHCb_RunInfo_EB_architecture"
+];
+
+enum STATES {
+  LHCbState,
+  DAQState,
+  DAIState,
+  DCSState,
+  EBState,
+  HVState,
+  TFCState,
+  MonitoringState,
+  SDDAQState,
+  runType,
+  dataType, //10 (value)
+  runNumber, //11
+  partId, //12
+  odinData, //13
+  nTriggers, //14
+  triggerRate,
+  hltNTriggers,
+  hltRate,
+  architecture,
+}
+
+class RunStates {
+  static const String RUNNING = "RUNNING";
+  static const String READY = "READY";
+  static const String ACTIVE = "ACTIVE";
+  static const String CONFIGURING = "CONFIGURING";
+  static const String NOT_READY = "NOT_READY";
+  static const String ERROR = "ERROR";
+}
+
+void update(STATES s) async {
+  var value = await getControlPanelState(fullStates[s.index]);
+  if (value == null) {
+    ControlPanel.controlValues[s.index].value = 'null';
+  } else {
+    ControlPanel.controlValues[s.index].value = value;
+    try {
+      ControlPanel.controlValues[s.index].value = value;
+    } catch (e) {
+      ControlPanel.controlValues[s.index].value = value;
+    }
+  }
 }
 
 void slowUpdateValue(Timer t) {
-  Isolate.spawn(update, Status(ControlPanel.state, 'state'));
-  Isolate.spawn(update, Status(ControlPanel.DAQState, 'DAQState'));
-  Isolate.spawn(update, Status(ControlPanel.DAIState, 'DAIState'));
-  Isolate.spawn(update, Status(ControlPanel.EBState, 'EBState'));
-  Isolate.spawn(update, Status(ControlPanel.HVState, 'HVState'));
-  Isolate.spawn(update, Status(ControlPanel.TFCState, 'TFCState'));
-  Isolate.spawn(
-      update, Status(ControlPanel.MonitoringState, 'MonitoringState'));
-  Isolate.spawn(update, Status(ControlPanel.SDDAQState, 'SDDAQState'));
-  Isolate.spawn(update, Status(ControlPanel.runType, 'runType'));
-  Isolate.spawn(update, Status(ControlPanel.dataType, 'dataType'));
-  Isolate.spawn(update, Status(ControlPanel.runNumber, 'runNumber'));
-  Isolate.spawn(update, Status(ControlPanel.partId, 'partId'));
-  Isolate.spawn(update, Status(ControlPanel.odinData, 'odinData'));
-  Isolate.spawn(update, Status(ControlPanel.triggerRate, 'triggerRate'));
-  Isolate.spawn(update, Status(ControlPanel.hltNTriggers, 'hltNTriggers'));
-  Isolate.spawn(update, Status(ControlPanel.hltRate, 'hltRate'));
-  Isolate.spawn(update, Status(ControlPanel.architecture, 'architecture'));
+  // Isolate.spawn(update, STATES.state);
+  // Isolate.spawn(update, STATES.DAQState);
+  // Isolate.spawn(update, STATES.DAIState);
+  // Isolate.spawn(update, STATES.EBState);
+  // Isolate.spawn(update, STATES.HVState);
+  // Isolate.spawn(update, STATES.TFCState);
+  // Isolate.spawn(update, STATES.MonitoringState);
+  // Isolate.spawn(update, STATES.SDDAQState);
+  // Isolate.spawn(update, STATES.runType);
+  // Isolate.spawn(update, STATES.dataType);
+  // Isolate.spawn(update, STATES.runNumber);
+  // Isolate.spawn(update, STATES.partId);
+  // Isolate.spawn(update, STATES.odinData);
+  // Isolate.spawn(update, STATES.triggerRate);
+  // Isolate.spawn(update, STATES.hltNTriggers);
+  // Isolate.spawn(update, STATES.hltRate);
+  // Isolate.spawn(update, STATES.architecture);
+  for (var i = 0; i < STATES.values.length; i++) {
+    update(STATES.values[i]);
+    print('$i: ' + ControlPanel.controlValues[i].value);
+  }
 }
 
 void fastUpdateValue(Timer t) {
-  Isolate.spawn(update, Status(ControlPanel.nTriggers, 'nTriggers'));
+  Isolate.spawn(update, STATES.nTriggers);
 }
 
 class ControlPanel extends StatelessWidget {
-  //TODO redo this with enum to reduce copypaste
-  static final state = ValueNotifier('');
-  static final DAQState = ValueNotifier<String>('');
-  static final DAIState = ValueNotifier<String>('');
-  static final EBState = ValueNotifier<String>('');
-  static final HVState = ValueNotifier<String>('');
-  static final TFCState = ValueNotifier<String>('');
-  static final MonitoringState = ValueNotifier<String>('');
-  static final SDDAQState = ValueNotifier<String>('');
-  static final runType = ValueNotifier<String>('');
-  static final dataType = ValueNotifier<String>('');
-  static final runNumber = ValueNotifier<double>(0);
-  static final partId = ValueNotifier<double>(0);
-  static final odinData = ValueNotifier<double>(0);
-  static final nTriggers = ValueNotifier<double>(0);
-  static final triggerRate = ValueNotifier<double>(0);
-  static final hltNTriggers = ValueNotifier<double>(0);
-  static final hltRate = ValueNotifier<double>(0);
-  static final architecture = ValueNotifier<String>('');
+  static var controlValues = List<ValueNotifier<String>>.generate(
+      STATES.values.length, (index) => ValueNotifier<String>('0.0'));
 
   ControlPanel({Key? key}) : super(key: key);
 
   final Timer slowTimer = Timer.periodic(
       const Duration(milliseconds: 700), (Timer t) => slowUpdateValue(t));
-  final Timer fastTimer = Timer.periodic(
-      const Duration(milliseconds: 100), (Timer t) => fastUpdateValue(t));
+  //final Timer fastTimer = Timer.periodic(
+  //    const Duration(milliseconds: 1000), (Timer t) => fastUpdateValue(t));
 
   @override
   Widget build(BuildContext context) {
@@ -139,13 +169,13 @@ class ControlPanel extends StatelessWidget {
               TabBar(
                 tabs: [
                   Tab(
-                    text: 'Status',
+                    text: 'LHCb Status',
                   ),
                   Tab(
                     text: 'Details',
                   ),
                   Tab(
-                    text: 'Something',
+                    text: 'Abbreviations',
                   ),
                 ],
               )
@@ -158,7 +188,7 @@ class ControlPanel extends StatelessWidget {
             children: [
               StatusPage(),
               DetailsPage(),
-              SomethingPage(),
+              Abbreviations(),
             ],
           ),
         ),
@@ -177,6 +207,8 @@ class RadialGaugeWithNumbers extends StatefulWidget {
   ///
   final ValueNotifier gaugeValue1;
   final ValueNotifier? gaugeValue2;
+  final ValueNotifier? gaugeValue3;
+  final ValueNotifier? gaugeValue4;
   final double radius;
   final double minValue;
   final double maxValue;
@@ -187,6 +219,8 @@ class RadialGaugeWithNumbers extends StatefulWidget {
     Key? key,
     required this.gaugeValue1,
     this.gaugeValue2,
+    this.gaugeValue3,
+    this.gaugeValue4,
     required this.radius,
     required this.minValue,
     required this.maxValue,
@@ -200,10 +234,26 @@ class RadialGaugeWithNumbers extends StatefulWidget {
 }
 
 class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
-  RadialGaugePointer fancyPointer(color, value) {
+  RadialGaugePointer fancyPointer(color, value, minValue, maxValue) {
     final double radius = widget.radius;
     var colors;
     switch (color) {
+      case 'orange':
+        colors = [
+          Color(Colors.orange[300]!.value),
+          Color(Colors.orange[300]!.value),
+          Color(Colors.orange[600]!.value),
+          Color(Colors.orange[600]!.value)
+        ];
+        break;
+      case 'green':
+        colors = [
+          Color(Colors.green[300]!.value),
+          Color(Colors.green[300]!.value),
+          Color(Colors.green[600]!.value),
+          Color(Colors.green[600]!.value)
+        ];
+        break;
       case 'blue':
         colors = [
           Color(Colors.blue[300]!.value),
@@ -214,8 +264,8 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
         break;
       case 'red':
         colors = [
-          Color(Colors.red[400]!.value),
-          Color(Colors.red[400]!.value),
+          Color(Colors.red[300]!.value),
+          Color(Colors.red[300]!.value),
           Color(Colors.red[600]!.value),
           Color(Colors.red[600]!.value),
         ];
@@ -230,8 +280,8 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
     }
 
     return RadialNeedlePointer(
-      minValue: -100,
-      maxValue: 100,
+      minValue: minValue,
+      maxValue: maxValue,
       value: value,
       thicknessStart: 20,
       thicknessEnd: 0,
@@ -251,9 +301,11 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
 
   static String toSuper(int i) {
     const String superScript = '⁰¹²³⁴⁵⁶⁷⁸⁹';
-    //Must be -9=<i<=9
     if (i < 0) {
-      return '⁻${superScript[i.abs()]}';
+      return '⁻${toSuper(i.abs())}';
+    } else if (i > 9) {
+      var s = i.toString();
+      return toSuper(int.parse(s[0])) + toSuper(int.parse(s.substring(1)));
     } else {
       return superScript[i];
     }
@@ -275,15 +327,30 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
       fit: FlexFit.tight,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
+          final bool useExp = widget.useExp;
+
+          double logify(double value) => useExp ? log10(value) : value;
           final ValueNotifier gaugeValue1 = widget.gaugeValue1;
           final ValueNotifier gaugeValue2;
+          final ValueNotifier gaugeValue3;
+          final ValueNotifier gaugeValue4;
+          //TODO fix this copy paste ->
           if (widget.gaugeValue2 == null) {
             gaugeValue2 = gaugeValue1;
           } else {
             gaugeValue2 = widget.gaugeValue2!;
           }
+          if (widget.gaugeValue3 == null) {
+            gaugeValue3 = gaugeValue1;
+          } else {
+            gaugeValue3 = widget.gaugeValue3!;
+          }
+          if (widget.gaugeValue4 == null) {
+            gaugeValue4 = gaugeValue1;
+          } else {
+            gaugeValue4 = widget.gaugeValue4!;
+          }
           final double radius = widget.radius;
-          final bool useExp = widget.useExp;
           String description = widget.descreption;
           if (description != '') description += ": ";
           final String units = widget.units;
@@ -296,10 +363,13 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
           double maxAngle = 150;
           double offsett = math.radians(180 - minAngle); // We need a offsett :/
           double rangeAngle = maxAngle - minAngle;
-          int displayedNumberOfValues = 10;
+          int displayedNumberOfValues =
+              max(10, (maxValue.round() + 2) * (useExp ? 1 : 0));
           int nrOfValues = displayedNumberOfValues - 1;
           double interval = rangeValue / nrOfValues;
-          int ticksInBetween = (8 * radius).round();
+          // Pick numbers that look nice
+          int ticksInBetween =
+              (8 * radius * 8 / displayedNumberOfValues).round();
 
           double tickLength = 0.2;
           double tickLengthSmall = 0.1;
@@ -309,14 +379,14 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
           var radialGauge = Positioned.fill(
               top: 0,
               left: 0,
-              child: ValueListenableBuilder(
-                  valueListenable: gaugeValue,
-                  builder: (context, value, widget) {
-                    if (useExp) {
-                      value = log10(value as double);
-                    } else {
-                      value = value as double;
-                    }
+              child: ValueListenableBuilder2(
+                  first: gaugeValue1,
+                  second: gaugeValue2,
+                  builder: (context, value1, value2, widget) {
+                    value1 = logify(double.parse(value1 as String));
+                    value2 = logify(double.parse(value2 as String));
+                    double value3 = logify(double.parse(gaugeValue3.value));
+                    double value4 = logify(double.parse(gaugeValue4.value));
                     return RadialGauge(
                       axes: [
                         // Main axis
@@ -343,8 +413,11 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
                                 ])
                           ],
                           pointers: [
-                            fancyPointer('blue', value),
-                            fancyPointer('red', value + 1)
+                            fancyPointer('orange', value4, minValue, maxValue),
+                            fancyPointer('green', value3, minValue, maxValue),
+                            fancyPointer('red', value2, minValue, maxValue),
+                            fancyPointer('blue', value1, minValue,
+                                maxValue) // This one is on top
                           ],
                         ),
                       ],
@@ -433,18 +506,51 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
                   cos(minTheta) * widthR * R,
               left: widthR + //Center of guage
                   sin(minTheta) * widthR * R,
-              child: ValueListenableBuilder(
-                  valueListenable: gaugeValue,
-                  builder: (context, value, widget) {
-                    return SizedBox(
-                        width: lengthOfBox,
-                        child: Text(
-                          '$description${compactFormat.format(value)}$units',
-                          textAlign: ui.TextAlign.center,
-                        ));
-                  })));
+              child: SizedBox(
+                  width: lengthOfBox,
+                  child: ValueListenableBuilder2(
+                      first: gaugeValue1,
+                      second: gaugeValue2,
+                      builder: (context, value1, value2, widget) {
+                        String value3 = gaugeValue3.value;
+                        String value4 = gaugeValue4.value;
+                        return SizedBox(
+                            width: lengthOfBox,
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text:
+                                          '$description${compactFormat.format(double.parse(value1 as String))}$units\n',
+                                      style: TextStyle(
+                                          color:
+                                              Color(Colors.blue[600]!.value))),
+                                  TextSpan(
+                                      text:
+                                          '$description${compactFormat.format(double.parse(value2 as String))}$units',
+                                      style: TextStyle(
+                                          color:
+                                              Color(Colors.red[600]!.value))),
+                                  TextSpan(
+                                      text:
+                                          '$description${compactFormat.format(double.parse(value3))}$units\n',
+                                      style: TextStyle(
+                                          color:
+                                              Color(Colors.green[600]!.value))),
+                                  TextSpan(
+                                      text:
+                                          '$description${compactFormat.format(double.parse(value4))}$units\n',
+                                      style: TextStyle(
+                                          color: Color(
+                                              Colors.orange[600]!.value))),
+                                ],
+                              ),
+                              textAlign: ui.TextAlign.center,
+                            ));
+                      }))));
 
           return Stack(
+            clipBehavior: ui.Clip.none,
             alignment: Alignment.center,
             children: children,
           );
@@ -461,30 +567,175 @@ class StatusPage extends StatefulWidget {
   State<StatusPage> createState() => _StatusPageState();
 }
 
-class _StatusPageState extends State<StatusPage> {
-  Timer? timer;
+class StatusText extends StatelessWidget {
+  final double widthFactor;
+  final double heightPadding;
+  const StatusText({Key? key, this.widthFactor = 1, this.heightPadding = 0})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    return Flexible(
+      child: FractionallySizedBox(
+        widthFactor: widthFactor,
+        child: Wrap(
+          //direction: Axis.horizontal,
+          //mainAxisAlignment: MainAxisAlignment.center,
+          direction: Axis.horizontal,
+          clipBehavior: ui.Clip.hardEdge,
+          children: [
+            SizedBox(
+              height: heightPadding,
+              width: 100, //Random number
+            ),
+            ValueListenableBuilder(
+              valueListenable:
+                  ControlPanel.controlValues[STATES.runNumber.index],
+              builder: (BuildContext context, dynamic value, Widget? child) {
+                var c = ControlPanel.controlValues;
+                String runNumber = c[STATES.runNumber.index].value;
+                String runType = c[STATES.runType.index].value;
+                String dataType = c[STATES.dataType.index].value;
+                String architecture = c[STATES.architecture.index].value;
+                var descriptionColor = Colors.grey[500];
+                return RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: 'Run Number:\n    ',
+                          style: TextStyle(color: descriptionColor)),
+                      TextSpan(text: runNumber),
+                      TextSpan(
+                          text: '\nRun Type:\n    ',
+                          style: TextStyle(color: descriptionColor)),
+                      TextSpan(text: runType),
+                      TextSpan(
+                          text: '\nData Type:\n    ',
+                          style: TextStyle(color: descriptionColor)),
+                      TextSpan(text: dataType, style: TextStyle(fontSize: 13)),
+                      TextSpan(
+                          text: '\nArchetecture:\n    ',
+                          style: TextStyle(color: descriptionColor)),
+                      TextSpan(text: architecture),
+                      TextSpan(
+                          text: '\nNr. Triggers\n',
+                          style:
+                              TextStyle(color: Color(Colors.blue[600]!.value))),
+                      TextSpan(
+                          text: 'Trigger rate\n',
+                          style:
+                              TextStyle(color: Color(Colors.red[600]!.value))),
+                      TextSpan(
+                          text: 'HLT rate\n',
+                          style: TextStyle(
+                              color: Color(Colors.green[600]!.value))),
+                      TextSpan(
+                          text: 'HLT N. rate\n',
+                          style: TextStyle(
+                              color: Color(Colors.orange[600]!.value))),
+                    ],
+                  ),
+                  textAlign: ui.TextAlign.left,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class StatusBox extends StatelessWidget {
+  final String name;
+  final ValueNotifier status;
+  const StatusBox({Key? key, required this.name, required this.status})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: status,
+      builder: (BuildContext context, dynamic strangeValue, Widget? child) {
+        ui.Color? color;
+
+        // The last char of the value is NOT ' ',
+        // so we remove the last char
+        String value =
+            (strangeValue as String).substring(0, strangeValue.length - 1);
+
+        switch (value) {
+          case RunStates.RUNNING:
+            color = Colors.green[700];
+            break;
+          case RunStates.READY:
+            color = Colors.green[900];
+            break;
+          case RunStates.ACTIVE:
+            color = Colors.teal[400];
+            break;
+          case RunStates.CONFIGURING:
+            color = Colors.teal[700];
+            break;
+          case RunStates.NOT_READY:
+            color = Colors.orange[300];
+            break;
+          case RunStates.ERROR:
+            color = Colors.red[800];
+            break;
+          default:
+            color = Colors.grey[700];
+        }
+
+        return Flexible(
+          child: Card(
+            color: color,
+            child: ListTile(
+              title: Text(
+                '$name: $value',
+                textAlign: ui.TextAlign.center,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _StatusPageState extends State<StatusPage> {
+  void refresh() {
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var s = ControlPanel.controlValues;
     return Column(
       children: [
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RadialGaugeWithNumbers(
-                gaugeValue1: ControlPanel.nTriggers,
-                radius: 0.55,
-                minValue: 0,
-                maxValue: 6,
-                useExp: true,
-                units: 'Hz',
+              const StatusText(
+                widthFactor: 0.8,
+                heightPadding: 45,
               ),
-              Expanded(
-                child: Text(
-                  'Test ',
-                  textAlign: ui.TextAlign.center,
-                ),
+              const SizedBox(
+                width: 10,
+              ),
+              RadialGaugeWithNumbers(
+                gaugeValue1: ControlPanel.controlValues[STATES.nTriggers.index],
+                gaugeValue2:
+                    ControlPanel.controlValues[STATES.triggerRate.index],
+                gaugeValue3: ControlPanel.controlValues[STATES.hltRate.index],
+                gaugeValue4:
+                    ControlPanel.controlValues[STATES.hltNTriggers.index],
+                radius: 0.65,
+                minValue: 0,
+                maxValue: 11,
+                useExp: true,
+                units: 'Hz', // TODO Should be a list of 4 values
               ),
             ],
           ),
@@ -493,15 +744,30 @@ class _StatusPageState extends State<StatusPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RadialGaugeWithNumbers(
-                gaugeValue1: ControlPanel.nTriggers,
-                radius: 0.55,
-                minValue: 0,
-                maxValue: 6,
-                useExp: true,
-                units: 'Hz',
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    StatusBox(name: 'LHCb', status: s[STATES.LHCbState.index]),
+                    StatusBox(name: 'DAI', status: s[STATES.DAIState.index]),
+                    StatusBox(name: 'DAQ', status: s[STATES.DAQState.index]),
+                    StatusBox(name: 'DCS', status: s[STATES.DCSState.index]),
+                  ],
+                ),
               ),
-              Expanded(child: Text('Testing')),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    StatusBox(name: 'EB', status: s[STATES.EBState.index]),
+                    StatusBox(name: 'TFC', status: s[STATES.TFCState.index]),
+                    StatusBox(name: 'HV', status: s[STATES.HVState.index]),
+                    StatusBox(
+                        name: 'Monitoring',
+                        status: s[STATES.MonitoringState.index]),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -525,7 +791,8 @@ class _DetailsPageState extends State<DetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const RadialGaugeWithNumbers(
+    return RadialGaugeWithNumbers(
+      gaugeValue1: ControlPanel.controlValues[STATES.nTriggers.index],
       radius: 0.55,
       minValue: 0,
       maxValue: 6,
@@ -538,17 +805,17 @@ class _DetailsPageState extends State<DetailsPage> {
   bool get wantKeepAlive => true;
 }
 
-class SomethingPage extends StatefulWidget {
-  const SomethingPage({Key? key}) : super(key: key);
+class Abbreviations extends StatefulWidget {
+  const Abbreviations({Key? key}) : super(key: key);
 
   @override
-  State<SomethingPage> createState() => _SomethingPageState();
+  State<Abbreviations> createState() => _AbbreviationsState();
   //In order to put a listener to update the app title
   //CRAVER: Logbook page 1, we need to use this
   static var currentPage = ValueNotifier<int>(1);
 }
 
-class _SomethingPageState extends State<SomethingPage> {
+class _AbbreviationsState extends State<Abbreviations> {
   @override
   Widget build(BuildContext context) {
     return const CircularProgressIndicator();

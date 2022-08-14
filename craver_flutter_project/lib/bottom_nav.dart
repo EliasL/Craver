@@ -67,7 +67,7 @@ class _BottomNavState extends State<BottomNav> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.speed),
-            label: 'Data',
+            label: 'Status',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book),
