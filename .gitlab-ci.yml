@@ -1,0 +1,22 @@
+stages:
+  - build
+#  - testing # Testing is for people who make mistakes.
+
+build_kaniko_command:
+    stage: build
+    variables:
+      # To push to a specific docker tag other than latest(the default), amend the --destination parameter, e.g. --destination $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
+      # See https://docs.gitlab.com/ee/ci/variables/predefined_variables.html#variables-reference for available variables
+      IMAGE_DESTINATION: ${CI_REGISTRY_IMAGE}:latest
+    image: 
+        # We recommend using the CERN version of the Kaniko image: gitlab-registry.cern.ch/ci-tools/docker-image-builder
+        name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
+        entrypoint: [""]
+    script:
+        # Prepare Kaniko configuration file
+        - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+        # Build and push the image from the Dockerfile at the root of the project.
+        - /kaniko/executor --context $CI_PROJECT_DIR/docker_server --dockerfile $CI_PROJECT_DIR/docker_server/Dockerfile --destination $IMAGE_DESTINATION
+        # Print the full registry path of the pushed image
+        - echo "Image pushed successfully to ${IMAGE_DESTINATION}"
+
