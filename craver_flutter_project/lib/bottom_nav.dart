@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'pages/controll_panel.dart';
+import 'pages/control_panel.dart';
 import 'pages/lb_logbook.dart';
 import 'pages/instances.dart';
 import 'pages/alarms.dart';
@@ -26,7 +26,7 @@ class _BottomNavState extends State<BottomNav> {
   //TODO: Make these pages build lazily when clicked on
   //Not all pages at once when the app loads
   static List<Widget> _pages = <Widget>[
-    ControllPanel(),
+    ControlPanel(),
     LbLogbook(),
     Instances(),
     Alarms(),
@@ -67,7 +67,7 @@ class _BottomNavState extends State<BottomNav> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.speed),
-            label: 'Data',
+            label: 'Status',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book),
