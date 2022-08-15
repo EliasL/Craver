@@ -123,8 +123,6 @@ class InstanceColumn extends StatelessWidget {
         // We want to make some of the instance names look prettier.
         List<String> badStrings = [
           '.lbdaq.cern.ch',
-          ':9100',
-          ':9090',
           'https://',
           '.cern.ch',
           'http://'

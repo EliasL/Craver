@@ -530,7 +530,7 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
                                 children: [
                                   TextSpan(
                                       text:
-                                          '$description${compactFormat.format(double.parse(value1 as String))}$units\n',
+                                          '\n$description${compactFormat.format(double.parse(value1 as String))}$units\n',
                                       style: TextStyle(
                                           color:
                                               Color(Colors.blue[600]!.value))),
@@ -540,12 +540,12 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
                                       style: TextStyle(
                                           color:
                                               Color(Colors.red[600]!.value))),
-                                  TextSpan(
-                                      text:
-                                          '$description${compactFormat.format(double.parse(value3))}$units\n',
-                                      style: TextStyle(
-                                          color:
-                                              Color(Colors.green[600]!.value))),
+                                  // TextSpan(
+                                  //     text:
+                                  //         '$description${compactFormat.format(double.parse(value3))}$units\n',
+                                  //     style: TextStyle(
+                                  //         color:
+                                  //             Color(Colors.green[600]!.value))),
                                   // TextSpan(
                                   //     text:
                                   //         '$description${compactFormat.format(double.parse(value4))}$units\n',
@@ -599,13 +599,14 @@ class StatusText extends StatelessWidget {
             ),
             ValueListenableBuilder(
               valueListenable:
-                  ControlPanel.controlValues[STATES.runNumber.index],
+                  ControlPanel.controlValues[STATES.nrOfEvents.index],
               builder: (BuildContext context, dynamic value, Widget? child) {
                 var c = ControlPanel.controlValues;
                 String runNumber = c[STATES.runNumber.index].value;
                 String runType = c[STATES.runType.index].value;
                 String dataType = c[STATES.dataType.index].value;
                 String architecture = c[STATES.architecture.index].value;
+                String nrOfEvents = c[STATES.nrOfEvents.index].value;
                 var descriptionColor = Colors.grey[500];
                 return RichText(
                   text: TextSpan(
@@ -623,21 +624,22 @@ class StatusText extends StatelessWidget {
                           style: TextStyle(color: descriptionColor)),
                       TextSpan(text: dataType, style: TextStyle(fontSize: 13)),
                       TextSpan(
-                          text: '\nArchetecture:\n    ',
+                          text: '\nArchitecture:\n    ',
                           style: TextStyle(color: descriptionColor)),
                       TextSpan(text: architecture),
+
                       TextSpan(
-                          text: '\n\nInput rate\n',
+                          text: '\nNr. events\n    ',
+                          style: TextStyle(color: descriptionColor)),
+                      TextSpan(text: nrOfEvents),
+                      TextSpan(
+                          text: '\nInput rate\n',
                           style:
                               TextStyle(color: Color(Colors.blue[600]!.value))),
                       TextSpan(
                           text: 'Output rate\n',
                           style:
                               TextStyle(color: Color(Colors.red[600]!.value))),
-                      TextSpan(
-                          text: 'Nr. events\n',
-                          style: TextStyle(
-                              color: Color(Colors.green[600]!.value))),
                       // TextSpan(
                       //     text: 'HLT N. rate\n',
                       //     style: TextStyle(
@@ -699,8 +701,8 @@ class StatusBox extends StatelessWidget {
             color = ui.Color.fromARGB(255, 255, 255, 153);
             break;
 
-          case RunStates.NOT_READY:
-            color = ui.Color.fromARGB(255, 255, 255, 153);
+          case RunStates.STOPPING:
+            color = ui.Color.fromARGB(255, 133, 178, 255);
             break;
           case RunStates.ERROR:
             color = ui.Color.fromARGB(255, 169, 54, 54);
@@ -752,7 +754,7 @@ class _StatusPageState extends State<StatusPage> {
             children: [
               const StatusText(
                 widthFactor: 0.8,
-                heightPadding: 20,
+                heightPadding: 25,
               ),
               const SizedBox(
                 width: 10,
@@ -761,8 +763,8 @@ class _StatusPageState extends State<StatusPage> {
                 gaugeValue1: ControlPanel.controlValues[STATES.inputRate.index],
                 gaugeValue2:
                     ControlPanel.controlValues[STATES.outputRate.index],
-                gaugeValue3:
-                    ControlPanel.controlValues[STATES.nrOfEvents.index],
+                //gaugeValue3:
+                //    ControlPanel.controlValues[STATES.nrOfEvents.index],
                 //gaugeValue4: ,
                 radius: 0.65,
                 minValue: 0,
