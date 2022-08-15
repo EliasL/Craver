@@ -1,26 +1,7 @@
 import urllib.request
 import json
 
-class ControlPanel:
-    def __init__(self) -> None:
-        pass
-
-    def get(self, state):
-        '''
-        Connects to a script using DIM to query various values
-        and forwards them here.
-
-        Example 
-        get('lbWeb/LHCb_RunInfo_general_partId')
-        
-        '''
-        url = f"http://10.128.97.112:8181/dim?query={state}"
-        contents = urllib.request.urlopen(url).read()
-        return contents
-
-if __name__ == '__main__':
-    p = ControlPanel()
-    states = ["lbWeb/LHCb|LHCb_fsm_currentState",
+allowed_states = ["lbWeb/LHCb|LHCb_fsm_currentState",
     "lbWeb/LHCb|LHCb_DAQ|LHCb_DAQ_fsm_currentState",
     "lbWeb/LHCb|LHCb_DAI|LHCb_DAI_fsm_currentState",
     "lbWeb/LHCb|LHCb_DCS|LHCb_DCS_fsm_currentState",
@@ -39,7 +20,31 @@ if __name__ == '__main__':
     "lbWeb/LHCb_RunInfo_HLTFarm_hltNTriggers",
     "lbWeb/LHCb_RunInfo_HLTFarm_hltRate",
     "lbWeb/LHCb_RunInfo_EB_architecture"]
+
+class ControlPanel:
+    def __init__(self) -> None:
+        pass
+
+    def get(self, state):
+        '''
+        Connects to a script using DIM to query various values
+        and forwards them here.
+
+        Example 
+        get('lbWeb/LHCb_RunInfo_general_partId')
+        
+        '''
+        
+        if state not in allowed_states:
+            return 'Not allowed state'
+
+        url = f"http://10.128.97.112:8181/dim?query={state}"
+        contents = urllib.request.urlopen(url).read()
+        return contents
+
+if __name__ == '__main__':
+    p = ControlPanel()
     
-    for state in states:
+    for state in allowed_states:
         j=p.get(state)
         print(j)

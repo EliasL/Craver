@@ -52,4 +52,5 @@ def get_control_panel_data():
 
 if __name__ == '__main__':
     #Remember to disable debug sooner or later
-    app.run(host="0.0.0.0", debug=False, port=8080)
+    app.run(host="0.0.0.0", debug=False
+    , port=8080)
