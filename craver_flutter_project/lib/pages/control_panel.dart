@@ -88,20 +88,27 @@ enum STATES {
   runNumber, //11
   partId, //12
   odinData, //13
-  nTriggers, //14
-  triggerRate,
-  hltNTriggers,
-  hltRate,
-  architecture,
+  nrOfEvents, //14 - nTriggers
+  inputRate, // 15 - triggerRate
+  hltNTriggers, // 16 - hltNTriggers
+  outputRate, // 17 - hltRate
+  architecture, // 18
 }
 
 class RunStates {
   static const String RUNNING = "RUNNING";
   static const String READY = "READY";
+  static const String RAMPING_READY = "RAMPING_READY";
   static const String ACTIVE = "ACTIVE";
   static const String CONFIGURING = "CONFIGURING";
+  static const String ALLOCATING = "ALLOCATING";
+  static const String NOT_ALLOCATED = "NOT_ALLOCATED";
   static const String NOT_READY = "NOT_READY";
+  static const String STOPPING = "STOPPING";
+  static const String UNKOWN = "UNKOWN";
   static const String ERROR = "ERROR";
+  static const String EMERGENCY_OFF = "EMERGENCY_OFF";
+  static const String OFF = "OFF";
 }
 
 void update(STATES s) async {
@@ -138,12 +145,12 @@ void slowUpdateValue(Timer t) {
   // Isolate.spawn(update, STATES.architecture);
   for (var i = 0; i < STATES.values.length; i++) {
     update(STATES.values[i]);
-    print('$i: ' + ControlPanel.controlValues[i].value);
+    //print('$i: ' + ControlPanel.controlValues[i].value);
   }
 }
 
 void fastUpdateValue(Timer t) {
-  Isolate.spawn(update, STATES.nTriggers);
+  Isolate.spawn(update, STATES.inputRate);
 }
 
 class ControlPanel extends StatelessWidget {
@@ -381,10 +388,10 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
               left: 0,
               child: ValueListenableBuilder2(
                   first: gaugeValue1,
-                  second: gaugeValue2,
+                  second: gaugeValue3,
                   builder: (context, value1, value2, widget) {
-                    value1 = logify(double.parse(value1 as String));
-                    value2 = logify(double.parse(value2 as String));
+                    double value1 = logify(double.parse(gaugeValue1.value));
+                    double value2 = logify(double.parse(gaugeValue2.value));
                     double value3 = logify(double.parse(gaugeValue3.value));
                     double value4 = logify(double.parse(gaugeValue4.value));
                     return RadialGauge(
@@ -510,8 +517,10 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
                   width: lengthOfBox,
                   child: ValueListenableBuilder2(
                       first: gaugeValue1,
-                      second: gaugeValue2,
+                      second: gaugeValue3,
                       builder: (context, value1, value2, widget) {
+                        String value1 = gaugeValue1.value;
+                        String value2 = gaugeValue2.value;
                         String value3 = gaugeValue3.value;
                         String value4 = gaugeValue4.value;
                         return SizedBox(
@@ -527,7 +536,7 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
                                               Color(Colors.blue[600]!.value))),
                                   TextSpan(
                                       text:
-                                          '$description${compactFormat.format(double.parse(value2 as String))}$units',
+                                          '$description${compactFormat.format(double.parse(value2 as String))}$units\n',
                                       style: TextStyle(
                                           color:
                                               Color(Colors.red[600]!.value))),
@@ -537,12 +546,12 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
                                       style: TextStyle(
                                           color:
                                               Color(Colors.green[600]!.value))),
-                                  TextSpan(
-                                      text:
-                                          '$description${compactFormat.format(double.parse(value4))}$units\n',
-                                      style: TextStyle(
-                                          color: Color(
-                                              Colors.orange[600]!.value))),
+                                  // TextSpan(
+                                  //     text:
+                                  //         '$description${compactFormat.format(double.parse(value4))}$units\n',
+                                  //     style: TextStyle(
+                                  //         color: Color(
+                                  //             Colors.orange[600]!.value))),
                                 ],
                               ),
                               textAlign: ui.TextAlign.center,
@@ -618,21 +627,21 @@ class StatusText extends StatelessWidget {
                           style: TextStyle(color: descriptionColor)),
                       TextSpan(text: architecture),
                       TextSpan(
-                          text: '\nNr. Triggers\n',
+                          text: '\n\nInput rate\n',
                           style:
                               TextStyle(color: Color(Colors.blue[600]!.value))),
                       TextSpan(
-                          text: 'Trigger rate\n',
+                          text: 'Output rate\n',
                           style:
                               TextStyle(color: Color(Colors.red[600]!.value))),
                       TextSpan(
-                          text: 'HLT rate\n',
+                          text: 'Nr. events\n',
                           style: TextStyle(
                               color: Color(Colors.green[600]!.value))),
-                      TextSpan(
-                          text: 'HLT N. rate\n',
-                          style: TextStyle(
-                              color: Color(Colors.orange[600]!.value))),
+                      // TextSpan(
+                      //     text: 'HLT N. rate\n',
+                      //     style: TextStyle(
+                      //         color: Color(Colors.orange[600]!.value))),
                     ],
                   ),
                   textAlign: ui.TextAlign.left,
@@ -666,27 +675,50 @@ class StatusBox extends StatelessWidget {
 
         switch (value) {
           case RunStates.RUNNING:
-            color = Colors.green[700];
+            color = ui.Color.fromARGB(255, 0, 204, 153);
             break;
           case RunStates.READY:
-            color = Colors.green[900];
+            color = ui.Color.fromARGB(255, 0, 204, 153);
+            break;
+          case RunStates.RAMPING_READY:
+            color = ui.Color.fromARGB(255, 0, 144, 108);
             break;
           case RunStates.ACTIVE:
             color = Colors.teal[400];
             break;
           case RunStates.CONFIGURING:
-            color = Colors.teal[700];
+            color = ui.Color.fromARGB(255, 255, 255, 153);
+            break;
+          case RunStates.ALLOCATING:
+            color = Colors.cyan[400];
+            break;
+          case RunStates.NOT_ALLOCATED:
+            color = Colors.cyan[700];
             break;
           case RunStates.NOT_READY:
-            color = Colors.orange[300];
+            color = ui.Color.fromARGB(255, 255, 255, 153);
+            break;
+
+          case RunStates.NOT_READY:
+            color = ui.Color.fromARGB(255, 255, 255, 153);
             break;
           case RunStates.ERROR:
-            color = Colors.red[800];
+            color = ui.Color.fromARGB(255, 169, 54, 54);
+            break;
+          case RunStates.EMERGENCY_OFF:
+            color = ui.Color.fromARGB(255, 199, 10, 10);
+            break;
+          case RunStates.OFF:
+            color = ui.Color.fromARGB(255, 51, 153, 255);
+            break;
+          case RunStates.UNKOWN:
+            color = ui.Color.fromARGB(255, 255, 153, 0);
             break;
           default:
             color = Colors.grey[700];
         }
-
+        Color textColor =
+            color!.computeLuminance() > 0.5 ? Colors.black : Colors.white;
         return Flexible(
           child: Card(
             color: color,
@@ -694,6 +726,7 @@ class StatusBox extends StatelessWidget {
               title: Text(
                 '$name: $value',
                 textAlign: ui.TextAlign.center,
+                style: TextStyle(color: textColor),
               ),
             ),
           ),
@@ -719,18 +752,18 @@ class _StatusPageState extends State<StatusPage> {
             children: [
               const StatusText(
                 widthFactor: 0.8,
-                heightPadding: 45,
+                heightPadding: 20,
               ),
               const SizedBox(
                 width: 10,
               ),
               RadialGaugeWithNumbers(
-                gaugeValue1: ControlPanel.controlValues[STATES.nTriggers.index],
+                gaugeValue1: ControlPanel.controlValues[STATES.inputRate.index],
                 gaugeValue2:
-                    ControlPanel.controlValues[STATES.triggerRate.index],
-                gaugeValue3: ControlPanel.controlValues[STATES.hltRate.index],
-                gaugeValue4:
-                    ControlPanel.controlValues[STATES.hltNTriggers.index],
+                    ControlPanel.controlValues[STATES.outputRate.index],
+                gaugeValue3:
+                    ControlPanel.controlValues[STATES.nrOfEvents.index],
+                //gaugeValue4: ,
                 radius: 0.65,
                 minValue: 0,
                 maxValue: 11,
@@ -749,8 +782,8 @@ class _StatusPageState extends State<StatusPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     StatusBox(name: 'LHCb', status: s[STATES.LHCbState.index]),
-                    StatusBox(name: 'DAI', status: s[STATES.DAIState.index]),
                     StatusBox(name: 'DAQ', status: s[STATES.DAQState.index]),
+                    StatusBox(name: 'DAI', status: s[STATES.DAIState.index]),
                     StatusBox(name: 'DCS', status: s[STATES.DCSState.index]),
                   ],
                 ),
@@ -759,12 +792,12 @@ class _StatusPageState extends State<StatusPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    StatusBox(name: 'EB', status: s[STATES.EBState.index]),
-                    StatusBox(name: 'TFC', status: s[STATES.TFCState.index]),
-                    StatusBox(name: 'HV', status: s[STATES.HVState.index]),
                     StatusBox(
                         name: 'Monitoring',
                         status: s[STATES.MonitoringState.index]),
+                    StatusBox(name: 'TFC', status: s[STATES.TFCState.index]),
+                    StatusBox(name: 'EB', status: s[STATES.EBState.index]),
+                    StatusBox(name: 'HV', status: s[STATES.HVState.index]),
                   ],
                 ),
               ),
@@ -792,10 +825,11 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     return RadialGaugeWithNumbers(
-      gaugeValue1: ControlPanel.controlValues[STATES.nTriggers.index],
+      gaugeValue1: ControlPanel.controlValues[STATES.inputRate.index],
+      gaugeValue2: ControlPanel.controlValues[STATES.outputRate.index],
       radius: 0.55,
       minValue: 0,
-      maxValue: 6,
+      maxValue: 8,
       useExp: true,
       units: 'Hz',
     );
