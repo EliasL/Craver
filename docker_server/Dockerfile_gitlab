@@ -1,8 +1,6 @@
 FROM python:3.7.13-slim-buster
 
 COPY .wgetrc .wgetrc
-ENV http_proxy=http://128.141.22.113:8080
-ENV https_proxy=http://128.141.22.113:8080
 
 RUN apt-get update
 
