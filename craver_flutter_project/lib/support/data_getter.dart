@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:xml/xml.dart';
 
-const server = 'http://10.128.124.104:8080';
+const server = 'http://lbcraver.cern.ch:80';
 
 final Map<String, String> httpHeaders = {
   HttpHeaders.contentTypeHeader: "application/json",

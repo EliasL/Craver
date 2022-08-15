@@ -8,6 +8,7 @@ import 'pages/control_panel.dart';
 import 'pages/lb_logbook.dart';
 import 'pages/instances.dart';
 import 'pages/alarms.dart';
+import 'support/settings.dart' as settings;
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ enum PAGES { controllPanel, lbLogbook, instances, alarms }
 
 class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
-  String title = 'CRAVER ${LbLogbook.currentPage}';
+  String title = '';
 
   //The order in this list MUST match the order in PAGES
   //TODO: Make these pages build lazily when clicked on
@@ -47,7 +48,7 @@ class _BottomNavState extends State<BottomNav> {
         title: ValueListenableBuilder(
             valueListenable: LbLogbook.currentPage,
             builder: (context, value, widget) {
-              String title = 'CRAVER';
+              String title = 'CRAVER ${settings.VERSION}';
               if (_selectedIndex == PAGES.lbLogbook.index) {
                 title += ': Logbook - page ${LbLogbook.currentPage.value}';
               }
