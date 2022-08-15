@@ -9,7 +9,8 @@ from flask import Flask, request, redirect
 import json
 import datetime
 
-
+#This must match VERSION in support/settings.dart in the flutter app
+SERVER_VERSION = '0.5' 
 
 app = Flask(__name__)
 P = Prometheus()
@@ -53,6 +54,11 @@ def get_control_panel_data():
     state = args['state']
     return C.get(state)
 
+
+
+@app.route("/version",)
+def get_server_version():
+    return SERVER_VERSION
 
 
 if __name__ == '__main__':
