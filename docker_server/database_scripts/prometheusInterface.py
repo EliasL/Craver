@@ -13,6 +13,11 @@ class Prometheus:
         get('up')
         get('up', {'instance':'aseb03.lbdaq.cern.ch'}, 5)
         '''
+
+        allowed_commands = ['up', 'up!=1', 'up==1']
+        if command not in allowed_commands:
+            return {}
+
         additional_args = self._format_additional_args(additional_args)
         url = f"http://prometheus02.lbdaq.cern.ch:9090/api/v1/query?query={command}{additional_args}"
         if time:
