@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:xml/xml.dart';
 
+import 'settings.dart' as settings;
+
 const server = 'http://lbcraver.cern.ch:80';
 
 final Map<String, String> httpHeaders = {
@@ -12,6 +14,25 @@ final Map<String, String> httpHeaders = {
   "Connection": "keep-alive",
   "Keep-Alive": "timeout=5, max=1000"
 };
+
+Future<String> getServerVersion() async {
+  const urlString = '$server/version';
+  final url = Uri.parse(urlString);
+  final http.Response response;
+  try {
+    response = await http.get(url, headers: httpHeaders);
+  } catch (e) {
+    return 'No Responce';
+  }
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    return response.body;
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    return 'Error';
+  }
+}
 
 Future<dynamic> getPrometheusAllUp() {
   const url = '$server/prometheus_query?command=up';

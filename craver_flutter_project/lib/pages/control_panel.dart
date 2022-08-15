@@ -9,12 +9,23 @@ import 'package:intl/intl.dart';
 import 'dart:isolate';
 
 import '../support/data_getter.dart';
+import '../support/alert.dart';
+import '../support/settings.dart' as settings;
 
 ///
 ///
 /// NOTE - A major concern with this control panel is to controll the color.
 /// The color of the pointer is not connected to the color of the number under
 /// the pointers, or the color of the text to the left. <- TODO
+///
+///
+
+void checkVersion(context) async {
+  String version = await getServerVersion();
+  if (version != settings.VERSION) {
+    incorrectVersion(context, version, settings.VERSION);
+  }
+}
 
 //https://stackoverflow.com/questions/58030337/valuelistenablebuilder-listen-to-more-than-one-value
 class ValueListenableBuilder2<A, B> extends StatelessWidget {
