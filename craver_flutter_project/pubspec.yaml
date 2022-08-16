@@ -1,5 +1,5 @@
-name: craver_flutter_project
-description: A new Flutter project.
+name: Craver
+description: View various CERN data on your phone.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

@@ -18,7 +18,7 @@ class BottomNav extends StatefulWidget {
   _BottomNavState createState() => _BottomNavState();
 }
 
-enum PAGES { controllPanel, lbLogbook, instances, alarms }
+enum PAGES { controllPanel, lbLogbook, instances } //, alarms }
 
 class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
@@ -31,7 +31,7 @@ class _BottomNavState extends State<BottomNav> {
     ControlPanel(),
     LbLogbook(),
     Instances(),
-    Alarms(),
+    //Alarms(),
   ];
 
   void _onItemTapped(int index) {
@@ -83,10 +83,10 @@ class _BottomNavState extends State<BottomNav> {
             icon: Icon(Icons.cloud),
             label: 'Servers',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.alarm),
-            label: 'Alarms',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.alarm),
+          //   label: 'Alarms',
+          // ),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
