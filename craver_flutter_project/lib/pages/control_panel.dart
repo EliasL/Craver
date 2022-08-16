@@ -20,13 +20,6 @@ import '../support/settings.dart' as settings;
 ///
 ///
 
-void checkVersion(context) async {
-  String version = await getServerVersion();
-  if (version != settings.VERSION) {
-    incorrectVersion(context, version, settings.VERSION);
-  }
-}
-
 //https://stackoverflow.com/questions/58030337/valuelistenablebuilder-listen-to-more-than-one-value
 class ValueListenableBuilder2<A, B> extends StatelessWidget {
   const ValueListenableBuilder2({

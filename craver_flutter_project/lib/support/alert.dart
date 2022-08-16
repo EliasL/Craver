@@ -1,6 +1,15 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'settings.dart' as settings;
+import 'data_getter.dart';
+
+void checkVersion(context) async {
+  String version = await getServerVersion();
+  if (version != settings.VERSION) {
+    incorrectVersion(context, version, settings.VERSION);
+  }
+}
 
 Future<void> incorrectVersion(context, server_version, local_version) {
   return showMyDialog(

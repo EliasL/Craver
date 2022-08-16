@@ -42,7 +42,7 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
-    //checkVersion(context);
+    checkVersion(context);
     return Scaffold(
       appBar: AppBar(
         leading: FractionallySizedBox(
