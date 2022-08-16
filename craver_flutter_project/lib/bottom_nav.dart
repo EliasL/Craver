@@ -9,6 +9,7 @@ import 'pages/lb_logbook.dart';
 import 'pages/instances.dart';
 import 'pages/alarms.dart';
 import 'support/settings.dart' as settings;
+import 'support/alert.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
