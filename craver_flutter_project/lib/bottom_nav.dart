@@ -42,7 +42,7 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
-    checkVersion(context);
+    //checkVersion(context);
     return Scaffold(
       appBar: AppBar(
         leading: FractionallySizedBox(
@@ -54,7 +54,7 @@ class _BottomNavState extends State<BottomNav> {
             builder: (context, value, widget) {
               String title = 'CRAVER ${settings.FULLVERSION}';
               if (_selectedIndex == PAGES.lbLogbook.index) {
-                title += ': Logbook - page ${LbLogbook.currentPage.value}';
+                title = 'CRAVER: Logbook - page ${LbLogbook.currentPage.value}';
               }
               return Text(title);
             }),
