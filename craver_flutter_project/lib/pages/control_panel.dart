@@ -171,7 +171,7 @@ class ControlPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 1,
       child: Scaffold(
         appBar: AppBar(
           flexibleSpace: Column(
@@ -182,12 +182,12 @@ class ControlPanel extends StatelessWidget {
                   Tab(
                     text: 'LHCb Status',
                   ),
-                  Tab(
-                    text: 'Details',
-                  ),
-                  Tab(
-                    text: 'Abbreviations',
-                  ),
+                  //Tab(
+                  //  text: 'Details',
+                  //),
+                  //Tab(
+                  //  text: 'Abbreviations',
+                  //),
                 ],
               )
             ],
@@ -198,8 +198,8 @@ class ControlPanel extends StatelessWidget {
           child: TabBarView(
             children: [
               StatusPage(),
-              DetailsPage(),
-              Abbreviations(),
+              //DetailsPage(),
+              //Abbreviations(),
             ],
           ),
         ),
