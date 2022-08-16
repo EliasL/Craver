@@ -9,6 +9,7 @@ import 'pages/lb_logbook.dart';
 import 'pages/instances.dart';
 import 'pages/alarms.dart';
 import 'support/settings.dart' as settings;
+import 'support/alert.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
@@ -42,15 +43,19 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
+    checkVersion(context);
     return Scaffold(
       appBar: AppBar(
+        leading: FractionallySizedBox(
+            heightFactor: 0.6,
+            child: Image.asset('assets/icon/craver_logo.png')),
         centerTitle: true,
         title: ValueListenableBuilder(
             valueListenable: LbLogbook.currentPage,
             builder: (context, value, widget) {
-              String title = 'CRAVER ${settings.VERSION}';
+              String title = 'CRAVER ${settings.FULLVERSION}';
               if (_selectedIndex == PAGES.lbLogbook.index) {
-                title += ': Logbook - page ${LbLogbook.currentPage.value}';
+                title = 'CRAVER: Logbook - page ${LbLogbook.currentPage.value}';
               }
               return Text(title);
             }),

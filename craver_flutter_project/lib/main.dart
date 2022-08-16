@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav.dart';
 import 'pages/alarms.dart';
-
+import 'support/data_getter.dart';
+import 'support/alert.dart';
+import 'support/settings.dart' as settings;
 //Base:
 //https://blog.logrocket.com/how-to-build-a-bottom-navigation-bar-in-flutter/
 
