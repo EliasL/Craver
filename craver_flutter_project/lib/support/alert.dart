@@ -5,20 +5,29 @@ import 'settings.dart' as settings;
 import 'data_getter.dart';
 
 void checkVersion() async {
-  String? version = await getServerVersion();
+  String? versions = await getServerVersion();
   // If version is null, that means that we have already
   // shown the user a network or server error, so no need
   // to show anything else.
-  if (version != null && version != settings.VERSION) {
-    incorrectVersion(version, settings.VERSION);
+  if (versions != null && !versions.split(',').contains(settings.VERSION)) {
+    incorrectVersion(versions, settings.VERSION);
   }
 }
 
-Future<void> incorrectVersion(serverVersion, localVersion) {
+Future<void> incorrectVersion(String serverVersions, String localVersion) {
+  String niceString = 'version';
+  List<String> s1 = serverVersions.split(',');
+  if (s1.length > 1) {
+    niceString +=
+        's ${serverVersions.replaceAll(',', ', ').replaceAll(', ${s1.last}', 'and ${s1.last}')}.';
+  } else {
+    niceString += ' ${s1[0]}';
+  }
+
   return showOkayDontShowAgainDialog(
       'Incorrect version!',
       'You are using version: $localVersion, '
-          'but the server has been updated to version $serverVersion',
+          'but the server is only compatible with $niceString',
       'VersionCheck');
 }
 

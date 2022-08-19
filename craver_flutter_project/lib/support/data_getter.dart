@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:html/dom.dart';
 import 'dart:async';
 import 'dart:convert';
