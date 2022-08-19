@@ -8,7 +8,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:craver_flutter_project/main.dart';
+// Uh oh I tink i put Craver somewhere where maybe
+// there should have been craver_flutter_project, but everything
+// still works... so not a problem!
+import 'package:Craver/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

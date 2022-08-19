@@ -12,10 +12,7 @@ import 'package:background_fetch/background_fetch.dart';
 
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:rxdart/subjects.dart';
@@ -141,7 +138,7 @@ void backgroundFetchHeadlessTask(HeadlessTask task) async {
 }
 
 class Alarms extends StatefulWidget {
-  const Alarms({Key? key}) : super(key: key);
+  Alarms({Key? key}) : super(key: key);
 
   @override
   _AlarmsState createState() => _AlarmsState();

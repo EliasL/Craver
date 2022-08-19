@@ -1,8 +1,4 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'pages/control_panel.dart';
 import 'pages/lb_logbook.dart';
@@ -24,14 +20,22 @@ class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
   String title = '';
 
+  /// We share this mainContext with all the other pages
+  /// to show error messages in. This way we are also
+  /// probably safe to ignore the: "Do not use BuildContexts across async gaps."
+  /// warning. I think this warning come from that the context we give might no
+  /// longer be the relative context because of the async. But so long as we
+  /// always use this mainContext, it should be fine i think.
+  static BuildContext? mainContext;
+
   //The order in this list MUST match the order in PAGES
   //TODO: Make these pages build lazily when clicked on
-  //Not all pages at once when the app loads
-  static List<Widget> _pages = <Widget>[
+  // Right now, all pages at once when the app loads
+  static final List<Widget> _pages = <Widget>[
     ControlPanel(),
     LbLogbook(),
     Instances(),
-    //Alarms(),
+    Alarms(),
   ];
 
   void _onItemTapped(int index) {
@@ -43,7 +47,8 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
-    checkVersion(context);
+    settings.messageContext = context;
+    checkVersion();
     return Scaffold(
       appBar: AppBar(
         leading: FractionallySizedBox(

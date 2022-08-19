@@ -5,11 +5,11 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
-import '../support/warnig_and_errors.dart';
 import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
+import '../support/alert.dart';
 
 String cleanUpText(String text) {
   print(text.replaceAll('\n', ' '));
@@ -66,11 +66,7 @@ class HTMLDisplay extends StatelessWidget {
                       await launchUrl(url,
                           mode: LaunchMode.externalApplication);
                     } else {
-                      //https://dart-lang.github.io/linter/lints/use_build_context_synchronously.html
-                      //Aparently i'm not supposed to use contex in async function,
-                      //I'm unable to resolve it... TODO?
-                      //if (mounted) return;
-                      showAlertDialog(context, 'Unable to open browser!');
+                      showOkayDialog('Error', 'Unable to open browser!');
                     }
                   })),
             isThreeLine: true,
@@ -145,7 +141,7 @@ class _LbLogbookState extends State<LbLogbook> {
 
     for (var i = 0; i < other.length; i += 5) {
       // These numbers, 1 and 4, are just found from
-      // looking at the order of the responce from lblogbook
+      // looking at the raw data of the responce from lblogbook
       dates.add(other[i + 1]);
       authors.add(other[i + 4]);
     }
