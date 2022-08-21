@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav.dart';
 import 'pages/alarms.dart';
+import 'support/settings.dart' as settings;
 
 //Base:
 //https://blog.logrocket.com/how-to-build-a-bottom-navigation-bar-in-flutter/
@@ -20,13 +21,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-        brightness: Brightness.dark,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: const BottomNav(),
-    );
+    return ValueListenableBuilder(
+        valueListenable: settings.theme,
+        builder: (BuildContext context, dynamic theme, Widget? child) {
+          return MaterialApp(
+            theme: ThemeData(
+              primarySwatch: Colors.teal,
+              brightness: theme,
+            ),
+            debugShowCheckedModeBanner: false,
+            home: const BottomNav(),
+          );
+        });
   }
 }

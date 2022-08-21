@@ -6,17 +6,28 @@ class ControlValue {
   // AControlValue has a long name like: "lbWeb/LHCb|LHCb_fsm_currentState",
   // a color, and a value that can either be a number or a string such as
   // 3.5 or "NOT_READY"
-  final String fullName;
+  final String dimPath;
+  final String shortName;
+  final String? longName;
   final Type type;
   String? sValue;
   double get numValue => double.tryParse(sValue ?? 'null') ?? 0;
 
   // Tells what color the different states should have for this controll value
   Map<String, Color> colorStateMap;
-  ControlValue(this.fullName,
-      {this.type = String, colorScheme = ECSColorScheme})
+  ControlValue(
+      {required this.dimPath,
+      required this.shortName,
+      this.longName,
+      this.type = String,
+      colorScheme = ECSColorScheme})
       : colorStateMap = defaultColorStateMap(colorScheme),
         assert(type == double || type == String);
+
+  @override
+  String toString() {
+    return "'$dimPath'";
+  }
 }
 
 class ControlValues {
@@ -28,54 +39,185 @@ class ControlValues {
   // These are the values we want to pull from the control panel (Through DIM)
   // They default to string type values like 'RUNNING', but you need to
   // specify them as double if they should be parsed. eg: '41236'
-  static final LHCbState = ControlValue("lbWeb/LHCb|LHCb_fsm_currentState");
-  static final DAQState =
-      ControlValue("lbWeb/LHCb|LHCb_DAQ|LHCb_DAQ_fsm_currentState");
-  static final DAIState =
-      ControlValue("lbWeb/LHCb|LHCb_DAI|LHCb_DAI_fsm_currentState");
-  static final DCSState =
-      ControlValue("lbWeb/LHCb|LHCb_DCS|LHCb_DCS_fsm_currentState");
-  static final EBState =
-      ControlValue("lbWeb/LHCb|LHCb_EB|LHCb_EB_fsm_currentState");
-  static final HVState =
-      ControlValue("lbWeb/LHCb|LHCb_HV|LHCb_HV_fsm_currentState");
-  static final TFCState =
-      ControlValue("lbWeb/LHCb|LHCb_TFC|LHCb_TFC_fsm_currentState");
+  static final LHCbState = ControlValue(
+      dimPath: "lbWeb/LHCb|LHCb_fsm_currentState",
+      shortName: 'LHCb',
+      longName: 'Large Hadron Collider beauty experiment');
+
+  static final DAQState = ControlValue(
+      dimPath: "lbWeb/LHCb|LHCb_DAQ|LHCb_DAQ_fsm_currentState",
+      shortName: 'DAQ',
+      longName: 'Data Acquisition System');
+
+  static final DAQ_VA_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|VA_DAQ|VA_DAQ_fsm_currentState",
+      shortName: 'VELOA',
+      longName: '');
+
+  static final DAQ_VC_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|VC_DAQ|VC_DAQ_fsm_currentState",
+      shortName: 'VELOC',
+      longName: '');
+
+  static final DAQ_R1_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|R1_DAQ|R1_DAQ_fsm_currentState",
+      shortName: 'RICH1',
+      longName: '');
+
+  static final DAQ_R2_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|R2_DAQ|R2_DAQ_fsm_currentState",
+      shortName: 'RICH2',
+      longName: '');
+
+  static final DAQ_UTA_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|UTA_DAQ|UTA_DAQ_fsm_currentState",
+      shortName: 'UTA',
+      longName: '');
+
+  static final DAQ_UTC_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|UTC_DAQ|UTC_DAQ_fsm_currentState",
+      shortName: 'UTC',
+      longName: '');
+
+  static final DAQ_SFA_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|SFA_DAQ|SFA_DAQ_fsm_currentState",
+      shortName: 'SFA',
+      longName: '');
+
+  static final DAQ_SFC_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|SFC_DAQ|SFC_DAQ_fsm_currentState",
+      shortName: 'SFC',
+      longName: '');
+
+  static final DAQ_MA_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|MA_DAQ|MA_DAQ_fsm_currentState",
+      shortName: 'MUONA',
+      longName: '');
+
+  static final DAQ_MC_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|MC_DAQ|MC_DAQ_fsm_currentState",
+      shortName: 'MUNOC',
+      longName: '');
+
+  static final DAQ_EC_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|EC_DAQ|EC_DAQ_fsm_currentState",
+      shortName: 'ECAL',
+      longName: '');
+
+  static final DAQ_HC_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|HC_DAQ|HC_DAQ_fsm_currentState",
+      shortName: 'HCAL',
+      longName: '');
+
+  static final DAQ_PL_State = ControlValue(
+      dimPath: "lbWeb/LHCb_DAQ|PL_DAQ|PL_DAQ_fsm_currentState",
+      shortName: 'PLUME',
+      longName: '');
+
+  static final DAIState = ControlValue(
+      dimPath: "lbWeb/LHCb|LHCb_DAI|LHCb_DAI_fsm_currentState",
+      shortName: 'DAI',
+      longName: "Demande d'Achat Interne");
+
+  static final DCSState = ControlValue(
+      dimPath: "lbWeb/LHCb|LHCb_DCS|LHCb_DCS_fsm_currentState",
+      shortName: 'DCS',
+      longName: 'Detector Control System');
+
+  static final EBState = ControlValue(
+      dimPath: "lbWeb/LHCb|LHCb_EB|LHCb_EB_fsm_currentState",
+      shortName: 'EB',
+      longName: 'Event Builder System');
+
+  static final HVState = ControlValue(
+      dimPath: "lbWeb/LHCb|LHCb_HV|LHCb_HV_fsm_currentState",
+      shortName: 'HV',
+      longName: 'High Voltage System');
+
+  static final TFCState = ControlValue(
+      dimPath: "lbWeb/LHCb|LHCb_TFC|LHCb_TFC_fsm_currentState",
+      shortName: 'TFC',
+      longName: 'Timing Fast Control System');
+
   static final MonitoringState = ControlValue(
-      "lbWeb/LHCb|LHCb_Monitoring|LHCb_Monitoring_fsm_currentState");
-  static final SDDAQState =
-      ControlValue("lbWeb/LHCb_DAQ|<SD>_DAQ|<SD>_DAQ_fsm_currentState");
-  static final runType = ControlValue("lbWeb/LHCb_RunInfo_general_runType");
-  static final dataType = ControlValue("lbWeb/LHCb_RunInfo_general_dataType");
-  static final runNumber =
-      ControlValue("lbWeb/LHCb_RunInfo_general_runNumber", type: double);
-  static final partId =
-      ControlValue("lbWeb/LHCb_RunInfo_general_partId", type: double);
-  static final odinData =
-      ControlValue("lbWeb/LHCb_RunInfo_TFC_odinData", type: double);
-  static final nrOfEvents =
-      ControlValue("lbWeb/LHCb_RunInfo_TFC_nTriggers", type: double);
-  static final inputRate =
-      ControlValue("lbWeb/LHCb_RunInfo_TFC_triggerRate", type: double);
-  static final hltNTriggers =
-      ControlValue("lbWeb/LHCb_RunInfo_HLTFarm_hltNTriggers", type: double);
-  static final outputRate =
-      ControlValue("lbWeb/LHCb_RunInfo_HLTFarm_hltRate", type: double);
-  static final architecture =
-      ControlValue("lbWeb/LHCb_RunInfo_EB_architecture");
+      dimPath: "lbWeb/LHCb|LHCb_Monitoring|LHCb_Monitoring_fsm_currentState",
+      shortName: 'Monitoring');
+
+  static final runType = ControlValue(
+      dimPath: "lbWeb/LHCb_RunInfo_general_runType", shortName: 'runType');
+
+  static final dataType = ControlValue(
+      dimPath: "lbWeb/LHCb_RunInfo_general_dataType", shortName: 'dataType');
+
+  static final runNumber = ControlValue(
+      dimPath: "lbWeb/LHCb_RunInfo_general_runNumber",
+      shortName: 'runNumber',
+      type: double);
+
+  static final partId = ControlValue(
+      dimPath: "lbWeb/LHCb_RunInfo_general_partId",
+      shortName: 'partId',
+      type: double);
+
+  static final odinData = ControlValue(
+      dimPath: "lbWeb/LHCb_RunInfo_TFC_odinData",
+      shortName: 'odinData',
+      type: double);
+
+  static final nrOfEvents = ControlValue(
+      dimPath: "lbWeb/LHCb_RunInfo_TFC_nTriggers",
+      shortName: 'nTriggers',
+      longName: 'Number of events',
+      type: double);
+
+  static final inputRate = ControlValue(
+      dimPath: "lbWeb/LHCb_RunInfo_TFC_triggerRate", //What Does
+      shortName: 'triggerRate',
+      longName: 'Input rate',
+      type: double);
+
+  static final hltNTriggers = ControlValue(
+      dimPath: "lbWeb/LHCb_RunInfo_HLTFarm_hltNTriggers", //This stuff
+      shortName: 'hltNTriggers',
+      longName: 'Number of high level triggers',
+      type: double);
+
+  static final outputRate = ControlValue(
+      dimPath: "lbWeb/LHCb_RunInfo_HLTFarm_hltRate", //Mean
+      shortName: 'hltRate',
+      longName: 'Output rate',
+      type: double);
+
+  static final architecture = ControlValue(
+      dimPath: "lbWeb/LHCb_RunInfo_EB_architecture",
+      shortName: 'architecture',
+      longName: 'Event builder architecture');
 
   static final List<ControlValue> allValues = [
     LHCbState,
     DAQState,
+    DAQ_EC_State,
+    DAQ_HC_State,
+    DAQ_MA_State,
+    DAQ_MC_State,
+    DAQ_PL_State,
+    DAQ_R1_State,
+    DAQ_R2_State,
+    DAQ_SFA_State,
+    DAQ_SFC_State,
+    DAQ_UTA_State,
+    DAQ_UTC_State,
+    DAQ_VA_State,
+    DAQ_VC_State,
     DAIState,
     DCSState,
     EBState,
     HVState,
     TFCState,
     MonitoringState,
-    SDDAQState,
     runType,
     dataType,
+    architecture,
     runNumber,
     partId,
     odinData,
@@ -83,22 +225,11 @@ class ControlValues {
     inputRate,
     hltNTriggers,
     outputRate,
-    architecture
   ];
 
   // This loads the selected colorscheme from the settings
   static void loadColorScheme({Function colorStateMap = defaultColorStateMap}) {
-    ColorScheme colorScheme;
-    switch (settings.COLORSETTING) {
-      case settings.ColorSchemes.ECSColors:
-        colorScheme = ECSColorScheme;
-        break;
-      case settings.ColorSchemes.craverColors:
-        colorScheme = craverColorScheme;
-        break;
-      default:
-        colorScheme = ECSColorScheme;
-    }
+    ColorScheme colorScheme = getCurrentColorScheme();
     for (var controlValue in allValues) {
       controlValue.colorStateMap = colorStateMap(colorScheme);
     }
@@ -107,6 +238,25 @@ class ControlValues {
   ControlValues() {
     loadColorScheme();
   }
+}
+
+getCurrentColorScheme() {
+  return getColorScheme(settings.COLORSETTING);
+}
+
+ColorScheme getColorScheme(settings.ColorSchemes option) {
+  ColorScheme colorScheme;
+  switch (option) {
+    case settings.ColorSchemes.ECS:
+      colorScheme = ECSColorScheme;
+      break;
+    case settings.ColorSchemes.Craver:
+      colorScheme = craverColorScheme;
+      break;
+    default:
+      colorScheme = ECSColorScheme;
+  }
+  return colorScheme;
 }
 
 class ColorScheme {
@@ -139,12 +289,12 @@ class ColorScheme {
   });
 }
 
-const Color defaultColor = ui.Color.fromARGB(255, 97, 97, 97);
+Color defaultColor = Colors.grey;
 
 const ColorScheme ECSColorScheme = ColorScheme(
   running: ui.Color.fromARGB(255, 0, 204, 153),
   ready: ui.Color.fromARGB(255, 51, 153, 255),
-  notReady: ui.Color.fromARGB(255, 255, 153, 0),
+  notReady: ui.Color.fromARGB(255, 255, 255, 153),
   abnomal: ui.Color.fromARGB(255, 255, 0, 0),
   off: ui.Color.fromARGB(255, 51, 153, 255),
   unknown: ui.Color.fromARGB(255, 255, 153, 0),
@@ -190,4 +340,31 @@ Map<String, Color> defaultColorStateMap(ColorScheme colorScheme) {
     RunStates.OFF: colorScheme.off,
     RunStates.UNKOWN: colorScheme.unknown,
   };
+}
+
+class ColorPreview extends StatelessWidget {
+  final ColorScheme cs; // ColorScheme
+  const ColorPreview(this.cs, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<Color> colors = [
+      cs.running,
+      cs.ready,
+      cs.notReady,
+      cs.abnomal,
+      cs.off,
+      cs.unknown,
+    ];
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List<Container>.generate(colors.length, (index) {
+        return Container(
+          height: 10,
+          width: 10,
+          color: colors[index],
+        );
+      }),
+    );
+  }
 }

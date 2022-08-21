@@ -1,6 +1,8 @@
 //http://10.128.97.87:8080/Shift/elog.rdf
 
 import 'dart:async';
+import 'dart:ffi';
+import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +12,35 @@ import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 import '../support/alert.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+extension on String {
+  // Splits a list into one part of the length given,
+  // and the remainder in the other
+  List<String> splitByLength(int length) =>
+      [substring(0, length), substring(length)];
+}
+
+extension on String {
+  // Splits the string into a list of equal lengths except
+  // the last which is leftover
+  // OPTIMIZATION: rewrite to avoid add
+  List<String> splitIntoLengths(int length) {
+    List<String> result = [];
+    String leftOver = this;
+    while (leftOver.length > length) {
+      var AB = leftOver.splitByLength(length);
+      result.add(AB[0]);
+      leftOver = AB[1];
+    }
+    return result;
+  }
+}
 
 String cleanUpText(String text) {
-  print(text.replaceAll('\n', ' '));
-  return text.replaceAll('\n', ' ');
+  // Ahh... So there are non-break-spaces here...
+  // This has caused quite some headackes.
+  return text.replaceAll('\u{00A0}', ' ');
 }
 
 class HTMLDisplay extends StatelessWidget {
@@ -26,6 +53,9 @@ class HTMLDisplay extends StatelessWidget {
     var texts = data[0];
     var authors = data[1];
     var dates = data[2];
+
+    GoogleFonts.config.allowRuntimeFetching = false;
+
     return ListView.builder(
       controller: ScrollController(),
       itemCount: texts.length,
@@ -33,6 +63,7 @@ class HTMLDisplay extends StatelessWidget {
       itemBuilder: (context, index) {
         String author = authors[index];
         String text = cleanUpText(texts[index]);
+
         String dateString = dates[index];
 
         // TODO: ENSURE THAT TIMEZONE IS HANDELED
@@ -57,6 +88,7 @@ class HTMLDisplay extends StatelessWidget {
           child: ListTile(
             title: SelectableText.rich(TextSpan(
                 text: text,
+                style: GoogleFonts.sourceCodePro(),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
                     var url = Uri.parse(

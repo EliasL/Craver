@@ -234,7 +234,7 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
                     textx / 2 * (-1 + sin(theta)), //Center text
                 child: Text(
                   value,
-                  style: TextStyle(color: Colors.grey[400]),
+                  style: TextStyle(color: Theme.of(context).primaryColorLight),
                 ),
               ),
             );

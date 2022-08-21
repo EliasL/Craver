@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
 import '../support/control_values_and_color.dart';
 import '../support/gauge.dart';
+import '../support/settings.dart' as settings;
+import 'dart:developer' as dev;
 
 void updateStates(context) async {
   // We generate a list of all the states
@@ -12,7 +14,7 @@ void updateStates(context) async {
   // newValues is a json object
   var newValues = await getControlPanelStates(
       List<String>.generate(ControlValues.allValues.length,
-          (i) => ControlValues.allValues[i].fullName),
+          (i) => ControlValues.allValues[i].dimPath),
       context);
   if (newValues == null) {
     return;
@@ -20,7 +22,7 @@ void updateStates(context) async {
 
   // Then we update the values in the ControlValues class
   for (ControlValue value in ControlValues.allValues) {
-    String newValue = newValues[value.fullName];
+    String newValue = newValues[value.dimPath];
     if (newValue == 'NOT__READY') {
       value.sValue = null;
     } else {
@@ -46,7 +48,6 @@ class ControlPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final Timer timer = Timer.periodic(
         const Duration(milliseconds: 700), (Timer t) => updateStates(context));
-
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -60,10 +61,10 @@ class ControlPanel extends StatelessWidget {
                     text: 'LHCb Status',
                   ),
                   Tab(
-                    text: 'Details',
+                    text: 'Sub detectors',
                   ),
                   Tab(
-                    text: 'Abbreviations',
+                    text: 'Details',
                   ),
                 ],
               )
@@ -75,8 +76,8 @@ class ControlPanel extends StatelessWidget {
           child: TabBarView(
             children: [
               StatusPage(gaugeColors: gaugeColors),
-              DetailsPage(gaugeColors: gaugeColors),
-              Abbreviations(),
+              const SubdetectorsPage(),
+              const DetailsPage(),
             ],
           ),
         ),
@@ -114,7 +115,7 @@ class StatusText extends StatelessWidget {
             ValueListenableBuilder(
               valueListenable: ControlValues.updater,
               builder: (BuildContext context, _, Widget? child) {
-                var descriptionColor = Colors.grey[500];
+                var descriptionColor = Theme.of(context).primaryColorLight;
                 return RichText(
                   text: TextSpan(
                     children: [
@@ -137,7 +138,7 @@ class StatusText extends StatelessWidget {
                           style: TextStyle(color: descriptionColor)),
                       TextSpan(text: ControlValues.architecture.sValue),
                       TextSpan(
-                          text: '\nNr. events\n    ',
+                          text: '\nNr. events:\n    ',
                           style: TextStyle(color: descriptionColor)),
                       TextSpan(text: ControlValues.nrOfEvents.sValue),
                       TextSpan(
@@ -162,13 +163,18 @@ class StatusText extends StatelessWidget {
 }
 
 class StatusBox extends StatelessWidget {
-  final String name;
   final ControlValue cv;
-  const StatusBox({Key? key, required this.name, required this.cv})
+  final bool useBorder;
+  const StatusBox(this.cv, {Key? key, this.useBorder = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    ShapeBorder? border;
+    if (useBorder) {
+      border = const ContinuousRectangleBorder(
+          side: BorderSide(width: 2, color: Colors.blue));
+    }
     return ValueListenableBuilder(
       valueListenable: ControlValues.updater,
       builder: (BuildContext context, _, Widget? child) {
@@ -179,8 +185,9 @@ class StatusBox extends StatelessWidget {
           child: Card(
             color: color,
             child: ListTile(
+              shape: border,
               title: Text(
-                '$name: ${cv.colorStateMap[cv.sValue] ?? ''}',
+                '${cv.shortName}: ${cv.colorStateMap[cv.sValue] ?? ''}',
                 textAlign: ui.TextAlign.center,
                 style: TextStyle(color: textColor),
               ),
@@ -232,7 +239,7 @@ class _StatusPageState extends State<StatusPage> {
                 minValue: 0,
                 maxValue: 11,
                 useExp: true,
-                units: ['Hz', 'Hz'],
+                units: const ['Hz', 'Hz'],
               ),
             ],
           ),
@@ -245,10 +252,13 @@ class _StatusPageState extends State<StatusPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    StatusBox(name: 'LHCb', cv: ControlValues.LHCbState),
-                    StatusBox(name: 'DAQ', cv: ControlValues.DAQState),
-                    StatusBox(name: 'DAI', cv: ControlValues.DAIState),
-                    StatusBox(name: 'DCS', cv: ControlValues.DCSState),
+                    StatusBox(
+                      ControlValues.LHCbState,
+                      //useBorder: true,
+                    ),
+                    StatusBox(ControlValues.DAQState),
+                    StatusBox(ControlValues.DAIState),
+                    StatusBox(ControlValues.DCSState),
                   ],
                 ),
               ),
@@ -256,11 +266,10 @@ class _StatusPageState extends State<StatusPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    StatusBox(
-                        name: 'Monitoring', cv: ControlValues.MonitoringState),
-                    StatusBox(name: 'TFC', cv: ControlValues.TFCState),
-                    StatusBox(name: 'EB', cv: ControlValues.EBState),
-                    StatusBox(name: 'HV', cv: ControlValues.HVState),
+                    StatusBox(ControlValues.MonitoringState),
+                    StatusBox(ControlValues.TFCState),
+                    StatusBox(ControlValues.EBState),
+                    StatusBox(ControlValues.HVState),
                   ],
                 ),
               ),
@@ -272,9 +281,57 @@ class _StatusPageState extends State<StatusPage> {
   }
 }
 
+class SubdetectorsPage extends StatefulWidget {
+  const SubdetectorsPage({Key? key}) : super(key: key);
+
+  @override
+  State<SubdetectorsPage> createState() => _SubdetectorsPageState();
+  //In order to put a listener to update the app title
+  //CRAVER: Logbook page 1, we need to use this
+  static var currentPage = ValueNotifier<int>(1);
+}
+
+class _SubdetectorsPageState extends State<SubdetectorsPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              StatusBox(ControlValues.DAQState),
+              StatusBox(ControlValues.DAQ_VA_State),
+              StatusBox(ControlValues.DAQ_R1_State),
+              StatusBox(ControlValues.DAQ_UTA_State),
+              StatusBox(ControlValues.DAQ_SFA_State),
+              StatusBox(ControlValues.DAQ_MA_State),
+              StatusBox(ControlValues.DAQ_EC_State),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              StatusBox(ControlValues.DAQ_PL_State),
+              StatusBox(ControlValues.DAQ_VC_State),
+              StatusBox(ControlValues.DAQ_R2_State),
+              StatusBox(ControlValues.DAQ_UTC_State),
+              StatusBox(ControlValues.DAQ_SFC_State),
+              StatusBox(ControlValues.DAQ_MC_State),
+              StatusBox(ControlValues.DAQ_HC_State),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class DetailsPage extends StatefulWidget {
-  final List<MaterialColor> gaugeColors;
-  const DetailsPage({Key? key, required this.gaugeColors}) : super(key: key);
+  const DetailsPage({Key? key}) : super(key: key);
 
   @override
   State<DetailsPage> createState() => _DetailsPageState();
@@ -288,35 +345,44 @@ class _DetailsPageState extends State<DetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return RadialGaugeWithNumbers(
-      updateData: ControlValues.updater,
-      gaugeValues: [ControlValues.inputRate, ControlValues.outputRate],
-      colors: widget.gaugeColors,
-      radius: 0.55,
-      minValue: 0,
-      maxValue: 8,
-      useExp: true,
-      units: ['Hz', 'Hz'],
+    return ListView.builder(
+      // Let the ListView know how many items it needs to build.
+      controller: ScrollController(),
+      itemCount: ControlValues.allValues.length,
+      shrinkWrap: true,
+      // Provide a builder function. This is where the magic happens.
+      // Convert each item into a widget based on the type of item it is.
+      itemBuilder: (context, index) {
+        ControlValue value = ControlValues.allValues[index];
+        Icon icon;
+
+        //Choose what icon to use depending on data type
+        if (value.type == String) {
+          icon = const Icon(Icons.text_fields);
+        } else {
+          // Type is double
+          icon = const Icon(Icons.numbers);
+        }
+
+        return ExpansionTile(
+          leading: icon,
+          title: SelectableText(value.shortName),
+          children: [
+            ListTile(
+              title: SelectableText(value.longName ?? value.shortName),
+            ),
+            ListTile(
+              title: SelectableText('Dim path: ${value.dimPath}'),
+            ),
+            ListTile(
+              title: SelectableText('Current value: ${value.sValue}'),
+            ),
+          ],
+        );
+      },
     );
   }
 
   @override
   bool get wantKeepAlive => true;
-}
-
-class Abbreviations extends StatefulWidget {
-  const Abbreviations({Key? key}) : super(key: key);
-
-  @override
-  State<Abbreviations> createState() => _AbbreviationsState();
-  //In order to put a listener to update the app title
-  //CRAVER: Logbook page 1, we need to use this
-  static var currentPage = ValueNotifier<int>(1);
-}
-
-class _AbbreviationsState extends State<Abbreviations> {
-  @override
-  Widget build(BuildContext context) {
-    return const CircularProgressIndicator();
-  }
 }

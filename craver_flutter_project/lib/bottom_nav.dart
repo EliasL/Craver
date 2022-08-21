@@ -4,6 +4,7 @@ import 'pages/control_panel.dart';
 import 'pages/lb_logbook.dart';
 import 'pages/instances.dart';
 import 'pages/alarms.dart';
+import 'pages/preferences.dart';
 import 'support/settings.dart' as settings;
 import 'support/alert.dart';
 
@@ -49,11 +50,34 @@ class _BottomNavState extends State<BottomNav> {
   Widget build(BuildContext context) {
     settings.messageContext = context;
     checkVersion();
+
+    /// When switching the brightness
+    /// the old color is still used until the widget is rebuild TODO?
+    Color selectedItemColor;
+    switch (Theme.of(context).brightness) {
+      case Brightness.dark:
+        selectedItemColor = Colors.amberAccent;
+        break;
+      case Brightness.light:
+        selectedItemColor = Colors.teal;
+        break;
+      default:
+        selectedItemColor = Colors.amberAccent;
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: FractionallySizedBox(
             heightFactor: 0.6,
-            child: Image.asset('assets/icon/craver_logo.png')),
+            child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Preferences()),
+                  );
+                },
+                child: Image.asset('assets/icon/craver_logo.png'))),
         centerTitle: true,
         title: ValueListenableBuilder(
             valueListenable: LbLogbook.currentPage,
@@ -72,8 +96,8 @@ class _BottomNavState extends State<BottomNav> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 20,
-        selectedIconTheme: const IconThemeData(color: Colors.amberAccent),
-        selectedItemColor: Colors.amberAccent,
+        selectedIconTheme: IconThemeData(color: selectedItemColor),
+        selectedItemColor: selectedItemColor,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

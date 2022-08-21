@@ -5,11 +5,14 @@ import 'package:flutter/cupertino.dart';
 const bool DEVELOPMENT = true;
 const String VERSION = '0.5'; //This must match SERVER_VERSION on the server
 const String FULLVERSION = '$VERSION${DEVELOPMENT ? '-dev' : ''}';
-const ColorSchemes COLORSETTING = ColorSchemes.ECSColors;
+
+ColorSchemes COLORSETTING = ColorSchemes.ECS;
+ValueNotifier<Brightness> theme =
+    ValueNotifier<Brightness>(Brightness.dark); //Load this from memory TODO
 
 enum ColorSchemes {
-  ECSColors, //Experiment control system
-  craverColors,
+  ECS, //Experiment control system
+  Craver,
 }
 
 /// This is the core variable of determening whether or not to show a message.

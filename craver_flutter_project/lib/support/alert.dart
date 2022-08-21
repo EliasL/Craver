@@ -15,6 +15,7 @@ void checkVersion() async {
 }
 
 Future<void> incorrectVersion(String serverVersions, String localVersion) {
+  // We make the versions into a nice string
   String niceString = 'version';
   List<String> s1 = serverVersions.split(',');
   if (s1.length > 1) {
@@ -23,7 +24,7 @@ Future<void> incorrectVersion(String serverVersions, String localVersion) {
   } else {
     niceString += ' ${s1[0]}';
   }
-
+  // and then we show it
   return showOkayDontShowAgainDialog(
       'Incorrect version!',
       'You are using version: $localVersion, '
@@ -46,6 +47,7 @@ Future<void> serverError(String url, http.Response response, serverErrorType) {
 }
 
 Future<void> showOkayDialog(title, text) async {
+  //Flutter needs to know what context to show the message in
   if (settings.messageContext == null) {
     throw Exception('Message context must be set in order to show message!');
   }
@@ -76,6 +78,7 @@ Future<void> showOkayDialog(title, text) async {
 }
 
 Future<void> showOkayDontShowAgainDialog(title, text, messageType) async {
+  //Flutter needs to know what context to show the message in
   if (settings.messageContext == null) {
     throw Exception('Message context must be set in order to show message!');
   }
