@@ -10,12 +10,6 @@ from flask import Flask, request, redirect, abort
 import json
 import datetime
 
-class PaymentRequired(ex.HTTPException):
-    code = 400
-    description = 'Invalid argument'
-
-abort.mappings[400] = PaymentRequired
-
 # These are all the versions of the app that this server is 
 # compatible with. It is a comma separated value. Eg. '0.6,1.2,0.01'
 SERVER_VERSIONS = '0.6' 
