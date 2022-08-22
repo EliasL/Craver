@@ -49,6 +49,7 @@ class _PreferencesState extends State<Preferences> {
                       onChanged: (v) {
                         if (v!) {
                           settings.COLORSETTING = value;
+                          ControlValues.loadColorScheme();
                           setState(() {});
                         }
                       },

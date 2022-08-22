@@ -185,7 +185,7 @@ class StatusBox extends StatelessWidget {
             child: ListTile(
               shape: border,
               title: Text(
-                '${cv.shortName}: ${cv.colorStateMap[cv.sValue] ?? ''}',
+                '${cv.shortName}: ${cv.sValue ?? ''}',
                 textAlign: ui.TextAlign.center,
                 style: TextStyle(color: textColor),
               ),
