@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'pages/control_panel.dart';
 import 'pages/lb_logbook.dart';
 import 'pages/instances.dart';
-import 'pages/alarms.dart';
+//import 'pages/alarms.dart';
 import 'pages/preferences.dart';
 import 'support/settings.dart' as settings;
 import 'support/alert.dart';
@@ -27,16 +27,15 @@ class _BottomNavState extends State<BottomNav> {
   /// warning. I think this warning come from that the context we give might no
   /// longer be the relative context because of the async. But so long as we
   /// always use this mainContext, it should be fine i think.
-  static BuildContext? mainContext;
 
   //The order in this list MUST match the order in PAGES
   //TODO: Make these pages build lazily when clicked on
   // Right now, all pages at once when the app loads
   static final List<Widget> _pages = <Widget>[
     ControlPanel(),
-    LbLogbook(),
+    const LbLogbook(),
     Instances(),
-    Alarms(),
+    //Alarms(),
   ];
 
   void _onItemTapped(int index) {
@@ -51,8 +50,6 @@ class _BottomNavState extends State<BottomNav> {
     settings.messageContext = context;
     checkVersion();
 
-    /// When switching the brightness
-    /// the old color is still used until the widget is rebuild TODO?
     Color selectedItemColor;
     switch (Theme.of(context).brightness) {
       case Brightness.dark:

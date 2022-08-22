@@ -5,7 +5,7 @@ import 'settings.dart' as settings;
 import 'data_getter.dart';
 
 void checkVersion() async {
-  String? versions = await getServerVersion();
+  String? versions = await getServerVersions();
   // If version is null, that means that we have already
   // shown the user a network or server error, so no need
   // to show anything else.

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
 
 class Instances extends StatefulWidget {
-  Instances({Key? key}) : super(key: key);
+  const Instances({Key? key}) : super(key: key);
 
   @override
   State<Instances> createState() => _InstancesState();

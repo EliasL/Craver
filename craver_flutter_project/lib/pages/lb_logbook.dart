@@ -1,8 +1,6 @@
 //http://10.128.97.87:8080/Shift/elog.rdf
 
 import 'dart:async';
-import 'dart:ffi';
-import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -14,45 +12,26 @@ import 'package:url_launcher/url_launcher.dart';
 import '../support/alert.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-extension on String {
-  // Splits a list into one part of the length given,
-  // and the remainder in the other
-  List<String> splitByLength(int length) =>
-      [substring(0, length), substring(length)];
-}
-
-extension on String {
-  // Splits the string into a list of equal lengths except
-  // the last which is leftover
-  // OPTIMIZATION: rewrite to avoid add
-  List<String> splitIntoLengths(int length) {
-    List<String> result = [];
-    String leftOver = this;
-    while (leftOver.length > length) {
-      var AB = leftOver.splitByLength(length);
-      result.add(AB[0]);
-      leftOver = AB[1];
-    }
-    return result;
-  }
-}
-
 String cleanUpText(String text) {
   // Ahh... So there are non-break-spaces here...
   // This has caused quite some headackes.
   return text.replaceAll('\u{00A0}', ' ');
 }
 
-class HTMLDisplay extends StatelessWidget {
-  //This is NOT a general XML viewer, only for this specific use case.
-  HTMLDisplay({Key? key, required this.data}) : super(key: key);
-  var data;
+class LbReader extends StatefulWidget {
+  final List data;
+  const LbReader(this.data, {Key? key}) : super(key: key);
 
   @override
+  State<LbReader> createState() => _LbReaderState();
+}
+
+class _LbReaderState extends State<LbReader> {
+  @override
   Widget build(BuildContext context) {
-    var texts = data[0];
-    var authors = data[1];
-    var dates = data[2];
+    var texts = widget.data[0];
+    var authors = widget.data[1];
+    var dates = widget.data[2];
 
     GoogleFonts.config.allowRuntimeFetching = false;
 
@@ -220,7 +199,7 @@ class _LbLogbookState extends State<LbLogbook> {
                             refresh();
                           },
                           key: ValueKey(LbLogbook.currentPage.value),
-                          child: HTMLDisplay(data: snapshot.data),
+                          child: LbReader(snapshot.data as List),
                         ));
 
                   default:

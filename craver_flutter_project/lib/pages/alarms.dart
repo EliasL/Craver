@@ -1,3 +1,10 @@
+/// Try to use firebase as much as possible I think. Redo this.
+/// background fetch is using depricated functions, so I don't think it is 
+/// very well maintained.
+/// 
+
+/*
+
 //https://pub.dev/documentation/background_fetch/latest/
 // and
 //https://github.com/MaikuB/flutter_local_notifications
@@ -7,10 +14,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:background_fetch/background_fetch.dart';
-
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -62,7 +66,7 @@ NotificationAppLaunchDetails? notificationAppLaunchDetails;
 ///
 /// CRAVER has been built on this project, so it should be okay...
 
-void initi_notifications() async {
+void initiNotifications() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await _configureLocalTimeZone();
@@ -103,7 +107,7 @@ void initi_notifications() async {
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String? payload) async {
     if (payload != null) {
-      debugPrint('notification payload: $payload');
+      //debugprint('notification payload: $payload');
     }
     selectedNotificationPayload = payload;
     selectNotificationSubject.add(payload);
@@ -127,11 +131,11 @@ void backgroundFetchHeadlessTask(HeadlessTask task) async {
   if (isTimeout) {
     // This task has exceeded its allowed running-time.
     // You must stop what you're doing and immediately .finish(taskId)
-    print("[BackgroundFetch] Headless task timed-out: $taskId");
+    //print("[BackgroundFetch] Headless task timed-out: $taskId");
     BackgroundFetch.finish(taskId);
     return;
   }
-  print('[BackgroundFetch] Headless event received.');
+  //print('[BackgroundFetch] Headless event received.');
   // Do your work here...
 
   BackgroundFetch.finish(taskId);
@@ -176,7 +180,7 @@ class _AlarmsState extends State<Alarms> {
             requiredNetworkType: NetworkType.NONE), (String taskId) async {
       // <-- Event handler
       // This is the fetch-event callback.
-      print("[BackgroundFetch] Event received $taskId");
+      //print("[BackgroundFetch] Event received $taskId");
       setState(() {
         _events.insert(0, DateTime.now());
         _status += 100;
@@ -213,14 +217,14 @@ class _AlarmsState extends State<Alarms> {
     }, (String taskId) async {
       // <-- Task timeout handler.
       // This task has exceeded its allowed running-time.  You must stop what you're doing and immediately .finish(taskId)
-      print("[BackgroundFetch] TASK TIMEOUT taskId: $taskId");
+      //print("[BackgroundFetch] TASK TIMEOUT taskId: $taskId");
       BackgroundFetch.finish(taskId);
       setState(() {
         _status += -5000;
       });
     });
 
-    print('[BackgroundFetch] configure success: $status');
+    //print('[BackgroundFetch] configure success: $status');
     setState(() {
       _status += 5;
     });
@@ -237,20 +241,20 @@ class _AlarmsState extends State<Alarms> {
     });
     if (enabled) {
       BackgroundFetch.start().then((int status) {
-        print('[BackgroundFetch] start success: $status');
+        //print('[BackgroundFetch] start success: $status');
       }).catchError((e) {
-        print('[BackgroundFetch] start FAILURE: $e');
+        //print('[BackgroundFetch] start FAILURE: $e');
       });
     } else {
       BackgroundFetch.stop().then((int status) {
-        print('[BackgroundFetch] stop success: $status');
+        //print('[BackgroundFetch] stop success: $status');
       });
     }
   }
 
   void _onClickStatus() async {
     int status = await BackgroundFetch.status;
-    print('[BackgroundFetch] status: $status');
+    //print('[BackgroundFetch] status: $status');
     setState(() {
       _status = status;
     });
@@ -295,3 +299,4 @@ class _AlarmsState extends State<Alarms> {
     );
   }
 }
+*/

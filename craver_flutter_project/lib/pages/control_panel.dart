@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
 import '../support/control_values_and_color.dart';
 import '../support/gauge.dart';
-import '../support/settings.dart' as settings;
-import 'dart:developer' as dev;
 
 void updateStates(context) async {
   // We generate a list of all the states
@@ -42,7 +40,7 @@ class ControlPanel extends StatelessWidget {
     Colors.green,
     Colors.orange
   ];
-  ControlPanel({Key? key}) : super(key: key);
+  const ControlPanel({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +70,7 @@ class ControlPanel extends StatelessWidget {
           ),
         ),
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: TabBarView(
             children: [
               StatusPage(gaugeColors: gaugeColors),
@@ -383,6 +381,5 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  @override
   bool get wantKeepAlive => true;
 }

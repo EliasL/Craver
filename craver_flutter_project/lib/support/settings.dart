@@ -2,8 +2,8 @@ library craver.globals;
 
 import 'package:flutter/cupertino.dart';
 
-const bool DEVELOPMENT = true;
-const String VERSION = '0.5'; //This must match SERVER_VERSION on the server
+const bool DEVELOPMENT = false;
+const String VERSION = '0.6';
 const String FULLVERSION = '$VERSION${DEVELOPMENT ? '-dev' : ''}';
 
 ColorSchemes COLORSETTING = ColorSchemes.ECS;

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav.dart';
-import 'pages/alarms.dart';
+//import 'pages/alarms.dart';
 import 'support/settings.dart' as settings;
 
 //Base:
 //https://blog.logrocket.com/how-to-build-a-bottom-navigation-bar-in-flutter/
 
 void main() async {
-  initi_notifications();
+  //initiNotifications();
   runApp(const MyApp());
 }
 

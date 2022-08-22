@@ -14,7 +14,7 @@ final Map<String, String> httpHeaders = {
   "Keep-Alive": "timeout=5, max=1000"
 };
 
-Future<String?> getServerVersion() async {
+Future<String?> getServerVersions() async {
   const urlString = '$server/version';
   http.Response? response =
       await _generalGet(urlString, serverErrorType: 'VersionServerError');

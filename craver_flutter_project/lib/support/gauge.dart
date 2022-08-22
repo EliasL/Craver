@@ -74,8 +74,6 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
     );
   }
 
-  static double log10(num x) => log(x) / ln10;
-
   static String toSuper(int i) {
     // Converts number to superscript: -45 -> ⁻⁴⁵
     const String superScript = '⁰¹²³⁴⁵⁶⁷⁸⁹';
