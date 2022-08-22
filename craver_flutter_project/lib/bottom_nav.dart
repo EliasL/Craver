@@ -1,13 +1,10 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'pages/control_panel.dart';
 import 'pages/lb_logbook.dart';
 import 'pages/instances.dart';
-import 'pages/alarms.dart';
+//import 'pages/alarms.dart';
+import 'pages/preferences.dart';
 import 'support/settings.dart' as settings;
 import 'support/alert.dart';
 
@@ -24,12 +21,19 @@ class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
   String title = '';
 
+  /// We share this mainContext with all the other pages
+  /// to show error messages in. This way we are also
+  /// probably safe to ignore the: "Do not use BuildContexts across async gaps."
+  /// warning. I think this warning come from that the context we give might no
+  /// longer be the relative context because of the async. But so long as we
+  /// always use this mainContext, it should be fine i think.
+
   //The order in this list MUST match the order in PAGES
   //TODO: Make these pages build lazily when clicked on
-  //Not all pages at once when the app loads
-  static List<Widget> _pages = <Widget>[
+  // Right now, all pages at once when the app loads
+  static final List<Widget> _pages = <Widget>[
     ControlPanel(),
-    LbLogbook(),
+    const LbLogbook(),
     Instances(),
     //Alarms(),
   ];
@@ -43,12 +47,34 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
-    checkVersion(context);
+    settings.messageContext = context;
+    checkVersion();
+
+    Color selectedItemColor;
+    switch (Theme.of(context).brightness) {
+      case Brightness.dark:
+        selectedItemColor = Colors.amberAccent;
+        break;
+      case Brightness.light:
+        selectedItemColor = Colors.teal;
+        break;
+      default:
+        selectedItemColor = Colors.amberAccent;
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: FractionallySizedBox(
             heightFactor: 0.6,
-            child: Image.asset('assets/icon/craver_logo.png')),
+            child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Preferences()),
+                  );
+                },
+                child: Image.asset('assets/icon/craver_logo.png'))),
         centerTitle: true,
         title: ValueListenableBuilder(
             valueListenable: LbLogbook.currentPage,
@@ -67,8 +93,8 @@ class _BottomNavState extends State<BottomNav> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 20,
-        selectedIconTheme: const IconThemeData(color: Colors.amberAccent),
-        selectedItemColor: Colors.amberAccent,
+        selectedIconTheme: IconThemeData(color: selectedItemColor),
+        selectedItemColor: selectedItemColor,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

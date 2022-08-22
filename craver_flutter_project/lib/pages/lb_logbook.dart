@@ -5,27 +5,36 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
-import '../support/warnig_and_errors.dart';
 import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
+import '../support/alert.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 String cleanUpText(String text) {
-  print(text.replaceAll('\n', ' '));
-  return text.replaceAll('\n', ' ');
+  // Ahh... So there are non-break-spaces here...
+  // This has caused quite some headackes.
+  return text.replaceAll('\u{00A0}', ' ');
 }
 
-class HTMLDisplay extends StatelessWidget {
-  //This is NOT a general XML viewer, only for this specific use case.
-  HTMLDisplay({Key? key, required this.data}) : super(key: key);
-  var data;
+class LbReader extends StatefulWidget {
+  final List data;
+  const LbReader(this.data, {Key? key}) : super(key: key);
 
   @override
+  State<LbReader> createState() => _LbReaderState();
+}
+
+class _LbReaderState extends State<LbReader> {
+  @override
   Widget build(BuildContext context) {
-    var texts = data[0];
-    var authors = data[1];
-    var dates = data[2];
+    var texts = widget.data[0];
+    var authors = widget.data[1];
+    var dates = widget.data[2];
+
+    GoogleFonts.config.allowRuntimeFetching = false;
+
     return ListView.builder(
       controller: ScrollController(),
       itemCount: texts.length,
@@ -33,6 +42,7 @@ class HTMLDisplay extends StatelessWidget {
       itemBuilder: (context, index) {
         String author = authors[index];
         String text = cleanUpText(texts[index]);
+
         String dateString = dates[index];
 
         // TODO: ENSURE THAT TIMEZONE IS HANDELED
@@ -57,6 +67,7 @@ class HTMLDisplay extends StatelessWidget {
           child: ListTile(
             title: SelectableText.rich(TextSpan(
                 text: text,
+                style: GoogleFonts.sourceCodePro(),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
                     var url = Uri.parse(
@@ -66,11 +77,7 @@ class HTMLDisplay extends StatelessWidget {
                       await launchUrl(url,
                           mode: LaunchMode.externalApplication);
                     } else {
-                      //https://dart-lang.github.io/linter/lints/use_build_context_synchronously.html
-                      //Aparently i'm not supposed to use contex in async function,
-                      //I'm unable to resolve it... TODO?
-                      //if (mounted) return;
-                      showAlertDialog(context, 'Unable to open browser!');
+                      showOkayDialog('Error', 'Unable to open browser!');
                     }
                   })),
             isThreeLine: true,
@@ -145,7 +152,7 @@ class _LbLogbookState extends State<LbLogbook> {
 
     for (var i = 0; i < other.length; i += 5) {
       // These numbers, 1 and 4, are just found from
-      // looking at the order of the responce from lblogbook
+      // looking at the raw data of the responce from lblogbook
       dates.add(other[i + 1]);
       authors.add(other[i + 4]);
     }
@@ -192,7 +199,7 @@ class _LbLogbookState extends State<LbLogbook> {
                             refresh();
                           },
                           key: ValueKey(LbLogbook.currentPage.value),
-                          child: HTMLDisplay(data: snapshot.data),
+                          child: LbReader(snapshot.data as List),
                         ));
 
                   default:

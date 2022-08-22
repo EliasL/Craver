@@ -1,4 +1,4 @@
-package com.example.craver_flutter_project
+package com.example.Craver
 
 import io.flutter.embedding.android.FlutterActivity
 

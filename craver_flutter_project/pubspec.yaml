@@ -40,13 +40,14 @@ dependencies:
   url_launcher: ^6.1.4
   html: ^0.15.0
   timeago: ^3.2.2
-  background_fetch: ^1.1.0
+  #background_fetch: ^1.1.0
   gauges: ^1.0.0
-  flutter_local_notifications: ^9.7.0
+  #flutter_local_notifications: ^9.7.0
   flutter_native_timezone: ^2.0.0
   rxdart: ^0.27.4
   flutter_launcher_icons: ^0.10.0
-
+  google_fonts: ^3.0.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -72,6 +73,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icon/craver_logo.png
+    - google_fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

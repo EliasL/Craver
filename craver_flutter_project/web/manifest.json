@@ -1,6 +1,6 @@
 {
-    "name": "craver_flutter_project",
-    "short_name": "craver_flutter_project",
+    "name": "Craver",
+    "short_name": "Craver",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

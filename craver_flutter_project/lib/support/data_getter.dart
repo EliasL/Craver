@@ -1,11 +1,10 @@
+import 'package:html/dom.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
-import 'package:xml/xml.dart';
-
-import 'settings.dart' as settings;
+import 'alert.dart';
 
 const server = 'http://lbcraver.cern.ch:80';
 
@@ -15,121 +14,94 @@ final Map<String, String> httpHeaders = {
   "Keep-Alive": "timeout=5, max=1000"
 };
 
-Future<String> getServerVersion() async {
+Future<String?> getServerVersions() async {
   const urlString = '$server/version';
-  final url = Uri.parse(urlString);
-  final http.Response response;
-  try {
-    response = await http.get(url, headers: httpHeaders);
-  } catch (e) {
-    return 'No Responce';
-  }
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    return response.body;
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    return 'Error';
-  }
-}
-
-Future<dynamic> getPrometheusAllUp() {
-  const url = '$server/prometheus_query?command=up';
-  return getPrometheus(url);
-}
-
-Future<dynamic> getPrometheusNotUp() {
-  const url = '$server/prometheus_query?command=up!=1';
-  return getPrometheus(url);
-}
-
-Future<dynamic> getPrometheusOnlyUp() {
-  const url = '$server/prometheus_query?command=up==1';
-  return getPrometheus(url);
-}
-
-Future<dynamic> getPrometheus(String urlString) async {
-  final url = Uri.parse(urlString);
-  final http.Response response;
-  try {
-    response = await http.get(url, headers: httpHeaders);
-  } catch (e) {
-    return [
-      {
-        'metric': {'instance': e.toString()},
-        'value': [0, 'Please try again']
-      }
-    ];
-  }
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    final D = jsonDecode(response.body); //d is a list of json objects
-    return D['data']['result'];
-    //return D.map((d) => TimeSeriesSales(d.id, d.value)).toList();
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load');
-  }
-}
-
-Future<dynamic> getControlPanelState(String state, {int attempt = 0}) async {
-  final urlString = '$server/control_panel?state=$state';
-  final url = Uri.parse(urlString);
-  final http.Response response;
-  try {
-    response = await http.get(url, headers: httpHeaders);
-  } catch (e) {
+  http.Response? response =
+      await _generalGet(urlString, serverErrorType: 'VersionServerError');
+  if (response == null) {
     return null;
   }
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    if (response.body != 'NOT__READY') {
-      return response.body;
-    } else {
-      if (attempt > 5) {
-        return null;
-      } else {
-        return getControlPanelState(state, attempt: attempt + 1);
-      }
-    }
-
-    //return D.map((d) => TimeSeriesSales(d.id, d.value)).toList();
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load');
-  }
+  return response.body;
 }
 
-Future<dynamic> getLbLogbook({int page = 1, int attempts = 0}) async {
+enum PrometheusCommands {
+  up,
+  notUp,
+  onlyUp,
+}
+
+Future<dynamic> getPrometheus(PrometheusCommands command) async {
+  String urlString;
+  switch (command) {
+    case PrometheusCommands.up:
+      urlString = '$server/prometheus_query?command=up';
+      break;
+
+    case PrometheusCommands.notUp:
+      urlString = '$server/prometheus_query?command=up!=1';
+      break;
+
+    case PrometheusCommands.onlyUp:
+      urlString = '$server/prometheus_query?command=up==1';
+      break;
+    default:
+      throw Exception('Unimplemented prometheus command.');
+  }
+  http.Response? response =
+      await _generalGet(urlString, serverErrorType: 'PrometheusServerError');
+  if (response == null) {
+    return null;
+  }
+  return jsonDecode(response.body)['data']['result'];
+}
+
+Future<dynamic> getControlPanelStates(List<String> states, context,
+    {showError = true}) async {
+  final urlString = '$server/control_panel?states=${states.join(',')}';
+  http.Response? response =
+      await _generalGet(urlString, serverErrorType: 'ControlPanelServerError');
+  if (response == null) {
+    return null;
+  }
+  return jsonDecode(response.body);
+}
+
+Future<Document?> getLbLogbook({int page = 1, int attempts = 0}) async {
   var urlString = '$server/lblogbook?page=$page';
+  http.Response? response =
+      await _generalGet(urlString, serverErrorType: 'LbLogbookServerError');
+  if (response == null) {
+    return null;
+  }
+  var temp = utf8.decode(response.bodyBytes);
+  // I just want everything to be a single class.
+  temp = temp.replaceAll('<td class="list2">', '<td class="list1">');
+  temp =
+      temp.replaceAll('<td class="list2" nowrap>', '<td class="list1" nowrap>');
+  return parse(temp);
+}
+
+Future<http.Response?> _generalGet(String urlString,
+    {int attempts = 0,
+    networkErrorType = 'NetworkError',
+    serverErrorType = 'ServerError'}) async {
   final url = Uri.parse(urlString);
   final http.Response response;
   try {
     response = await http.get(url, headers: httpHeaders);
   } catch (e) {
-    //throw Exception('This really needs to be fixed!');
-    // This error seems to happen every now and then. I guiestimate
-    // the rate to be about 1/30. I think we can get away with just retrying
-    // after a second or something.
-    if (attempts > 20) {
-      return null; //Not tested. TODO make a gracefull error. This will probably crash.
+    if (attempts > 5) {
+      networkError(urlString, e.toString(), networkErrorType);
+      return null;
     }
-    await Future.delayed(const Duration(seconds: 1));
-    return getLbLogbook(page: page, attempts: attempts + 1);
+    await Future.delayed(const Duration(milliseconds: 50));
+    return _generalGet(urlString, attempts: attempts + 1);
   }
   if (response.statusCode == 200) {
-    var temp = utf8.decode(response.bodyBytes);
-    // I just want everything to be a single class.
-    temp = temp.replaceAll('<td class="list2">', '<td class="list1">');
-    temp = temp.replaceAll(
-        '<td class="list2" nowrap>', '<td class="list1" nowrap>');
-    return parse(temp);
+    return response;
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load');
+    serverError(urlString, response, serverErrorType);
+
+    return null;
   }
 }

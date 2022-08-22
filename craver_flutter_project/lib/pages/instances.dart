@@ -27,13 +27,13 @@ class _InstancesState extends State<Instances> {
   _getData() async {
     switch (dropdownValue) {
       case 'All':
-        return await getPrometheusAllUp();
+        return await getPrometheus(PrometheusCommands.up);
       case 'On':
-        return await getPrometheusOnlyUp();
+        return await getPrometheus(PrometheusCommands.onlyUp);
       case 'Off':
-        return await getPrometheusNotUp();
+        return await getPrometheus(PrometheusCommands.notUp);
       default:
-        return await getPrometheusAllUp();
+        return await getPrometheus(PrometheusCommands.up);
     }
   }
 
