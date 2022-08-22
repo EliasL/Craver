@@ -302,7 +302,7 @@ const ColorScheme ECSColorScheme = ColorScheme(
 
 ColorScheme craverColorScheme = ColorScheme(
     running: Colors.teal,
-    ready: ui.Color.fromARGB(255, 68, 98, 174)!,
+    ready: ui.Color.fromARGB(255, 68, 98, 174),
     notReady: Colors.amber[200]!,
     abnomal: ui.Color.fromARGB(255, 197, 28, 53),
     off: Colors.blueGrey,
