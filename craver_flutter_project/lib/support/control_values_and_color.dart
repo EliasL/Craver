@@ -300,10 +300,10 @@ const ColorScheme ECSColorScheme = ColorScheme(
   unknown: ui.Color.fromARGB(255, 255, 153, 0),
 );
 
-const ColorScheme craverColorScheme = ColorScheme(
+ColorScheme craverColorScheme = ColorScheme(
     running: Colors.teal,
-    ready: Colors.indigo,
-    notReady: Colors.orange,
+    ready: ui.Color.fromARGB(255, 68, 98, 174)!,
+    notReady: Colors.amber[200]!,
     abnomal: ui.Color.fromARGB(255, 197, 28, 53),
     off: Colors.blueGrey,
     unknown: Colors.purple);
