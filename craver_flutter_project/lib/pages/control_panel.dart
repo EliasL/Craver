@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
 import '../support/control_values_and_color.dart';
 import '../support/gauge.dart';
+import '../support/settings.dart' as settings;
 
 void updateStates(context) async {
   // We generate a list of all the states
@@ -95,8 +96,36 @@ class StatusText extends StatelessWidget {
       this.heightPadding = 0})
       : super(key: key);
 
+  /*List<TextSpan> generateTextPanel(
+      String name, String value, BuildContext context) {
+    Color descriptionColor = Theme.of(context).primaryColorLight;
+
+    Color textColor = settings.theme.value == ui.Brightness.light
+        ? Colors.black
+        : Colors.white;
+    return [
+      TextSpan(
+          text: 'Run Number:\n    ', style: TextStyle(color: descriptionColor)),
+      TextSpan(text: ControlValues.runNumber.sValue)
+    ];
+  }*/
+
   @override
   Widget build(BuildContext context) {
+    List<TextSpan> format(String name, String? value, {double fontSize = 14}) {
+      Color textColor = settings.theme.value == ui.Brightness.light
+          ? Colors.black
+          : Colors.white;
+      return [
+        TextSpan(
+            text: name,
+            style: TextStyle(color: Theme.of(context).primaryColorLight)),
+        TextSpan(
+            text: value,
+            style: TextStyle(fontSize: fontSize, color: textColor)),
+      ];
+    }
+
     return Flexible(
       child: FractionallySizedBox(
         widthFactor: widthFactor,
@@ -113,41 +142,26 @@ class StatusText extends StatelessWidget {
             ValueListenableBuilder(
               valueListenable: ControlValues.updater,
               builder: (BuildContext context, _, Widget? child) {
-                var descriptionColor = Theme.of(context).primaryColorLight;
                 return RichText(
                   text: TextSpan(
-                    children: [
-                      TextSpan(
-                          text: 'Run Number:\n    ',
-                          style: TextStyle(color: descriptionColor)),
-                      TextSpan(text: ControlValues.runNumber.sValue),
-                      TextSpan(
-                          text: '\nRun Type:\n    ',
-                          style: TextStyle(color: descriptionColor)),
-                      TextSpan(text: ControlValues.runType.sValue),
-                      TextSpan(
-                          text: '\nData Type:\n    ',
-                          style: TextStyle(color: descriptionColor)),
-                      TextSpan(
-                          text: ControlValues.dataType.sValue,
-                          style: const TextStyle(fontSize: 13)),
-                      TextSpan(
-                          text: '\nArchitecture:\n    ',
-                          style: TextStyle(color: descriptionColor)),
-                      TextSpan(text: ControlValues.architecture.sValue),
-                      TextSpan(
-                          text: '\nNr. events:\n    ',
-                          style: TextStyle(color: descriptionColor)),
-                      TextSpan(text: ControlValues.nrOfEvents.sValue),
-                      TextSpan(
-                          text: '\nInput rate\n',
-                          style:
-                              TextStyle(color: Color(colors[0][600]!.value))),
-                      TextSpan(
-                          text: 'Output rate\n',
-                          style:
-                              TextStyle(color: Color(colors[1][600]!.value))),
-                    ],
+                    children: format('Run Number:\n    ',
+                            ControlValues.runNumber.sValue) +
+                        format('\nRun Type:\n    ',
+                            ControlValues.dataType.sValue) +
+                        format('\nArchitecture:\n    ',
+                            ControlValues.architecture.sValue, fontSize: 13) +
+                        format('\nNr. events:\n    ',
+                            ControlValues.nrOfEvents.sValue) +
+                        [
+                          TextSpan(
+                              text: '\nInput rate\n',
+                              style: TextStyle(
+                                  color: Color(colors[0][600]!.value))),
+                          TextSpan(
+                              text: 'Output rate\n',
+                              style: TextStyle(
+                                  color: Color(colors[1][600]!.value))),
+                        ],
                   ),
                   textAlign: ui.TextAlign.left,
                 );
