@@ -1,6 +1,10 @@
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import '../support/settings.dart' as settings;
+import 'dart:developer' as dev;
 
 class ControlValue {
   // AControlValue has a long name like: "lbWeb/LHCb|LHCb_fsm_currentState",
@@ -39,6 +43,7 @@ class ControlValues {
   // These are the values we want to pull from the control panel (Through DIM)
   // They default to string type values like 'RUNNING', but you need to
   // specify them as double if they should be parsed. eg: '41236'
+
   static final LHCbState = ControlValue(
       dimPath: "lbWeb/LHCb|LHCb_fsm_currentState",
       shortName: 'LHCb',
@@ -50,69 +55,76 @@ class ControlValues {
       longName: 'Data Acquisition System');
 
   static final DAQ_VA_State = ControlValue(
-      dimPath: "lbWeb/LHCb_DAQ|VA_DAQ|VA_DAQ_fsm_currentState",
+      dimPath: "lbWeb/LHCb_DAQ|VELOA_DAQ|VELOA_DAQ_fsm_currentState",
       shortName: 'VELOA',
-      longName: '');
+      longName: 'VErtex LOcator A');
 
   static final DAQ_VC_State = ControlValue(
-      dimPath: "lbWeb/LHCb_DAQ|VC_DAQ|VC_DAQ_fsm_currentState",
+      dimPath: "lbWeb/LHCb_DAQ|VELOC_DAQ|VELOC_DAQ_fsm_currentState",
       shortName: 'VELOC',
-      longName: '');
+      longName: 'VErtex LOcator C');
 
   static final DAQ_R1_State = ControlValue(
-      dimPath: "lbWeb/LHCb_DAQ|R1_DAQ|R1_DAQ_fsm_currentState",
+      dimPath: "lbWeb/LHCb_DAQ|RICH1_DAQ|RICH1_DAQ_fsm_currentState",
       shortName: 'RICH1',
-      longName: '');
+      longName: 'Ring Imaging Cherenkov 1');
 
   static final DAQ_R2_State = ControlValue(
-      dimPath: "lbWeb/LHCb_DAQ|R2_DAQ|R2_DAQ_fsm_currentState",
+      dimPath: "lbWeb/LHCb_DAQ|RICH2_DAQ|RICH2_DAQ_fsm_currentState",
       shortName: 'RICH2',
+      longName: 'Ring Imaging Cherenkov 2');
+
+  static final DAQ_TDET_State = ControlValue(
+      //UNUSED
+      dimPath: "lbWeb/LHCb_DAQ|TDET_DAQ|TDET_DAQ_fsm_currentState",
+      shortName: 'TDET',
       longName: '');
 
   static final DAQ_UTA_State = ControlValue(
+      //UNUSED
       dimPath: "lbWeb/LHCb_DAQ|UTA_DAQ|UTA_DAQ_fsm_currentState",
       shortName: 'UTA',
-      longName: '');
+      longName: 'Upstream Tracker A');
 
   static final DAQ_UTC_State = ControlValue(
       dimPath: "lbWeb/LHCb_DAQ|UTC_DAQ|UTC_DAQ_fsm_currentState",
       shortName: 'UTC',
-      longName: '');
+      longName: 'Upstream Tracker C');
 
   static final DAQ_SFA_State = ControlValue(
       dimPath: "lbWeb/LHCb_DAQ|SFA_DAQ|SFA_DAQ_fsm_currentState",
       shortName: 'SFA',
-      longName: '');
+      longName: 'Scintillating-Fibre particle-tracking detector / SciFi A');
 
   static final DAQ_SFC_State = ControlValue(
       dimPath: "lbWeb/LHCb_DAQ|SFC_DAQ|SFC_DAQ_fsm_currentState",
       shortName: 'SFC',
-      longName: '');
+      longName: 'Scintillating-Fibre particle-tracking detector / SciFi C');
 
   static final DAQ_MA_State = ControlValue(
-      dimPath: "lbWeb/LHCb_DAQ|MA_DAQ|MA_DAQ_fsm_currentState",
+      dimPath: "lbWeb/LHCb_DAQ|MUONA_DAQ|MUONA_DAQ_fsm_currentState",
       shortName: 'MUONA',
-      longName: '');
+      longName: 'Muon Detector A');
 
   static final DAQ_MC_State = ControlValue(
-      dimPath: "lbWeb/LHCb_DAQ|MC_DAQ|MC_DAQ_fsm_currentState",
-      shortName: 'MUNOC',
-      longName: '');
+      dimPath: "lbWeb/LHCb_DAQ|MUONC_DAQ|MUONC_DAQ_fsm_currentState",
+      shortName: 'MUONC',
+      longName: 'Muon Detector C');
 
   static final DAQ_EC_State = ControlValue(
-      dimPath: "lbWeb/LHCb_DAQ|EC_DAQ|EC_DAQ_fsm_currentState",
+      dimPath: "lbWeb/LHCb_DAQ|ECAL_DAQ|ECAL_DAQ_fsm_currentState",
       shortName: 'ECAL',
-      longName: '');
+      longName: 'Electromagnetic Calorimeter');
 
   static final DAQ_HC_State = ControlValue(
-      dimPath: "lbWeb/LHCb_DAQ|HC_DAQ|HC_DAQ_fsm_currentState",
+      dimPath: "lbWeb/LHCb_DAQ|HCAL_DAQ|HCAL_DAQ_fsm_currentState",
       shortName: 'HCAL',
-      longName: '');
+      longName: 'Hadron Calorimeter');
 
   static final DAQ_PL_State = ControlValue(
-      dimPath: "lbWeb/LHCb_DAQ|PL_DAQ|PL_DAQ_fsm_currentState",
+      dimPath: "lbWeb/LHCb_DAQ|PLUME_DAQ|PLUME_DAQ_fsm_currentState",
       shortName: 'PLUME',
-      longName: '');
+      longName: 'Probe for LUminosity MEasurement');
 
   static final DAIState = ControlValue(
       dimPath: "lbWeb/LHCb|LHCb_DAI|LHCb_DAI_fsm_currentState",
@@ -205,6 +217,7 @@ class ControlValues {
     DAQ_R2_State,
     DAQ_SFA_State,
     DAQ_SFC_State,
+    DAQ_TDET_State,
     DAQ_UTA_State,
     DAQ_UTC_State,
     DAQ_VA_State,
@@ -233,6 +246,7 @@ class ControlValues {
     for (var controlValue in allValues) {
       controlValue.colorStateMap = colorStateMap(colorScheme);
     }
+    dev.log(allValues.toString());
   }
 
   ControlValues() {
@@ -241,7 +255,7 @@ class ControlValues {
 }
 
 getCurrentColorScheme() {
-  return getColorScheme(settings.COLORSETTING);
+  return getColorScheme(settings.controlColors);
 }
 
 ColorScheme getColorScheme(settings.ColorSchemes option) {
@@ -302,9 +316,9 @@ const ColorScheme ECSColorScheme = ColorScheme(
 
 ColorScheme craverColorScheme = ColorScheme(
     running: Colors.teal,
-    ready: ui.Color.fromARGB(255, 68, 98, 174),
+    ready: const ui.Color.fromARGB(255, 68, 98, 174),
     notReady: Colors.amber[200]!,
-    abnomal: ui.Color.fromARGB(255, 197, 28, 53),
+    abnomal: const ui.Color.fromARGB(255, 197, 28, 53),
     off: Colors.blueGrey,
     unknown: Colors.purple);
 
@@ -321,7 +335,7 @@ class RunStates {
   static const String ERROR = "ERROR";
   static const String EMERGENCY_OFF = "EMERGENCY_OFF";
   static const String OFF = "OFF";
-  static const String UNKOWN = "UNKOWN";
+  static const String UNKOWN = "UNKNOWN";
 }
 
 Map<String, Color> defaultColorStateMap(ColorScheme colorScheme) {

@@ -11,6 +11,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 import '../support/alert.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../support/settings.dart' as settings;
 
 String cleanUpText(String text) {
   // Ahh... So there are non-break-spaces here...
@@ -20,6 +21,10 @@ String cleanUpText(String text) {
 
 class LbReader extends StatefulWidget {
   final List data;
+  static ScrollController scrollController = ScrollController();
+  // This is used to either preserve scroll possition
+  // or to reset it. Update the value to reset, or use the same
+  // value to preserve the scroll state.
   const LbReader(this.data, {Key? key}) : super(key: key);
 
   @override
@@ -36,9 +41,9 @@ class _LbReaderState extends State<LbReader> {
     GoogleFonts.config.allowRuntimeFetching = false;
 
     return ListView.builder(
-      controller: ScrollController(),
+      controller: LbReader.scrollController,
       itemCount: texts.length,
-      shrinkWrap: true,
+      //shrinkWrap: true,
       itemBuilder: (context, index) {
         String author = authors[index];
         String text = cleanUpText(texts[index]);
@@ -94,11 +99,19 @@ class _LbReaderState extends State<LbReader> {
 class LbLogbook extends StatefulWidget {
   const LbLogbook({Key? key}) : super(key: key);
 
+  static int _currentPage = 1;
+  static int get currentPage => _currentPage;
+  static set currentPage(int page) {
+    settings.title.value = '${settings.defaultTitle}: Logbook - page $page';
+    _currentPage = page;
+  }
+
+  static void updateTitle() {
+    currentPage = currentPage;
+  }
+
   @override
   State<LbLogbook> createState() => _LbLogbookState();
-  //In order to put a listener to update the app title
-  //CRAVER: Logbook page 1, we need to use this
-  static var currentPage = ValueNotifier<int>(1);
 }
 
 class _LbLogbookState extends State<LbLogbook> {
@@ -106,21 +119,37 @@ class _LbLogbookState extends State<LbLogbook> {
 
   Timer? timer;
 
-  @override
-  void initState() {
-    data = _getData(LbLogbook.currentPage.value);
-    super.initState();
-    // This updates the ages of the posts: 5 minutes ago -> 6 minutes ago
-    // set update data to false if you want to optimize battery
-    // (Don't know how much it matters)
-    timer = Timer.periodic(
-        const Duration(minutes: 1), (Timer t) => refresh(updateData: true));
+  void startTimer() {
+    timer = Timer.periodic(const Duration(minutes: 1),
+        (Timer t) => refresh(updateData: true, keepScroll: true));
   }
 
-  Future refresh({updateData = true}) async {
+  @override
+  void initState() {
+    data = _getData(LbLogbook.currentPage);
+    super.initState();
+    // This updates the ages of the posts: 5 minutes ago -> 6 minutes ago
+    // TODO set update data to false if you want to optimize battery
+    // (Don't know how much it matters)
+    startTimer();
+  }
+
+  Future refresh({updateData = true, keepScroll = false}) async {
     if (updateData) {
-      data = _getData(LbLogbook.currentPage.value);
+      data = _getData(LbLogbook.currentPage);
     }
+    if (keepScroll) {
+      double offset = LbReader.scrollController.offset;
+      LbReader.scrollController = ScrollController(initialScrollOffset: offset);
+    } else {
+      LbReader.scrollController = ScrollController();
+    }
+
+    // Reset automatic timer
+    timer!.cancel();
+    startTimer();
+
+    // Update widgets
     setState(() {});
   }
 
@@ -128,7 +157,7 @@ class _LbLogbookState extends State<LbLogbook> {
     //Im not sure if i want to reset the
     //page number when draging down, but
     // i think so
-    LbLogbook.currentPage.value = 1;
+    LbLogbook.currentPage = 1;
     refresh();
   }
 
@@ -161,8 +190,7 @@ class _LbLogbookState extends State<LbLogbook> {
   }
 
   updateCurrentPage(direction) {
-    LbLogbook.currentPage.value +=
-        direction == DismissDirection.endToStart ? 1 : -1;
+    LbLogbook.currentPage += direction == DismissDirection.endToStart ? 1 : -1;
   }
 
   @override
@@ -191,14 +219,15 @@ class _LbLogbookState extends State<LbLogbook> {
                         onRefresh: scrollUpRefresh,
                         child: Dismissible(
                           confirmDismiss: (direction) async {
-                            return !(LbLogbook.currentPage.value == 1 &&
+                            return !(LbLogbook.currentPage == 1 &&
                                 direction == DismissDirection.startToEnd);
                           },
                           onDismissed: (DismissDirection direction) {
                             updateCurrentPage(direction);
                             refresh();
                           },
-                          key: ValueKey(LbLogbook.currentPage.value),
+                          key: ValueKey(LbLogbook.currentPage),
+                          //This is the actual log book list
                           child: LbReader(snapshot.data as List),
                         ));
 

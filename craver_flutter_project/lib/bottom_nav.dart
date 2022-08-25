@@ -12,46 +12,49 @@ class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
 
   @override
-  _BottomNavState createState() => _BottomNavState();
+  State<BottomNav> createState() => _BottomNavState();
 }
 
 enum PAGES { controllPanel, lbLogbook, instances } //, alarms }
 
 class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
-  String title = '';
-
-  /// We share this mainContext with all the other pages
-  /// to show error messages in. This way we are also
-  /// probably safe to ignore the: "Do not use BuildContexts across async gaps."
-  /// warning. I think this warning come from that the context we give might no
-  /// longer be the relative context because of the async. But so long as we
-  /// always use this mainContext, it should be fine i think.
 
   //The order in this list MUST match the order in PAGES
-  //TODO: Make these pages build lazily when clicked on
-  // Right now, all pages at once when the app loads
   static final List<Widget> _pages = <Widget>[
-    ControlPanel(),
+    const ControlPanel(),
     const LbLogbook(),
-    Instances(),
+    const Instances(),
     //Alarms(),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _pages[index];
+      //_pages[index];
+      switch (PAGES.values[index]) {
+        case PAGES.lbLogbook:
+          LbLogbook.updateTitle();
+          break;
+        default:
+          settings.title.value = settings.defaultTitle;
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    /// We share this messageContext with all the other pages
+    /// to show error messages in. This way we are also
+    /// probably safe to ignore the: "Do not use BuildContexts across async gaps."
+    /// warning. I think this warning come from that the context we give might no
+    /// longer be the relative context because of the async. But so long as we
+    /// always use this messageContext, it should be fine i think.
     settings.messageContext = context;
     checkVersion();
 
     Color selectedItemColor;
-    switch (Theme.of(context).brightness) {
+    switch (settings.theme.value) {
       case Brightness.dark:
         selectedItemColor = Colors.amberAccent;
         break;
@@ -77,12 +80,8 @@ class _BottomNavState extends State<BottomNav> {
                 child: Image.asset('assets/icon/craver_logo.png'))),
         centerTitle: true,
         title: ValueListenableBuilder(
-            valueListenable: LbLogbook.currentPage,
-            builder: (context, value, widget) {
-              String title = 'CRAVER ${settings.FULLVERSION}';
-              if (_selectedIndex == PAGES.lbLogbook.index) {
-                title = 'CRAVER: Logbook - page ${LbLogbook.currentPage.value}';
-              }
+            valueListenable: settings.title,
+            builder: (context, String title, widget) {
               return Text(title);
             }),
         elevation: 0,

@@ -46,6 +46,10 @@ Future<void> serverError(String url, http.Response response, serverErrorType) {
       serverErrorType);
 }
 
+Future<void> customServerError(String message, serverErrorType) {
+  return showOkayDontShowAgainDialog('Server Error!', message, serverErrorType);
+}
+
 Future<void> showOkayDialog(title, text) async {
   //Flutter needs to know what context to show the message in
   if (settings.messageContext == null) {

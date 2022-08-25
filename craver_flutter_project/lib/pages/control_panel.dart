@@ -6,15 +6,14 @@ import '../support/control_values_and_color.dart';
 import '../support/gauge.dart';
 import '../support/settings.dart' as settings;
 
-void updateStates(context) async {
+void updateStates() async {
   // We generate a list of all the states
   // we want to get values for.
 
   // newValues is a json object
-  var newValues = await getControlPanelStates(
-      List<String>.generate(ControlValues.allValues.length,
-          (i) => ControlValues.allValues[i].dimPath),
-      context);
+  var newValues = await getControlPanelStates(List<String>.generate(
+      ControlValues.allValues.length,
+      (i) => ControlValues.allValues[i].dimPath));
   if (newValues == null) {
     return;
   }
@@ -45,8 +44,6 @@ class ControlPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Timer timer = Timer.periodic(
-        const Duration(milliseconds: 700), (Timer t) => updateStates(context));
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -96,22 +93,10 @@ class StatusText extends StatelessWidget {
       this.heightPadding = 0})
       : super(key: key);
 
-  /*List<TextSpan> generateTextPanel(
-      String name, String value, BuildContext context) {
-    Color descriptionColor = Theme.of(context).primaryColorLight;
-
-    Color textColor = settings.theme.value == ui.Brightness.light
-        ? Colors.black
-        : Colors.white;
-    return [
-      TextSpan(
-          text: 'Run Number:\n    ', style: TextStyle(color: descriptionColor)),
-      TextSpan(text: ControlValues.runNumber.sValue)
-    ];
-  }*/
-
   @override
   Widget build(BuildContext context) {
+    // We define a function inside here so that we can make use of
+    // the context without having to give it as an argument. (lazy coder)
     List<TextSpan> format(String name, String? value, {double fontSize = 14}) {
       Color textColor = settings.theme.value == ui.Brightness.light
           ? Colors.black
@@ -193,6 +178,7 @@ class StatusBox extends StatelessWidget {
         Color color = cv.colorStateMap[cv.sValue] ?? defaultColor;
         Color textColor =
             color.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+        //settings.title.value = '${cv.shortName}${ControlValues.updater.value}';
         return Flexible(
           child: Card(
             color: color,
@@ -220,8 +206,14 @@ class StatusPage extends StatefulWidget {
 }
 
 class _StatusPageState extends State<StatusPage> {
-  void refresh() {
-    setState(() {});
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(
+        const Duration(milliseconds: 700), (Timer t) => updateStates());
   }
 
   @override
@@ -298,9 +290,6 @@ class SubdetectorsPage extends StatefulWidget {
 
   @override
   State<SubdetectorsPage> createState() => _SubdetectorsPageState();
-  //In order to put a listener to update the app title
-  //CRAVER: Logbook page 1, we need to use this
-  static var currentPage = ValueNotifier<int>(1);
 }
 
 class _SubdetectorsPageState extends State<SubdetectorsPage> {
@@ -314,9 +303,9 @@ class _SubdetectorsPageState extends State<SubdetectorsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               StatusBox(ControlValues.DAQState),
+              StatusBox(ControlValues.DAQ_TDET_State),
               StatusBox(ControlValues.DAQ_VA_State),
               StatusBox(ControlValues.DAQ_R1_State),
-              StatusBox(ControlValues.DAQ_UTA_State),
               StatusBox(ControlValues.DAQ_SFA_State),
               StatusBox(ControlValues.DAQ_MA_State),
               StatusBox(ControlValues.DAQ_EC_State),
@@ -328,9 +317,9 @@ class _SubdetectorsPageState extends State<SubdetectorsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               StatusBox(ControlValues.DAQ_PL_State),
+              StatusBox(ControlValues.DAQ_UTC_State),
               StatusBox(ControlValues.DAQ_VC_State),
               StatusBox(ControlValues.DAQ_R2_State),
-              StatusBox(ControlValues.DAQ_UTC_State),
               StatusBox(ControlValues.DAQ_SFC_State),
               StatusBox(ControlValues.DAQ_MC_State),
               StatusBox(ControlValues.DAQ_HC_State),
@@ -347,14 +336,9 @@ class DetailsPage extends StatefulWidget {
 
   @override
   State<DetailsPage> createState() => _DetailsPageState();
-  //In order to put a listener to update the app title
-  //CRAVER: Logbook page 1, we need to use this
-  static var currentPage = ValueNotifier<int>(1);
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-  Timer? timer;
-
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -394,6 +378,4 @@ class _DetailsPageState extends State<DetailsPage> {
       },
     );
   }
-
-  bool get wantKeepAlive => true;
 }
