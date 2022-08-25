@@ -22,7 +22,7 @@ void main() async {
 }
 
 Future<void> loadSettings() async {
-  loadPreferences();
+  await loadPreferences();
   ControlValues.loadColorScheme();
 }
 

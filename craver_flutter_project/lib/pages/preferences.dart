@@ -20,7 +20,7 @@ void setPreference(String key, var value) async {
   }
 }
 
-void loadPreferences() async {
+Future<void> loadPreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   settings.controlColors =
       settings.ColorSchemes.values[prefs.getInt('controlColors') ?? 0];
@@ -77,8 +77,8 @@ class _PreferencesState extends State<Preferences> {
                         if (v!) {
                           settings.controlColors = value;
                           setPreference('controlColors', value.index);
-                          setState(() {});
                           ControlValues.loadColorScheme();
+                          setState(() {});
                         }
                       },
                     );

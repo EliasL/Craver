@@ -246,7 +246,8 @@ class ControlValues {
     for (var controlValue in allValues) {
       controlValue.colorStateMap = colorStateMap(colorScheme);
     }
-    dev.log(allValues.toString());
+    // This is usefull to update the server allowed states
+    //dev.log(allValues.toString());
   }
 
   ControlValues() {
