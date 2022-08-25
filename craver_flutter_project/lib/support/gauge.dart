@@ -1,4 +1,4 @@
-import 'package:Craver/support/control_values_and_color.dart';
+import '../support/control_values_and_color.dart';
 import 'package:flutter/material.dart';
 import 'package:gauges/gauges.dart';
 import 'dart:math';
@@ -107,8 +107,6 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
           final List<MaterialColor> colors = widget.colors;
           final bool useExp = widget.useExp;
 
-          //double logify(double value) => useExp ? log10(value) : value;
-
           final double radius = widget.radius;
           String description = widget.descreption;
           if (description != '') description += ": ";
@@ -141,6 +139,7 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
               child: ValueListenableBuilder(
                   valueListenable: widget.updateData,
                   builder: (context, _, widget) {
+                    double log10(num x) => log(x) / ln10;
                     return RadialGauge(
                       axes: [
                         // Main axis
@@ -168,8 +167,14 @@ class _RadialGaugeWithNumbersState extends State<RadialGaugeWithNumbers> {
                           ],
                           pointers: List<RadialGaugePointer>.generate(
                               gaugeValues.length,
-                              (i) => fancyPointer(colors[i],
-                                  gaugeValues[i].numValue, minValue, maxValue)),
+                              (i) => fancyPointer(
+                                    colors[i],
+                                    useExp
+                                        ? log10(gaugeValues[i].numValue)
+                                        : gaugeValues[i].numValue,
+                                    minValue,
+                                    maxValue,
+                                  )),
                         ),
                       ],
                     );

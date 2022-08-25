@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'alert.dart';
 
-const server = 'http://lbcraver.cern.ch:80';
+//const server = 'http://lbcraver.cern.ch:80';
+//Local server for debuging
+const server = 'http://10.128.124.104:8080';
 
 final Map<String, String> httpHeaders = {
   HttpHeaders.contentTypeHeader: "application/json",
@@ -55,7 +57,7 @@ Future<dynamic> getPrometheus(PrometheusCommands command) async {
   return jsonDecode(response.body)['data']['result'];
 }
 
-Future<dynamic> getControlPanelStates(List<String> states, context,
+Future<dynamic> getControlPanelStates(List<String> states,
     {showError = true}) async {
   final urlString = '$server/control_panel?states=${states.join(',')}';
   http.Response? response =
@@ -63,7 +65,16 @@ Future<dynamic> getControlPanelStates(List<String> states, context,
   if (response == null) {
     return null;
   }
-  return jsonDecode(response.body);
+  try {
+    return jsonDecode(response.body);
+  } catch (e) {
+    // We assume that the response here is something like
+    // Not allowed state: {state}
+    customServerError(
+        'Error: ${response.body}\n\nSomeone needs to update the server.',
+        'Not allowed command');
+    return null;
+  }
 }
 
 Future<Document?> getLbLogbook({int page = 1, int attempts = 0}) async {

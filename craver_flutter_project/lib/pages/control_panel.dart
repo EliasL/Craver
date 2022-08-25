@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
 import '../support/control_values_and_color.dart';
 import '../support/gauge.dart';
+import '../support/settings.dart' as settings;
 
-void updateStates(context) async {
+void updateStates() async {
   // We generate a list of all the states
   // we want to get values for.
 
   // newValues is a json object
-  var newValues = await getControlPanelStates(
-      List<String>.generate(ControlValues.allValues.length,
-          (i) => ControlValues.allValues[i].dimPath),
-      context);
+  var newValues = await getControlPanelStates(List<String>.generate(
+      ControlValues.allValues.length,
+      (i) => ControlValues.allValues[i].dimPath));
   if (newValues == null) {
     return;
   }
@@ -44,8 +44,6 @@ class ControlPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Timer timer = Timer.periodic(
-        const Duration(milliseconds: 700), (Timer t) => updateStates(context));
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -97,6 +95,22 @@ class StatusText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // We define a function inside here so that we can make use of
+    // the context without having to give it as an argument. (lazy coder)
+    List<TextSpan> format(String name, String? value, {double fontSize = 14}) {
+      Color textColor = settings.theme.value == ui.Brightness.light
+          ? Colors.black
+          : Colors.white;
+      return [
+        TextSpan(
+            text: name,
+            style: TextStyle(color: Theme.of(context).primaryColorLight)),
+        TextSpan(
+            text: value,
+            style: TextStyle(fontSize: fontSize, color: textColor)),
+      ];
+    }
+
     return Flexible(
       child: FractionallySizedBox(
         widthFactor: widthFactor,
@@ -113,41 +127,26 @@ class StatusText extends StatelessWidget {
             ValueListenableBuilder(
               valueListenable: ControlValues.updater,
               builder: (BuildContext context, _, Widget? child) {
-                var descriptionColor = Theme.of(context).primaryColorLight;
                 return RichText(
                   text: TextSpan(
-                    children: [
-                      TextSpan(
-                          text: 'Run Number:\n    ',
-                          style: TextStyle(color: descriptionColor)),
-                      TextSpan(text: ControlValues.runNumber.sValue),
-                      TextSpan(
-                          text: '\nRun Type:\n    ',
-                          style: TextStyle(color: descriptionColor)),
-                      TextSpan(text: ControlValues.runType.sValue),
-                      TextSpan(
-                          text: '\nData Type:\n    ',
-                          style: TextStyle(color: descriptionColor)),
-                      TextSpan(
-                          text: ControlValues.dataType.sValue,
-                          style: const TextStyle(fontSize: 13)),
-                      TextSpan(
-                          text: '\nArchitecture:\n    ',
-                          style: TextStyle(color: descriptionColor)),
-                      TextSpan(text: ControlValues.architecture.sValue),
-                      TextSpan(
-                          text: '\nNr. events:\n    ',
-                          style: TextStyle(color: descriptionColor)),
-                      TextSpan(text: ControlValues.nrOfEvents.sValue),
-                      TextSpan(
-                          text: '\nInput rate\n',
-                          style:
-                              TextStyle(color: Color(colors[0][600]!.value))),
-                      TextSpan(
-                          text: 'Output rate\n',
-                          style:
-                              TextStyle(color: Color(colors[1][600]!.value))),
-                    ],
+                    children: format('Run Number:\n    ',
+                            ControlValues.runNumber.sValue) +
+                        format('\nRun Type:\n    ',
+                            ControlValues.dataType.sValue) +
+                        format('\nArchitecture:\n    ',
+                            ControlValues.architecture.sValue, fontSize: 13) +
+                        format('\nNr. events:\n    ',
+                            ControlValues.nrOfEvents.sValue) +
+                        [
+                          TextSpan(
+                              text: '\nInput rate\n',
+                              style: TextStyle(
+                                  color: Color(colors[0][600]!.value))),
+                          TextSpan(
+                              text: 'Output rate\n',
+                              style: TextStyle(
+                                  color: Color(colors[1][600]!.value))),
+                        ],
                   ),
                   textAlign: ui.TextAlign.left,
                 );
@@ -179,13 +178,14 @@ class StatusBox extends StatelessWidget {
         Color color = cv.colorStateMap[cv.sValue] ?? defaultColor;
         Color textColor =
             color.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+        //settings.title.value = '${cv.shortName}${ControlValues.updater.value}';
         return Flexible(
           child: Card(
             color: color,
             child: ListTile(
               shape: border,
               title: Text(
-                '${cv.shortName}: ${cv.colorStateMap[cv.sValue] ?? ''}',
+                '${cv.shortName}: ${cv.sValue ?? ''}',
                 textAlign: ui.TextAlign.center,
                 style: TextStyle(color: textColor),
               ),
@@ -206,8 +206,14 @@ class StatusPage extends StatefulWidget {
 }
 
 class _StatusPageState extends State<StatusPage> {
-  void refresh() {
-    setState(() {});
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(
+        const Duration(milliseconds: 700), (Timer t) => updateStates());
   }
 
   @override
@@ -284,9 +290,6 @@ class SubdetectorsPage extends StatefulWidget {
 
   @override
   State<SubdetectorsPage> createState() => _SubdetectorsPageState();
-  //In order to put a listener to update the app title
-  //CRAVER: Logbook page 1, we need to use this
-  static var currentPage = ValueNotifier<int>(1);
 }
 
 class _SubdetectorsPageState extends State<SubdetectorsPage> {
@@ -300,9 +303,9 @@ class _SubdetectorsPageState extends State<SubdetectorsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               StatusBox(ControlValues.DAQState),
+              StatusBox(ControlValues.DAQ_TDET_State),
               StatusBox(ControlValues.DAQ_VA_State),
               StatusBox(ControlValues.DAQ_R1_State),
-              StatusBox(ControlValues.DAQ_UTA_State),
               StatusBox(ControlValues.DAQ_SFA_State),
               StatusBox(ControlValues.DAQ_MA_State),
               StatusBox(ControlValues.DAQ_EC_State),
@@ -314,9 +317,9 @@ class _SubdetectorsPageState extends State<SubdetectorsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               StatusBox(ControlValues.DAQ_PL_State),
+              StatusBox(ControlValues.DAQ_UTC_State),
               StatusBox(ControlValues.DAQ_VC_State),
               StatusBox(ControlValues.DAQ_R2_State),
-              StatusBox(ControlValues.DAQ_UTC_State),
               StatusBox(ControlValues.DAQ_SFC_State),
               StatusBox(ControlValues.DAQ_MC_State),
               StatusBox(ControlValues.DAQ_HC_State),
@@ -333,14 +336,9 @@ class DetailsPage extends StatefulWidget {
 
   @override
   State<DetailsPage> createState() => _DetailsPageState();
-  //In order to put a listener to update the app title
-  //CRAVER: Logbook page 1, we need to use this
-  static var currentPage = ValueNotifier<int>(1);
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-  Timer? timer;
-
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -380,6 +378,4 @@ class _DetailsPageState extends State<DetailsPage> {
       },
     );
   }
-
-  bool get wantKeepAlive => true;
 }

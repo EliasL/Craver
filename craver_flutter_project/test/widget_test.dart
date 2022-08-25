@@ -11,7 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 // Uh oh I tink i put Craver somewhere where maybe
 // there should have been craver_flutter_project, but everything
 // still works... so not a problem!
-import 'package:Craver/main.dart';
+// ignore: depend_on_referenced_packages
+import 'package:craver/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

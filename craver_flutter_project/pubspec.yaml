@@ -1,4 +1,4 @@
-name: Craver
+name: craver
 description: View various CERN data on your phone.
 
 # The following line prevents the package from being accidentally published to
@@ -47,6 +47,8 @@ dependencies:
   rxdart: ^0.27.4
   flutter_launcher_icons: ^0.10.0
   google_fonts: ^3.0.1
+  shared_preferences: ^2.0.15
+  vector_math: ^2.1.2
   
 dev_dependencies:
   flutter_test:
@@ -73,7 +75,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icon/craver_logo.png
-    - google_fonts/
+    - google_fonts/Source_Code_Pro/static/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

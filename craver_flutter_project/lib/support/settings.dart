@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 library craver.globals;
 
 import 'package:flutter/cupertino.dart';
@@ -6,11 +8,22 @@ const bool DEVELOPMENT = false;
 const String VERSION = '0.6';
 const String FULLVERSION = '$VERSION${DEVELOPMENT ? '-dev' : ''}';
 
-ColorSchemes COLORSETTING = ColorSchemes.ECS;
-ValueNotifier<Brightness> theme =
-    ValueNotifier<Brightness>(Brightness.dark); //Load this from memory TODO
+/// Local Preferences
+/// These variables will be stored localy on the
+/// users phone and each require a key to access.
+/// This list is used purely to ensure that the same key is used all the time
+/// and that the request for a variable isn't accidentally misspelled.
+List<String> settingKeys = ['controlColors', 'theme'];
+
+ColorSchemes controlColors = ColorSchemes.ECS;
+ValueNotifier<Brightness> theme = ValueNotifier<Brightness>(Brightness.dark);
+
+String defaultTitle = 'Craver';
+ValueNotifier<String> title = ValueNotifier<String>(defaultTitle);
 
 enum ColorSchemes {
+  // The name here will be displayed, so make it look nice
+  // (not ecs and craver)
   ECS, //Experiment control system
   Craver,
 }
@@ -27,4 +40,10 @@ enum ColorSchemes {
 /// we reenable the message.
 Map<String, bool> showMessage = {};
 
+/// We share this messageContext with all the other pages
+/// to show error messages in. This way we are also
+/// probably safe to ignore the: "Do not use BuildContexts across async gaps."
+/// warning. I think this warning come from that the context we give might no
+/// longer be the relative context because of the async. But so long as we
+/// always use this context, it should be fine i think.
 BuildContext? messageContext;
