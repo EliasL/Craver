@@ -1,22 +1,23 @@
 import urllib.request
 import json
 
-allowed_states = [
+allowed_states =   [
     'lbWeb/LHCb|LHCb_fsm_currentState',
     'lbWeb/LHCb|LHCb_DAQ|LHCb_DAQ_fsm_currentState',
-    'lbWeb/LHCb_DAQ|EC_DAQ|EC_DAQ_fsm_currentState',
-    'lbWeb/LHCb_DAQ|HC_DAQ|HC_DAQ_fsm_currentState',
-    'lbWeb/LHCb_DAQ|MA_DAQ|MA_DAQ_fsm_currentState',
-    'lbWeb/LHCb_DAQ|MC_DAQ|MC_DAQ_fsm_currentState',
-    'lbWeb/LHCb_DAQ|PL_DAQ|PL_DAQ_fsm_currentState',
-    'lbWeb/LHCb_DAQ|R1_DAQ|R1_DAQ_fsm_currentState',
-    'lbWeb/LHCb_DAQ|R2_DAQ|R2_DAQ_fsm_currentState',
+    'lbWeb/LHCb_DAQ|ECAL_DAQ|ECAL_DAQ_fsm_currentState',
+    'lbWeb/LHCb_DAQ|HCAL_DAQ|HCAL_DAQ_fsm_currentState',
+    'lbWeb/LHCb_DAQ|MUONA_DAQ|MUONA_DAQ_fsm_currentState',
+    'lbWeb/LHCb_DAQ|MUONC_DAQ|MUONC_DAQ_fsm_currentState',
+    'lbWeb/LHCb_DAQ|PLUME_DAQ|PLUME_DAQ_fsm_currentState',
+    'lbWeb/LHCb_DAQ|RICH1_DAQ|RICH1_DAQ_fsm_currentState',
+    'lbWeb/LHCb_DAQ|RICH2_DAQ|RICH2_DAQ_fsm_currentState',
     'lbWeb/LHCb_DAQ|SFA_DAQ|SFA_DAQ_fsm_currentState',
     'lbWeb/LHCb_DAQ|SFC_DAQ|SFC_DAQ_fsm_currentState',
+    'lbWeb/LHCb_DAQ|TDET_DAQ|TDET_DAQ_fsm_currentState',
     'lbWeb/LHCb_DAQ|UTA_DAQ|UTA_DAQ_fsm_currentState',
     'lbWeb/LHCb_DAQ|UTC_DAQ|UTC_DAQ_fsm_currentState',
-    'lbWeb/LHCb_DAQ|VA_DAQ|VA_DAQ_fsm_currentState',
-    'lbWeb/LHCb_DAQ|VC_DAQ|VC_DAQ_fsm_currentState',
+    'lbWeb/LHCb_DAQ|VELOA_DAQ|VELOA_DAQ_fsm_currentState',
+    'lbWeb/LHCb_DAQ|VELOC_DAQ|VELOC_DAQ_fsm_currentState',
     'lbWeb/LHCb|LHCb_DAI|LHCb_DAI_fsm_currentState',
     'lbWeb/LHCb|LHCb_DCS|LHCb_DCS_fsm_currentState',
     'lbWeb/LHCb|LHCb_EB|LHCb_EB_fsm_currentState',
@@ -25,16 +26,15 @@ allowed_states = [
     'lbWeb/LHCb|LHCb_Monitoring|LHCb_Monitoring_fsm_currentState',
     'lbWeb/LHCb_RunInfo_general_runType',
     'lbWeb/LHCb_RunInfo_general_dataType',
+    'lbWeb/LHCb_RunInfo_EB_architecture',
     'lbWeb/LHCb_RunInfo_general_runNumber',
     'lbWeb/LHCb_RunInfo_general_partId',
     'lbWeb/LHCb_RunInfo_TFC_odinData',
     'lbWeb/LHCb_RunInfo_TFC_nTriggers',
     'lbWeb/LHCb_RunInfo_TFC_triggerRate',
     'lbWeb/LHCb_RunInfo_HLTFarm_hltNTriggers',
-    'lbWeb/LHCb_RunInfo_HLTFarm_hltRate',
-    'lbWeb/LHCb_RunInfo_EB_architecture'
+    'lbWeb/LHCb_RunInfo_HLTFarm_hltRate'
   ]
-
 assert ',' not in ''.join(allowed_states), "We use ',' to separate states. Talk to Aristeidis Fkiaras to change."
 
 class ControlPanel:
