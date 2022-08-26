@@ -16,5 +16,5 @@ ADD database_scripts database_scripts
 WORKDIR /app/database_scripts
 
 EXPOSE 8080
-CMD [ "python3", "requestHandler.py"]
+CMD [ "python3", "main.py"]
 
