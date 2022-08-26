@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 const bool DEVELOPMENT = false;
 const String VERSION = '0.6';
 const String FULLVERSION = '$VERSION${DEVELOPMENT ? '-dev' : ''}';
+const String SUPPORT_EMAIL = 'lbonsupp@cern.ch';
 
 /// Local Preferences
 /// These variables will be stored localy on the

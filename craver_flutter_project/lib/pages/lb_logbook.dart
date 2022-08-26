@@ -99,11 +99,70 @@ class _LbReaderState extends State<LbReader> {
 class LbLogbook extends StatefulWidget {
   const LbLogbook({Key? key}) : super(key: key);
 
+  static ValueNotifier<List<List<String?>>?> data = ValueNotifier(null);
+
+  static Timer? timer;
+
   static int _currentPage = 1;
   static int get currentPage => _currentPage;
   static set currentPage(int page) {
     settings.title.value = '${settings.defaultTitle}: Logbook - page $page';
     _currentPage = page;
+  }
+
+  static void startTimer() {
+    timer = Timer.periodic(const Duration(minutes: 1),
+        (Timer t) => refresh(updateData: true, keepScroll: true));
+  }
+
+  static void refresh({updateData = true, keepScroll = false}) async {
+    if (updateData) {
+      data.value = await _getData(LbLogbook.currentPage);
+    }
+    if (keepScroll && LbReader.scrollController.hasClients) {
+      double offset = LbReader.scrollController.offset;
+      LbReader.scrollController = ScrollController(initialScrollOffset: offset);
+    } else {
+      LbReader.scrollController = ScrollController();
+    }
+
+    // Reset automatic timer
+    timer?.cancel();
+    startTimer();
+  }
+
+  static Future<List<List<String?>>?> _getData(int page) async {
+    var rawData = await getLbLogbook(page: page);
+    if (rawData == null) {
+      return null;
+    }
+    var textElements = rawData.getElementsByClassName('summary');
+    List<String> texts = textElements
+        .map((e) => parse(e.innerHtml).documentElement!.text)
+        .toList();
+
+    var otherElements = rawData.getElementsByClassName('list1');
+    var other = otherElements
+        .map((e) => parse(e.innerHtml).documentElement!.text)
+        .toList();
+
+    List<String> authors = [];
+    List<String> dates = [];
+
+    for (var i = 0; i < other.length; i += 5) {
+      // These numbers, 1 and 4, are just found from
+      // looking at the raw data of the responce from lblogbook
+      dates.add(other[i + 1]);
+      authors.add(other[i + 4]);
+    }
+    if (texts.isEmpty) {
+      showOkayDontShowAgainDialog(
+          'No Logbook Text!',
+          'This should not happen. Please contact ${settings.SUPPORT_EMAIL}',
+          'No logbook text');
+    }
+
+    return [texts, authors, dates];
   }
 
   static void updateTitle() {
@@ -115,78 +174,12 @@ class LbLogbook extends StatefulWidget {
 }
 
 class _LbLogbookState extends State<LbLogbook> {
-  Future? data;
-
-  Timer? timer;
-
-  void startTimer() {
-    timer = Timer.periodic(const Duration(minutes: 1),
-        (Timer t) => refresh(updateData: true, keepScroll: true));
-  }
-
-  @override
-  void initState() {
-    data = _getData(LbLogbook.currentPage);
-    super.initState();
-    // This updates the ages of the posts: 5 minutes ago -> 6 minutes ago
-    // TODO set update data to false if you want to optimize battery
-    // (Don't know how much it matters)
-    startTimer();
-  }
-
-  Future refresh({updateData = true, keepScroll = false}) async {
-    if (updateData) {
-      data = _getData(LbLogbook.currentPage);
-    }
-    if (keepScroll) {
-      double offset = LbReader.scrollController.offset;
-      LbReader.scrollController = ScrollController(initialScrollOffset: offset);
-    } else {
-      LbReader.scrollController = ScrollController();
-    }
-
-    // Reset automatic timer
-    timer!.cancel();
-    startTimer();
-
-    // Update widgets
-    setState(() {});
-  }
-
   Future scrollUpRefresh() async {
     //Im not sure if i want to reset the
     //page number when draging down, but
     // i think so
     LbLogbook.currentPage = 1;
-    refresh();
-  }
-
-  _getData(int page) async {
-    var rawData = await getLbLogbook(page: page);
-    if (rawData == null) {
-      return null;
-    }
-    var textElements = rawData.getElementsByClassName('summary');
-    var texts = textElements
-        .map((e) => parse(e.innerHtml).documentElement!.text)
-        .toList();
-
-    var otherElements = rawData.getElementsByClassName('list1');
-    var other = otherElements
-        .map((e) => parse(e.innerHtml).documentElement!.text)
-        .toList();
-
-    var authors = [];
-    var dates = [];
-
-    for (var i = 0; i < other.length; i += 5) {
-      // These numbers, 1 and 4, are just found from
-      // looking at the raw data of the responce from lblogbook
-      dates.add(other[i + 1]);
-      authors.add(other[i + 4]);
-    }
-
-    return [texts, authors, dates];
+    LbLogbook.refresh();
   }
 
   updateCurrentPage(direction) {
@@ -200,21 +193,20 @@ class _LbLogbookState extends State<LbLogbook> {
         children: [
           const SizedBox(height: 10),
           Expanded(
-            child: FutureBuilder(
-              future: data,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.done:
-                    if (snapshot.data == null) {
-                      return Column(children: [
-                        Flexible(
-                          child: ElevatedButton(
-                            onPressed: refresh,
-                            child: const Text('Refresh'),
-                          ),
-                        )
-                      ]);
-                    }
+            child: ValueListenableBuilder(
+              valueListenable: LbLogbook.data,
+              builder: (BuildContext context, var _, Widget? child) {
+                switch (LbLogbook.data.value) {
+                  case null:
+                    return Column(children: const [
+                      Flexible(
+                        child: ElevatedButton(
+                          onPressed: LbLogbook.refresh,
+                          child: Text('Refresh'),
+                        ),
+                      )
+                    ]);
+                  default:
                     return RefreshIndicator(
                         onRefresh: scrollUpRefresh,
                         child: Dismissible(
@@ -224,17 +216,12 @@ class _LbLogbookState extends State<LbLogbook> {
                           },
                           onDismissed: (DismissDirection direction) {
                             updateCurrentPage(direction);
-                            refresh();
+                            LbLogbook.refresh();
                           },
                           key: ValueKey(LbLogbook.currentPage),
                           //This is the actual log book list
-                          child: LbReader(snapshot.data as List),
+                          child: LbReader(LbLogbook.data.value!),
                         ));
-
-                  default:
-                    return Column(children: const [
-                      Flexible(child: CircularProgressIndicator())
-                    ]);
                 }
               },
             ),

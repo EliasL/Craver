@@ -32,7 +32,7 @@ enum PrometheusCommands {
   onlyUp,
 }
 
-Future<dynamic> getPrometheus(PrometheusCommands command) async {
+Future<List?> getPrometheus(PrometheusCommands command) async {
   String urlString;
   switch (command) {
     case PrometheusCommands.up:
@@ -54,7 +54,7 @@ Future<dynamic> getPrometheus(PrometheusCommands command) async {
   if (response == null) {
     return null;
   }
-  return jsonDecode(response.body)['data']['result'];
+  return jsonDecode(response.body)['data']['result'] as List;
 }
 
 Future<dynamic> getControlPanelStates(List<String> states,

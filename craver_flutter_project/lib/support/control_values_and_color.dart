@@ -4,7 +4,7 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import '../support/settings.dart' as settings;
-import 'dart:developer' as dev;
+//import 'dart:developer' as dev;
 
 class ControlValue {
   // AControlValue has a long name like: "lbWeb/LHCb|LHCb_fsm_currentState",
@@ -195,7 +195,7 @@ class ControlValues {
       type: double);
 
   static final outputRate = ControlValue(
-      dimPath: "lbWeb/LHCb_RunInfo_HLTFarm_hltRate", //Mean
+      dimPath: "lbWeb/LHCb_RunInfo_HLTFarm_hltRate", //Mean?
       shortName: 'hltRate',
       longName: 'Output rate',
       type: double);
@@ -282,7 +282,7 @@ class ColorScheme {
   // Color that the system is in while we are NOT RUNNING, but could start
   final Color ready;
   // "YELLOW"-ish
-  // Intermediate points between off/unkown and ready (or running and ready)
+  // Intermediate points between off/unknown and ready (or running and ready)
   final Color notReady;
   // "RED"-ish
   // Abnomal situation
@@ -291,7 +291,7 @@ class ColorScheme {
   // Off
   final Color off;
   // "Orange"-ish
-  // Unkown
+  // Unknown
   final Color unknown;
 
   const ColorScheme({
@@ -323,6 +323,25 @@ ColorScheme craverColorScheme = ColorScheme(
     off: Colors.blueGrey,
     unknown: Colors.purple);
 
+enum RunStates {
+  RUNNING,
+  READY,
+  ACTIVE,
+  RAMPING_READY,
+  CONFIGURING,
+  ALLOCATING,
+  STOPPING,
+  NOT_ALLOCATED,
+  NOT_READY,
+  ERROR,
+  EMERGENCY_OFF,
+  OFF,
+  UNKNOWN,
+}
+
+List<String> allRunstates = List<String>.generate(
+    RunStates.values.length, (index) => RunStates.values[index].name);
+/*
 class RunStates {
   static const String RUNNING = "RUNNING";
   static const String READY = "READY";
@@ -336,24 +355,24 @@ class RunStates {
   static const String ERROR = "ERROR";
   static const String EMERGENCY_OFF = "EMERGENCY_OFF";
   static const String OFF = "OFF";
-  static const String UNKOWN = "UNKNOWN";
-}
+  static const String UNKNOWN = "UNKNOWN";
+}*/
 
 Map<String, Color> defaultColorStateMap(ColorScheme colorScheme) {
   return {
-    RunStates.RUNNING: colorScheme.running,
-    RunStates.READY: colorScheme.ready,
-    RunStates.ACTIVE: colorScheme.ready,
-    RunStates.RAMPING_READY: colorScheme.notReady,
-    RunStates.CONFIGURING: colorScheme.notReady,
-    RunStates.ALLOCATING: colorScheme.notReady,
-    RunStates.STOPPING: colorScheme.notReady,
-    RunStates.NOT_ALLOCATED: colorScheme.notReady,
-    RunStates.NOT_READY: colorScheme.notReady,
-    RunStates.ERROR: colorScheme.abnomal,
-    RunStates.EMERGENCY_OFF: colorScheme.abnomal,
-    RunStates.OFF: colorScheme.off,
-    RunStates.UNKOWN: colorScheme.unknown,
+    RunStates.RUNNING.name: colorScheme.running,
+    RunStates.READY.name: colorScheme.ready,
+    RunStates.ACTIVE.name: colorScheme.ready,
+    RunStates.RAMPING_READY.name: colorScheme.notReady,
+    RunStates.CONFIGURING.name: colorScheme.notReady,
+    RunStates.ALLOCATING.name: colorScheme.notReady,
+    RunStates.STOPPING.name: colorScheme.notReady,
+    RunStates.NOT_ALLOCATED.name: colorScheme.notReady,
+    RunStates.NOT_READY.name: colorScheme.notReady,
+    RunStates.ERROR.name: colorScheme.abnomal,
+    RunStates.EMERGENCY_OFF.name: colorScheme.abnomal,
+    RunStates.OFF.name: colorScheme.off,
+    RunStates.UNKNOWN.name: colorScheme.unknown,
   };
 }
 

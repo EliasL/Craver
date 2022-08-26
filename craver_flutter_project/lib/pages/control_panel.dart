@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+//import 'package:craver/support/alert.dart';
 import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
 import '../support/control_values_and_color.dart';
@@ -41,6 +42,17 @@ class ControlPanel extends StatelessWidget {
     Colors.orange
   ];
   const ControlPanel({Key? key}) : super(key: key);
+
+  static Timer? timer;
+
+  static void startTimer() {
+    timer = Timer.periodic(
+        const Duration(milliseconds: 700), (Timer t) => updateStates());
+  }
+
+  static void stopTimer() {
+    timer?.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -206,16 +218,6 @@ class StatusPage extends StatefulWidget {
 }
 
 class _StatusPageState extends State<StatusPage> {
-  Timer? timer;
-
-  @override
-  void initState() {
-    super.initState();
-
-    timer = Timer.periodic(
-        const Duration(milliseconds: 700), (Timer t) => updateStates());
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
