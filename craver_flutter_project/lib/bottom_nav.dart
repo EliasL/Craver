@@ -18,7 +18,7 @@ class BottomNav extends StatefulWidget {
 enum PAGES { controllPanel, lbLogbook, instances } //, alarms }
 
 class _BottomNavState extends State<BottomNav> {
-  int _selectedIndex = 0;
+  PAGES selectedPage = PAGES.controllPanel;
 
   //The order in this list MUST match the order in PAGES
   static final List<Widget> _pages = <Widget>[
@@ -29,17 +29,33 @@ class _BottomNavState extends State<BottomNav> {
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      //_pages[index];
-      switch (PAGES.values[index]) {
-        case PAGES.lbLogbook:
-          LbLogbook.updateTitle();
-          break;
-        default:
-          settings.title.value = settings.defaultTitle;
-      }
-    });
+    selectedPage = PAGES.values[index];
+    //_pages[index];
+    settings.title.value = settings.defaultTitle;
+    switch (selectedPage) {
+      case PAGES.controllPanel:
+        ControlPanel.startTimer();
+        break;
+      case PAGES.instances:
+        ControlPanel.stopTimer();
+        Instances.refresh();
+        break;
+      case PAGES.lbLogbook:
+        ControlPanel.stopTimer();
+        LbLogbook.updateTitle(); //Overwrite default title
+        LbLogbook.refresh();
+        break;
+      default:
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (selectedPage == PAGES.controllPanel) {
+      ControlPanel.startTimer();
+    }
   }
 
   @override
@@ -87,7 +103,7 @@ class _BottomNavState extends State<BottomNav> {
         elevation: 0,
       ),
       body: IndexedStack(
-        index: _selectedIndex,
+        index: selectedPage.index,
         children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -113,7 +129,7 @@ class _BottomNavState extends State<BottomNav> {
           //   label: 'Alarms',
           // ),
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: selectedPage.index,
         onTap: _onItemTapped,
       ),
     );

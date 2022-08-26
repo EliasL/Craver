@@ -4,27 +4,15 @@ import '../support/data_getter.dart';
 class Instances extends StatefulWidget {
   const Instances({Key? key}) : super(key: key);
 
-  @override
-  State<Instances> createState() => _InstancesState();
-}
+  static ValueNotifier<List?> data = ValueNotifier(null);
 
-class _InstancesState extends State<Instances> {
-  Future? data;
+  static String dropdownValue = 'Off';
 
-  String dropdownValue = 'Off';
-
-  @override
-  void initState() {
-    data = _getData();
-    super.initState();
+  static void refresh() async {
+    data.value = await _getData();
   }
 
-  void refresh() async {
-    data = _getData();
-    setState(() {});
-  }
-
-  _getData() async {
+  static Future<List?> _getData() async {
     switch (dropdownValue) {
       case 'All':
         return await getPrometheus(PrometheusCommands.up);
@@ -38,6 +26,11 @@ class _InstancesState extends State<Instances> {
   }
 
   @override
+  State<Instances> createState() => _InstancesState();
+}
+
+class _InstancesState extends State<Instances> {
+  @override
   Widget build(BuildContext context) {
     return Center(
       // Center is a layout widget. It takes a single child and positions it
@@ -48,20 +41,20 @@ class _InstancesState extends State<Instances> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(
-                onPressed: refresh,
-                child: const Text('Refresh'),
+              const ElevatedButton(
+                onPressed: Instances.refresh,
+                child: Text('Refresh'),
               ),
               DropdownButton<String>(
-                value: dropdownValue,
+                value: Instances.dropdownValue,
                 icon: const Icon(Icons.arrow_downward),
                 elevation: 16,
                 underline: Container(
                   height: 2,
                 ),
                 onChanged: (String? newValue) {
-                  dropdownValue = newValue!;
-                  refresh();
+                  Instances.dropdownValue = newValue!;
+                  Instances.refresh();
                 },
                 items: <String>['All', 'On', 'Off']
                     .map<DropdownMenuItem<String>>((String value) {
@@ -75,19 +68,19 @@ class _InstancesState extends State<Instances> {
           ),
           const SizedBox(height: 10),
           Expanded(
-            child: FutureBuilder(
-              future: data,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.done:
-                    return InstanceColumn(
-                      data: snapshot.data,
-                    );
-
-                  default:
+            child: ValueListenableBuilder(
+              valueListenable: Instances.data,
+              builder: (BuildContext context, List? value, Widget? child) {
+                switch (value) {
+                  case null:
                     return Column(children: const [
                       Flexible(child: CircularProgressIndicator())
                     ]);
+
+                  default:
+                    return InstanceColumn(
+                      data: value,
+                    );
                 }
               },
             ),
@@ -100,19 +93,24 @@ class _InstancesState extends State<Instances> {
 
 class InstanceColumn extends StatelessWidget {
   const InstanceColumn({Key? key, this.data}) : super(key: key);
-  final dynamic data;
+  final List? data;
 
   @override
   Widget build(BuildContext context) {
+    if (data == null) {
+      return Column(children: const [
+        Flexible(child: CircularProgressIndicator()),
+      ]);
+    }
     return ListView.builder(
       // Let the ListView know how many items it needs to build.
       controller: ScrollController(),
-      itemCount: data.length,
+      itemCount: data!.length,
       shrinkWrap: true,
       // Provide a builder function. This is where the magic happens.
       // Convert each item into a widget based on the type of item it is.
       itemBuilder: (context, index) {
-        final item = data[index];
+        final item = data![index];
         String instanceName = item['metric']['instance'];
         String value = item['value'][1];
         String date = DateTime.fromMillisecondsSinceEpoch(

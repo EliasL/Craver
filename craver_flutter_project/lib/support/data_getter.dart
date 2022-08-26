@@ -6,9 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'alert.dart';
 
-//const server = 'http://lbcraver.cern.ch:80';
+const server = 'http://lbcraver.cern.ch:80';
 //Local server for debuging
-const server = 'http://10.128.124.104:8080';
+//const server = 'http://10.128.124.104:8080';
 
 final Map<String, String> httpHeaders = {
   HttpHeaders.contentTypeHeader: "application/json",
@@ -32,7 +32,7 @@ enum PrometheusCommands {
   onlyUp,
 }
 
-Future<dynamic> getPrometheus(PrometheusCommands command) async {
+Future<List?> getPrometheus(PrometheusCommands command) async {
   String urlString;
   switch (command) {
     case PrometheusCommands.up:
@@ -54,7 +54,7 @@ Future<dynamic> getPrometheus(PrometheusCommands command) async {
   if (response == null) {
     return null;
   }
-  return jsonDecode(response.body)['data']['result'];
+  return jsonDecode(response.body)['data']['result'] as List;
 }
 
 Future<dynamic> getControlPanelStates(List<String> states,
