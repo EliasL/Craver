@@ -1,7 +1,4 @@
 from ast import arg
-from tables import Tables
-from dbInterface import Database
-from config import client_user
 from lblogbookInterface import LbLogbook
 from prometheusInterface import Prometheus
 from controlPanelInterface import ControlPanel
@@ -9,6 +6,7 @@ import werkzeug.exceptions as ex
 from flask import Flask, request, redirect, abort
 import json
 import datetime
+import threading
 
 # These are all the versions of the app that this server is 
 # compatible with. It is a comma separated value. Eg. '0.6,1.2,0.01'
@@ -19,6 +17,17 @@ P = Prometheus()
 L = LbLogbook()
 C = ControlPanel()
 
+
+def cache_clearing(clear_counter):
+    # We clear the cache for Prometheus and the logbook
+    # only every 20 second, where as the control panel is
+    # updated every second.
+    if clear_counter % 20 == 0:
+        P.get.cache_clear()
+        L.get.cache_clear()
+    C.get.cache_clear()
+    clear_counter +=1
+    threading.Timer(1, cache_clearing, args=((clear_counter,))).start()
 
 def badArgs(*args):
     return None in args
@@ -51,7 +60,7 @@ def get_prometheus_data():
     if badArgs(command):
         abort(400)
 
-    return P.get(command, args, time)
+    return P.get(command, time)
 
 @app.route("/lblogbook", methods = ['GET'])
 def get_lblogbook_data():
@@ -78,5 +87,5 @@ def get_compatibale_versions():
 
 if __name__ == '__main__':
     from waitress import serve
-    #app.run(host="0.0.0.0", port=8080)
+    cache_clearing(0)
     serve(app, host="0.0.0.0", port=8080, threads=8, connection_limit=1000, backlog=4000)

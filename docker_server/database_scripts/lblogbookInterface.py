@@ -2,13 +2,23 @@ from encodings import utf_8
 import urllib.request
 import xml.etree.ElementTree as ET
 import re
+import functools
+import os
+
 
 class LbLogbook:
     def __init__(self) -> None:
-        pass
+        if 'LBLOGBOOK_SOURCE' in os.environ:
+            self.lblogbook_source = os.environ['LBLOGBOOK_SOURCE']
+        else:
+            self.lblogbook_source = 'http://10.128.97.87:8080'
 
+    @functools.lru_cache(maxsize = None)
     def get(self, page):
-        url = f'http://10.128.97.87:8080/Shift/page{page}/elog.rdf'
+        # Checks that all characters in page are numbers
+        if(sum([char in '0123456789' for char in page]) != len(page) or len(page)>3):
+            return 'Not a number!'
+        url = f'{self.lblogbook_source}/Shift/page{page}/elog.rdf'
         # Perhaps this is silly, but I just prefer utf-8
         # There is some performance to be gained here, but I just want everyting
         # to be utf. TODO?

@@ -1,5 +1,7 @@
 import urllib.request
 import json
+import functools
+import os
 
 allowed_states =   [
     'lbWeb/LHCb|LHCb_fsm_currentState',
@@ -39,8 +41,12 @@ assert ',' not in ''.join(allowed_states), "We use ',' to separate states. Talk 
 
 class ControlPanel:
     def __init__(self) -> None:
-        pass
+        if 'CONTROL_PANEL_SOURCE' in os.environ:
+            self.control_panel_source = os.environ['CONTROL_PANEL_SOURCE']
+        else:
+            self.control_panel_source = 'http://10.128.97.112:8181'
 
+    @functools.lru_cache(maxsize = None)
     def get(self, states):
         '''
         Connects to a script using DIM to query various values
@@ -49,13 +55,12 @@ class ControlPanel:
         Example 
         get('lbWeb/LHCb_RunInfo_general_partId,lbWeb/LHCb|LHCb_DAQ|LHCb_DAQ_fsm_currentState')
         '''
-
         #TODO If the server is slow, perhaps this can be optimized
         for state in states.split(','):
             if state not in allowed_states:
                 return f'Not allowed state: {state}'
 
-        url = f"http://10.128.97.112:8181/dims?query={states}"
+        url = f"{self.control_panel_source}/dims?query={states}"
         contents = urllib.request.urlopen(url)
         contents = json.load(contents)
         return contents

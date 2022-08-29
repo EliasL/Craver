@@ -1,11 +1,18 @@
 import urllib.request
 import json
+import functools
+import time
+import os
 
 class Prometheus:
     def __init__(self) -> None:
-        pass
-
-    def get(self, command, additional_args=None, time=None):
+        if 'PROMETHEUS_SOURCE' in os.environ:
+            self.prometheus_source = os.environ['PROMETHEUS_SOURCE']
+        else:
+            self.prometheus_source = 'http://prometheus02.lbdaq.cern.ch:9090'
+  
+    @functools.lru_cache(maxsize = None)
+    def get(self, command, time=None):
         '''
         time is given in seconds
 
@@ -17,11 +24,13 @@ class Prometheus:
         allowed_commands = ['up', 'up!=1', 'up==1']
         if command not in allowed_commands:
             return {}
-
-        additional_args = self._format_additional_args(additional_args)
-        url = f"http://prometheus02.lbdaq.cern.ch:9090/api/v1/query?query={command}{additional_args}"
-        if time:
-            url += f"[{time}s]"
+        # Additional args is a dict. Cache doesn't like dicts because they are not
+        # hashable, so the simplest solution is to not have additional args
+        #additional_args = self._format_additional_args(additional_args)
+        url = f"{self.prometheus_source}/api/v1/query?query={command}"
+        # time isn't used, so it is commented out
+        #if time:
+        #    url += f"[{time}s]"
         contents = urllib.request.urlopen(url)
         contents = json.load(contents)
         return contents
