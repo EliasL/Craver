@@ -5,7 +5,7 @@ library craver.globals;
 import 'package:flutter/cupertino.dart';
 
 const bool DEVELOPMENT = false;
-const String VERSION = '0.6';
+const String VERSION = '1.0';
 const String FULLVERSION = '$VERSION${DEVELOPMENT ? '-dev' : ''}';
 const String SUPPORT_EMAIL = 'lbonsupp@cern.ch';
 
@@ -48,3 +48,6 @@ Map<String, bool> showMessage = {};
 /// longer be the relative context because of the async. But so long as we
 /// always use this context, it should be fine i think.
 BuildContext? messageContext;
+
+String userName = 'Not logged in';
+String idToken = '';

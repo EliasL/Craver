@@ -55,6 +55,7 @@ class _InstancesState extends State<Instances> {
                 onChanged: (String? newValue) {
                   Instances.dropdownValue = newValue!;
                   Instances.refresh();
+                  setState(() {});
                 },
                 items: <String>['All', 'On', 'Off']
                     .map<DropdownMenuItem<String>>((String value) {
@@ -129,6 +130,8 @@ class InstanceColumn extends StatelessWidget {
         for (String badString in badStrings) {
           niceInstanceName = niceInstanceName.replaceAll(badString, '');
         }
+        // Remove port (Assume only one ':')
+        niceInstanceName = niceInstanceName.split(':')[0];
 
         //Choose what icon to use depending on server status
         if (value == '1') {

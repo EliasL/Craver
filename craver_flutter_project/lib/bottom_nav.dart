@@ -1,3 +1,4 @@
+import 'package:craver/authentication.dart';
 import 'package:flutter/material.dart';
 
 import 'pages/control_panel.dart';
@@ -7,6 +8,7 @@ import 'pages/instances.dart';
 import 'pages/preferences.dart';
 import 'support/settings.dart' as settings;
 import 'support/alert.dart';
+import 'package:is_lock_screen/is_lock_screen.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({Key? key}) : super(key: key);
@@ -17,7 +19,7 @@ class BottomNav extends StatefulWidget {
 
 enum PAGES { controllPanel, lbLogbook, instances } //, alarms }
 
-class _BottomNavState extends State<BottomNav> {
+class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
   PAGES selectedPage = PAGES.controllPanel;
 
   //The order in this list MUST match the order in PAGES
@@ -53,8 +55,27 @@ class _BottomNavState extends State<BottomNav> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (selectedPage == PAGES.controllPanel) {
       ControlPanel.startTimer();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.inactive) {
+      ControlPanel.stopTimer();
+    } else if (state == AppLifecycleState.resumed) {
+      if (selectedPage == PAGES.controllPanel) {
+        ControlPanel.startTimer();
+      }
     }
   }
 

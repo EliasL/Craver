@@ -2,6 +2,7 @@ import '../support/control_values_and_color.dart';
 import 'package:flutter/material.dart';
 import '../support/settings.dart' as settings;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../authentication.dart';
 
 void setPreference(String key, var value) async {
   assert([String, int].contains(value.runtimeType));
@@ -115,6 +116,20 @@ class _PreferencesState extends State<Preferences> {
                 ),
               ],
             ),
+            ListTile(
+              title: Center(child: Text('Logged in as: ${settings.userName}')),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  Authentication.logOut = true;
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Authentication()),
+                  );
+                },
+                child: const Text('Log out'))
           ],
         ));
   }
