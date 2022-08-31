@@ -5,7 +5,7 @@ library craver.globals;
 import 'package:flutter/cupertino.dart';
 
 const bool DEVELOPMENT = false;
-const String VERSION = '0.7';
+const String VERSION = '1.0';
 const String FULLVERSION = '$VERSION${DEVELOPMENT ? '-dev' : ''}';
 const String SUPPORT_EMAIL = 'lbonsupp@cern.ch';
 
