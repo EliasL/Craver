@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav.dart';
+import 'authentication.dart';
 //import 'pages/alarms.dart';
 import 'support/settings.dart' as settings;
 import 'pages/preferences.dart';
@@ -51,7 +52,7 @@ class _MyAppState extends State<MyApp> {
               brightness: theme,
             ),
             debugShowCheckedModeBanner: false,
-            home: const BottomNav(),
+            home: const Authentication(),
           );
         });
   }

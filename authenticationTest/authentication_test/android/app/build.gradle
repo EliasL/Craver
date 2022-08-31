@@ -47,7 +47,7 @@ android {
         applicationId "com.example.authentication_test"
         //https://stackoverflow.com/questions/52177668/android-build-error-androidmanifest-xml-requires-a-placeholder-substitution
         // place correct redirectScheme~
-        manifestPlaceholders += [appAuthRedirectScheme: 'com.redirectScheme.comm']
+        manifestPlaceholders += [appAuthRedirectScheme: 'ch.cern.auth0.craver']
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 18

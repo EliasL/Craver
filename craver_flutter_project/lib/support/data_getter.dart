@@ -5,16 +5,22 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'alert.dart';
+import 'settings.dart' as settings;
 
 const server = 'http://lbcraver.cern.ch:80';
 //Local server for debuging
 //const server = 'http://10.128.124.104:8080';
 
-final Map<String, String> httpHeaders = {
-  HttpHeaders.contentTypeHeader: "application/json",
-  "Connection": "keep-alive",
-  "Keep-Alive": "timeout=5, max=1000"
-};
+// We use a getter just so that we don't update the token
+// without updating the header. Should maybe only update
+// when the token updates, but it's almost friday.
+Map<String, String> get httpHeaders => {
+      HttpHeaders.contentTypeHeader: "application/json",
+      "Connection": "keep-alive",
+      "Keep-Alive": "timeout=5, max=1000",
+      //Don't ask me about the Bearer
+      "Authorization": "Bearer ${settings.idToken}",
+    };
 
 Future<String?> getServerVersions() async {
   const urlString = '$server/version';

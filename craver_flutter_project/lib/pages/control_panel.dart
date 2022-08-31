@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:ui' as ui;
-//import 'package:craver/support/alert.dart';
 import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
 import '../support/control_values_and_color.dart';
