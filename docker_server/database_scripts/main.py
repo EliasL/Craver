@@ -7,15 +7,36 @@ from flask import Flask, request, redirect, abort
 import json
 import datetime
 import threading
+from auth import oidc_validate
+import config as c
 
 # These are all the versions of the app that this server is 
 # compatible with. It is a comma separated value. Eg. '0.6,1.2,0.01'
-SERVER_VERSIONS = '0.6' 
+SERVER_VERSIONS = '1.0' 
 
 app = Flask(__name__)
+app.config.update(
+    DEBUG = c.DEBUG,
+
+    CSRF_ENABLED = c.CSRF_ENABLED,
+
+    # Use a secure, unique and absolutely secret key for
+    # signing the data.
+    CSRF_SESSION_KEY = c.CSRF_SESSION_KEY,
+
+    # Secret key for signing cookies
+    SECRET_KEY = c.SECRET_KEY,
+
+    # OIDC configuration
+    OIDC_CLIENT_ID = c.OIDC_CLIENT_ID,
+    OIDC_JWKS_URL = c.OIDC_JWKS_URL,
+    OIDC_ISSUER = c.OIDC_ISSUER,
+)
+
 P = Prometheus()
 L = LbLogbook()
 C = ControlPanel()
+
 
 
 def cache_clearing(clear_counter):
@@ -44,6 +65,7 @@ def home_page():
 # Example: /prometheus_query?command=up&instance=aseb03.lbdaq.cern.ch&time=4
 # Example: /prometheus_query?command=up
 @app.route("/prometheus_query", methods = ['GET'])
+@oidc_validate
 def get_prometheus_data():
     # Convert arguments to dict
     args = request.args.to_dict()
@@ -63,6 +85,7 @@ def get_prometheus_data():
     return P.get(command, time)
 
 @app.route("/lblogbook", methods = ['GET'])
+@oidc_validate
 def get_lblogbook_data():
     
     args = request.args.to_dict()
@@ -72,6 +95,7 @@ def get_lblogbook_data():
     return L.get(page)
 
 @app.route("/control_panel", methods = ['GET'])
+@oidc_validate
 def get_control_panel_data():
     
     args = request.args.to_dict()
