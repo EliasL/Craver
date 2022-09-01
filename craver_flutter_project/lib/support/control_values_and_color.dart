@@ -78,7 +78,7 @@ class ControlValues {
       //UNUSED
       dimPath: "lbWeb/LHCb_DAQ|TDET_DAQ|TDET_DAQ_fsm_currentState",
       shortName: 'TDET',
-      longName: '');
+      longName: 'Test Detector');
 
   static final DAQ_UTA_State = ControlValue(
       //UNUSED
