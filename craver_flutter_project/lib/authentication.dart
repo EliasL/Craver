@@ -10,7 +10,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -69,6 +69,11 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // When testing, we need a way to get past the login
+    // The server api is still authentication protected, so this
+    // is not a security issue.
+    bool skipLogin = Platform.environment.containsKey('FLUTTER_TEST');
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -82,6 +87,17 @@ class Login extends StatelessWidget {
           loginError,
           style: TextStyle(color: Colors.red[800]),
         ),
+        Visibility(
+            visible: skipLogin,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const BottomNav()),
+                );
+              },
+              child: const Text('Sneak in'),
+            ))
       ],
     );
   }
@@ -115,6 +131,12 @@ class _AuthenticationState extends State<Authentication> {
   void startTimer() {
     timer = Timer.periodic(
         const Duration(minutes: 15), (Timer t) => refreshToken());
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override

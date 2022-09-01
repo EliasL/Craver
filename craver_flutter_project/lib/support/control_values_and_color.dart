@@ -341,22 +341,6 @@ enum RunStates {
 
 List<String> allRunstates = List<String>.generate(
     RunStates.values.length, (index) => RunStates.values[index].name);
-/*
-class RunStates {
-  static const String RUNNING = "RUNNING";
-  static const String READY = "READY";
-  static const String ACTIVE = "ACTIVE";
-  static const String RAMPING_READY = "RAMPING_READY";
-  static const String CONFIGURING = "CONFIGURING";
-  static const String ALLOCATING = "ALLOCATING";
-  static const String STOPPING = "STOPPING";
-  static const String NOT_ALLOCATED = "NOT_ALLOCATED";
-  static const String NOT_READY = "NOT_READY";
-  static const String ERROR = "ERROR";
-  static const String EMERGENCY_OFF = "EMERGENCY_OFF";
-  static const String OFF = "OFF";
-  static const String UNKNOWN = "UNKNOWN";
-}*/
 
 Map<String, Color> defaultColorStateMap(ColorScheme colorScheme) {
   return {

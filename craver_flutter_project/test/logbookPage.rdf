@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<html><head>
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+<title>ELOG Shift</title>
+<link rel="stylesheet" type="text/css" href="elog.css">
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="icon" href="favicon.png" type="image/png" />
+<link rel="alternate" type="application/rss+xml" title="ELOG Shift" href="elog.rdf" />
+</head>
+<body>
+<form name="form1" method="GET" action=".">
+
+<table class="frame" cellpadding="0" cellspacing="0"><!-- show_standard_title -->
+
+<tr><td><table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td class="title1">&nbsp;&nbsp;Shift, Page 1 of 413&nbsp;</td>
+<td class="title2" align=center>Not logged in</td>
+<td class="title3"><img border=0 src="lhcblogo.gif" width=50 alt="Logo"></td>
+</tr></table></td></tr>
+
+<tr><td class="menuframe"><span class="menu1">
+&nbsp;<a href="?cmd=Find">Find</a>&nbsp;|
+&nbsp;<a href="?cmd=Login">Login</a>&nbsp;|
+&nbsp;<a href="?cmd=Help">Help</a>&nbsp;
+</span></td></tr>
+
+<tr><td class="menuframe">
+<table width="100%" border=0 cellpadding="0" cellspacing="0">
+<tr>
+<td class="menu2a">
+&nbsp;<a href="?mode=full">Full</a>&nbsp;|&nbsp;Summary&nbsp;|&nbsp;<a href="?mode=threaded">Threaded</a>&nbsp;</td>
+<td class="menu2b">
+<a href="?new_entries=1"><img align="middle" border="0" src="new_entry.png" alt="Show only new entries" title="Show only new entries"></a>&nbsp;&nbsp;<select title="Select period" name=last onChange="document.form1.submit()">
+<option value="_all_">-- All entries --
+<option  value=1>Last day
+<option  value=3>Last 3 Days
+<option  value=7>Last week
+<option  value=31>Last month
+<option  value=92>Last 3 Months
+<option  value=182>Last 6 Months
+<option  value=364>Last Year
+</select>
+<input onClick="this.value='';" title="Enter Run" type=text onChange="document.form1.submit()" name="Run" value="-- Run --">
+<select title="Select System" name="System" onChange="document.form1.submit()">
+<option value="_all_">-- System --
+<option value="^LHCb$">LHCb
+<option value="^Shift Summary$">Shift Summary
+<option value="^Velo$">Velo
+<option value="^RICH1$">RICH1
+<option value="^UT$">UT
+<option value="^RICH2$">RICH2
+<option value="^RICH$">RICH
+<option value="^SCIFI$">SCIFI
+<option value="^CALO$">CALO
+<option value="^ECAL$">ECAL
+<option value="^HCAL$">HCAL
+<option value="^MUON$">MUON
+<option value="^PLUME$">PLUME
+<option value="^HLT1$">HLT1
+<option value="^HLT2$">HLT2
+<option value="^TFC$">TFC
+<option value="^Magnet$">Magnet
+<option value="^LHC$">LHC
+<option value="^DSS$">DSS
+<option value="^Monitoring$">Monitoring
+<option value="^Access$">Access
+<option value="^ONLINE$">ONLINE
+<option value="^Shift Crew$">Shift Crew
+<option value="^ALIGNMENT$">ALIGNMENT
+<option value="^CALIBRATION$">CALIBRATION
+</select> 
+<input onClick="this.value='';" title="Enter Author" type=text onChange="document.form1.submit()" name="Author" value="-- Author --">
+<noscript>
+<input type=submit value="Search">
+</noscript>
+&nbsp;<b>8243 Entries</b>&nbsp;</td></tr></table></td></tr>
+
+<tr><td class="menuframe"><span class="menu3">
+Goto page 
+1, 
+<a href="page2">2</a>, 
+<a href="page3">3</a>&nbsp;...&nbsp;<a href="page411">411</a>, 
+<a href="page412">412</a>, 
+<a href="page413">413</a>&nbsp;&nbsp;
+<a href="page2">Next</a>&nbsp;&nbsp;</span></td></tr>
+<tr><td><table class="listframe" width="100%" cellspacing=0>
+<tr>
+<th  class="listtitle"><a href="page1/elog.rdf?sort=ID">ID</a></th>
+<th  class="listtitle"><a href="page1/elog.rdf?sort=Date">Date</a></th>
+<th  class="listtitle"><a href="page1/elog.rdf?sort=Run">Run</a></th>
+<th  class="listtitle"><a href="page1/elog.rdf?sort=System">System</a></th>
+<th  class="listtitle"><a href="page1/elog.rdf?sort=Author">Author</a></th>
+<th class="listtitle2">Text</th>
+<th class="listtitle3"><img src="attachment.png" alt="Attachments" title="Attachments"</th></tr>
+
+<tr><td class="list2">
+<a href="../Shift/8258">&nbsp;&nbsp;8258&nbsp;&nbsp;</a>
+</td>
+
+<td class="list2" nowrap><a href="../Shift/8258">31-Aug-2022 23:08</a></td>
+<td class="list2">&nbsp;</td><td class="list2">HCAL</td><td class="list2">Yuri Guz</td><td class="summary">The&nbsp;HCAL&nbsp;calibration&nbsp;run&nbsp;with&nbsp;the&nbsp;Cs-137&nbsp;sources&nbsp;finished&nbsp;successfully.</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list1">
+<a href="../Shift/8257">&nbsp;&nbsp;8257&nbsp;&nbsp;</a>
+</td>
+
+<td class="list1" nowrap><a href="../Shift/8257">31-Aug-2022 22:30</a></td>
+<td class="list1">&nbsp;</td><td class="list1">Shift Crew</td><td class="list1">From Database</td><td class="summary">Shift&nbsp;Leader&nbsp;Miroslav&nbsp;Saur&nbsp;with&nbsp;Data&nbsp;Manager&nbsp;Jessy&nbsp;Daniel</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list2">
+<a href="../Shift/8256">&nbsp;&nbsp;8256&nbsp;&nbsp;</a>
+</td>
+
+<td class="list2" nowrap><a href="../Shift/8256">31-Aug-2022 21:02</a></td>
+<td class="list2">&nbsp;</td><td class="list2">Shift Summary</td><td class="list2">Klaas Padeken</td><td class="summary">LHC:
+<br>
+-&nbsp;NO&nbsp;beam&nbsp;until&nbsp;week&nbsp;37&nbsp;at&nbsp;least
+<br>
+LHCb:
+<br>
+-&nbsp;No&nbsp;real&nbsp;data&nbsp;the&nbsp;hole&nbsp;afternoon&nbsp;TDET,VELO,UT,SF,rich1,rich2MUON&nbsp;were&nbsp;in&nbsp;local&nbsp;all&nbsp;shift
+<br>
+-&nbsp;ECAL&nbsp;and&nbsp;HCAL&nbsp;had&nbsp;proboblems&nbsp;(https://lblogbook.cern.ch/Shift/8250)
+<br>
+-&nbsp;We&nbsp;could&nbsp;run&nbsp;for&nbsp;a&nbsp;(very)&nbsp;short&nbsp;while&nbsp;before&nbsp;we&nbsp;stopped&nbsp;for&nbsp;the&nbsp;HCAL&nbsp;source&nbsp;scan&nbsp;But&nbsp;a&nbsp;few&nbsp;TELL40&nbsp;had&nbsp;to&nbsp;be&nbsp;excluded&nbsp;(corresponding&nbsp;to&nbsp;ECTEL012).
+<br>
+-
+<br>
+To&nbsp;be&nbsp;done:
+<br>
+-&nbsp;Get&nbsp;information&nbsp;from&nbsp;HCAL&nbsp;how&nbsp;the&nbsp;source&nbsp;status&nbsp;is&nbsp;(no&nbsp;opening&nbsp;of&nbsp;the&nbsp;cavern&nbsp;before&nbsp;the&nbsp;source&nbsp;is&nbsp;secured)
+<br>
+-&nbsp;Follow&nbsp;up&nbsp;on&nbsp;issue&nbsp;from&nbsp;Monet&nbsp;(https://lblogbook.cern.ch/Shift/8255)
+<br>
+-&nbsp;Follow&nbsp;up&nbsp;with&nbsp;SF&nbsp;if&nbsp;they&nbsp;want&nbsp;to&nbsp;be&nbsp;in&nbsp;global,&nbsp;ECAL&nbsp;HCAL&nbsp;probably&nbsp;in&nbsp;global,&nbsp;Muon&nbsp;wanted&nbsp;to&nbsp;do&nbsp;a&nbsp;th&nbsp;scan.
+<br>
+-&nbsp;Continue&nbsp;to&nbsp;take&nbsp;cosmics&nbsp;(with&nbsp;whatever&nbsp;systems&nbsp;are&nbsp;in&nbsp;global)</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list1">
+<a href="../Shift/8255">&nbsp;&nbsp;8255&nbsp;&nbsp;</a>
+</td>
+
+<td class="list1" nowrap><a href="../Shift/8255">31-Aug-2022 20:57</a></td>
+<td class="list1">&nbsp;</td><td class="list1">LHCb</td><td class="list1">Bhagyashree Pagare </td><td class="summary">Monet&nbsp;crashed.&nbsp;Error&nbsp;log&nbsp;attached.</td>
+<td class="listatt">&nbsp;<a href="../Shift/220831_205513/monet_crash.txt" target="_blank"><img border="0" align="absmiddle" src="attachment.png" alt="monet_crash.txt" title="monet_crash.txt"></a>&nbsp;</td><tr><td class="list2">
+<a href="../Shift/8254">&nbsp;&nbsp;8254&nbsp;&nbsp;</a>
+</td>
+
+<td class="list2" nowrap><a href="../Shift/8254">31-Aug-2022 19:39</a></td>
+<td class="list2">&nbsp;</td><td class="list2">LHCb</td><td class="list2">wander baldini</td><td class="summary">Closed&nbsp;the&nbsp;PZ&nbsp;access&nbsp;due&nbsp;to&nbsp;the&nbsp;HCAL&nbsp;calibration&nbsp;run&nbsp;with&nbsp;137Cs&nbsp;source.&nbsp;&nbsp;</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list1">
+<a href="../Shift/8253">&nbsp;&nbsp;8253&nbsp;&nbsp;</a>
+</td>
+
+<td class="list1" nowrap><a href="../Shift/8253">31-Aug-2022 18:48</a></td>
+<td class="list1">&nbsp;</td><td class="list1">LHCb</td><td class="list1">Klaas Padeken</td><td class="summary">HCAL&nbsp;started&nbsp;source&nbsp;scan,&nbsp;so&nbsp;ECAL&nbsp;and&nbsp;HCAL&nbsp;are&nbsp;in&nbsp;local.&nbsp;Only&nbsp;Plume&nbsp;left&nbsp;in&nbsp;global.</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list2">
+<a href="../Shift/8252">&nbsp;&nbsp;8252&nbsp;&nbsp;</a>
+</td>
+
+<td class="list2" nowrap><a href="../Shift/8252">31-Aug-2022 18:47</a></td>
+<td class="list2">&nbsp;</td><td class="list2">LHCb</td><td class="list2">Klaas Padeken</td><td class="summary">Try&nbsp;to&nbsp;run&nbsp;with&nbsp;CALO&nbsp;again,
+<br>
+
+<br>
+Problems&nbsp;from&nbsp;ecal&nbsp;persist
+<br>
+problematic&nbsp;Tell40&nbsp;is&nbsp;ECTEL012&nbsp;</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list1">
+<a href="../Shift/8251">&nbsp;&nbsp;8251&nbsp;&nbsp;</a>
+</td>
+
+<td class="list1" nowrap><a href="../Shift/8251">31-Aug-2022 17:18</a></td>
+<td class="list1">244407</td><td class="list1">LHCb</td><td class="list1">Klaas Padeken</td><td class="summary">While&nbsp;the&nbsp;calos&nbsp;are&nbsp;investigated,&nbsp;we&nbsp;are&nbsp;starting&nbsp;a&nbsp;run&nbsp;with&nbsp;Plume&nbsp;only,&nbsp;to&nbsp;check&nbsp;if&nbsp;the&nbsp;high&nbsp;rates&nbsp;are&nbsp;back.</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list2">
+<a href="../Shift/8250">&nbsp;&nbsp;8250&nbsp;&nbsp;</a>
+</td>
+
+<td class="list2" nowrap><a href="../Shift/8250">31-Aug-2022 17:02</a></td>
+<td class="list2">&nbsp;</td><td class="list2">LHCb</td><td class="list2">Klaas Padeken</td><td class="summary">HCAL&nbsp;started&nbsp;to&nbsp;ramp&nbsp;HV&nbsp;--&gt;&nbsp;Daq&nbsp;went&nbsp;to&nbsp;error
+<br>
+Meanwhile&nbsp;the&nbsp;ECAL&nbsp;finished&nbsp;the&nbsp;investigation&nbsp;with&nbsp;no&nbsp;conclusions
+<br>
+&nbsp;&nbsp;--&gt;CAECTEL012_0,CAECTEL012_1&nbsp;excluded&nbsp;from&nbsp;FSM
+<br>
+ECAL&nbsp;piquet&nbsp;informed&nbsp;Expert&nbsp;to&nbsp;investigate&nbsp;Error
+<br>
+
+<br>
+While&nbsp;restarting&nbsp;for&nbsp;HCAL&nbsp;and&nbsp;ECAL&nbsp;a&nbsp;few&nbsp;3CU&nbsp;went&nbsp;into&nbsp;error
+<br>
+e.g.&nbsp;HC15_3CU&nbsp;or&nbsp;EC07_3CU
+<br>
+
+<br>
+logbook&nbsp;was&nbsp;stuck&nbsp;also&nbsp;needed&nbsp;a&nbsp;restart</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list1">
+<a href="../Shift/8249">&nbsp;&nbsp;8249&nbsp;&nbsp;</a>
+</td>
+
+<td class="list1" nowrap><a href="../Shift/8249">31-Aug-2022 16:20</a></td>
+<td class="list1">244407</td><td class="list1">LHCb</td><td class="list1">Klaas Padeken</td><td class="summary">ECAL&nbsp;went&nbsp;into&nbsp;error,&nbsp;expert&nbsp;is&nbsp;looking&nbsp;into&nbsp;this
+<br>
+--&gt;&nbsp;ECAL&nbsp;excluded
+<br>
+Restarted&nbsp;Run,&nbsp;this&nbsp;time&nbsp;EB&nbsp;started&nbsp;without&nbsp;problems</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list2">
+<a href="../Shift/8248">&nbsp;&nbsp;8248&nbsp;&nbsp;</a>
+</td>
+
+<td class="list2" nowrap><a href="../Shift/8248">31-Aug-2022 15:31</a></td>
+<td class="list2">&nbsp;</td><td class="list2">LHCb</td><td class="list2">Klaas Padeken</td><td class="summary">When&nbsp;we&nbsp;try&nbsp;to&nbsp;start&nbsp;a&nbsp;run&nbsp;the&nbsp;EB&nbsp;will&nbsp;not&nbsp;go&nbsp;from&nbsp;ready&nbsp;to&nbsp;Running.
+<br>
+The&nbsp;Expert&nbsp;is&nbsp;investigating.</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list1">
+<a href="../Shift/8247">&nbsp;&nbsp;8247&nbsp;&nbsp;</a>
+</td>
+
+<td class="list1" nowrap><a href="../Shift/8247">31-Aug-2022 15:08</a></td>
+<td class="list1">&nbsp;</td><td class="list1">LHCb</td><td class="list1">Guillaume Vouters</td><td class="summary">CALO,&nbsp;RICH,&nbsp;SCIFI,&nbsp;MUON&nbsp;and&nbsp;PLUME&nbsp;setups&nbsp;have&nbsp;been&nbsp;upgraded&nbsp;to&nbsp;Geneve
+<br>
+
+<br>
+VELO&nbsp;will&nbsp;be&nbsp;done&nbsp;later</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list2">
+<a href="../Shift/8246">&nbsp;&nbsp;8246&nbsp;&nbsp;</a>
+</td>
+
+<td class="list2" nowrap><a href="../Shift/8246">31-Aug-2022 14:58</a></td>
+<td class="list2">244386</td><td class="list2">LHCb</td><td class="list2">Klaas Padeken</td><td class="summary">Plume&nbsp;high&nbsp;rate&nbsp;was&nbsp;fixed&nbsp;by&nbsp;expert&nbsp;(original&nbsp;issue:&nbsp;https://lblogbook.cern.ch/Shift/8238).
+<br>
+EB&nbsp;test&nbsp;over
+<br>
+Starting&nbsp;new&nbsp;run</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list1">
+<a href="../Shift/8245">&nbsp;&nbsp;8245&nbsp;&nbsp;</a>
+</td>
+
+<td class="list1" nowrap><a href="../Shift/8245">31-Aug-2022 14:30</a></td>
+<td class="list1">&nbsp;</td><td class="list1">Shift Crew</td><td class="list1">From Database</td><td class="summary">Shift&nbsp;Leader&nbsp;Klaas&nbsp;Padeken&nbsp;with&nbsp;Data&nbsp;Manager&nbsp;Bhagyashree&nbsp;Pagare</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list2">
+<a href="../Shift/8244">&nbsp;&nbsp;8244&nbsp;&nbsp;</a>
+</td>
+
+<td class="list2" nowrap><a href="../Shift/8244">31-Aug-2022 14:27</a></td>
+<td class="list2">&nbsp;</td><td class="list2">LHCb</td><td class="list2">Klaas Padeken</td><td class="summary">HCAL&nbsp;operations&nbsp;on&nbsp;the&nbsp;HV&nbsp;system.&nbsp;Therefore&nbsp;HCAL&nbsp;is&nbsp;excluded&nbsp;from&nbsp;the&nbsp;BigBrother&nbsp;and&nbsp;in&nbsp;the&nbsp;Hand&nbsp;of&nbsp;the&nbsp;experts.</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list1">
+<a href="../Shift/8243">&nbsp;&nbsp;8243&nbsp;&nbsp;</a>
+</td>
+
+<td class="list1" nowrap><a href="../Shift/8243">31-Aug-2022 14:14</a></td>
+<td class="list1">&nbsp;</td><td class="list1">Shift Summary</td><td class="list1">Elena Dall'Occo</td><td class="summary">LHC:
+<br>
+-&nbsp;NO&nbsp;beam&nbsp;until&nbsp;week&nbsp;37&nbsp;at&nbsp;least&nbsp;&nbsp;
+<br>
+
+<br>
+LHCb:
+<br>
+-&nbsp;taken&nbsp;a&nbsp;few&nbsp;runs&nbsp;&nbsp;with&nbsp;COSMICS&nbsp;activity&nbsp;and&nbsp;CaloActivity_plusLumi&nbsp;trigger;&nbsp;ECAL,&nbsp;HCAL,&nbsp;MUONA/C,&nbsp;PLUME&nbsp;in&nbsp;global&nbsp;and&nbsp;HV&nbsp;included&nbsp;in&nbsp;the&nbsp;
+<br>
+BigBrother&nbsp;
+<br>
+-&nbsp;SciFi&nbsp;still&nbsp;in&nbsp;local&nbsp;and&nbsp;excluded&nbsp;from&nbsp;BigBrother
+<br>
+-&nbsp;Plume&nbsp;in&nbsp;local&nbsp;to&nbsp;investigate&nbsp;jumps&nbsp;of&nbsp;the&nbsp;bb&nbsp;rate&nbsp;(https://lblogbook.cern.ch/Shift/8237)
+<br>
+-&nbsp;Muon&nbsp;in&nbsp;local&nbsp;and&nbsp;excluded&nbsp;from&nbsp;BigBrother&nbsp;for&nbsp;local&nbsp;tests&nbsp;(https://lblogbook.cern.ch/Shift/8240)
+<br>
+-&nbsp;TELL40&nbsp;firmware&nbsp;updated&nbsp;for&nbsp;ECal&nbsp;and&nbsp;HCal:&nbsp;this&nbsp;is&nbsp;now&nbsp;completed&nbsp;and&nbsp;working.&nbsp;Following&nbsp;this,&nbsp;the&nbsp;EB&nbsp;is&nbsp;in&nbsp;error&nbsp;and&nbsp;experts&nbsp;are&nbsp;working&nbsp;on<br>
+it
+<br>
+
+<br>
+To&nbsp;be&nbsp;done:
+<br>
+-&nbsp;follow&nbsp;up&nbsp;on&nbsp;the&nbsp;EB&nbsp;error
+<br>
+-&nbsp;&nbsp;when&nbsp;possible,&nbsp;start&nbsp;again&nbsp;to&nbsp;take&nbsp;data&nbsp;with&nbsp;COSMICS&nbsp;activity&nbsp;</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list2">
+<a href="../Shift/8242">&nbsp;&nbsp;8242&nbsp;&nbsp;</a>
+</td>
+
+<td class="list2" nowrap><a href="../Shift/8242">31-Aug-2022 13:11</a></td>
+<td class="list2">244361</td><td class="list2">LHCb</td><td class="list2">Elena DallOcco</td><td class="summary">**&nbsp;From&nbsp;the&nbsp;Alarm&nbsp;Screen&nbsp;**
+<br>
+UNKNOWN&nbsp;ONLDIRAC:&nbsp;on&nbsp;2022.07.26&nbsp;11:56:21.288:
+<br>
+_Event&nbsp;-&nbsp;License&nbsp;expires</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list1">
+<a href="../Shift/8241">&nbsp;&nbsp;8241&nbsp;&nbsp;</a>
+</td>
+
+<td class="list1" nowrap><a href="../Shift/8241">31-Aug-2022 10:11</a></td>
+<td class="list1">&nbsp;</td><td class="list1">LHC</td><td class="list1">Comments</td><td class="summary">RF&nbsp;warm-up&nbsp;ongoing
+<br>
+Access&nbsp;possible&nbsp;from&nbsp;30.08&nbsp;to&nbsp;02.09
+<br>
+(contact&nbsp;EN-ACE&nbsp;161669)
+<br>
+NO&nbsp;beam&nbsp;until&nbsp;week&nbsp;37&nbsp;at&nbsp;least</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list2">
+<a href="../Shift/8240">&nbsp;&nbsp;8240&nbsp;&nbsp;</a>
+</td>
+
+<td class="list2" nowrap><a href="../Shift/8240">31-Aug-2022 09:46</a></td>
+<td class="list2">&nbsp;</td><td class="list2">MUON</td><td class="list2">wander baldini</td><td class="summary">Muon&nbsp;in&nbsp;Local&nbsp;(HV&nbsp;in&nbsp;STANDBY1,&nbsp;excluded&nbsp;from&nbsp;Big&nbsp;Brother)&nbsp;to&nbsp;perform&nbsp;some&nbsp;preliminary&nbsp;tests&nbsp;needed&nbsp;for&nbsp;the&nbsp;
+<br>
+threshold&nbsp;scan&nbsp;</td>
+<td class="listatt">&nbsp;&nbsp;</td><tr><td class="list1">
+<a href="../Shift/8239">&nbsp;&nbsp;8239&nbsp;&nbsp;</a>
+</td>
+
+<td class="list1" nowrap><a href="../Shift/8239">31-Aug-2022 09:36</a></td>
+<td class="list1">&nbsp;</td><td class="list1">LHCb</td><td class="list1">Maurício Féo</td><td class="summary">&gt;&nbsp;Partition&nbsp;allocation&nbsp;hiccup
+<br>
+
+<br>
+The&nbsp;SL&nbsp;deallocated&nbsp;LHCb&nbsp;and&nbsp;excluded&nbsp;PLUME&nbsp;but&nbsp;when&nbsp;reallocating,&nbsp;PLUME's&nbsp;DAQ&nbsp;was&nbsp;still&nbsp;included,&nbsp;even&nbsp;after&nbsp;a&nbsp;
+<br>
+couple&nbsp;DEALLOCATE&nbsp;-&gt;&nbsp;ALLOCATE&nbsp;commands.
+<br>
+After&nbsp;PLUME&nbsp;allocated&nbsp;themselves&nbsp;in&nbsp;local&nbsp;and&nbsp;started&nbsp;running,&nbsp;(with&nbsp;their&nbsp;DAQ&nbsp;somehow&nbsp;included&nbsp;in&nbsp;local&nbsp;AND&nbsp;in&nbsp;
+<br>
+global)&nbsp;the&nbsp;ALLOCATE&nbsp;from&nbsp;the&nbsp;top&nbsp;was&nbsp;failing&nbsp;with&nbsp;the&nbsp;error&nbsp;message:
+<br>
+	
+<br>
+31-Aug-2022&nbsp;09:18:02&nbsp;-&nbsp;Could&nbsp;not&nbsp;Allocate&nbsp;TFC:&nbsp;Invalid&nbsp;Partition&nbsp;ID&nbsp;7c00
+<br>
+31-Aug-2022&nbsp;09:18:03&nbsp;-&nbsp;***&nbsp;ERROR&nbsp;-&nbsp;Requested&nbsp;partition&nbsp;'PL_EBPART'&nbsp;already&nbsp;allocated&nbsp;in&nbsp;PLUME!
+<br>
+
+<br>
+So&nbsp;I&nbsp;asked&nbsp;them&nbsp;to&nbsp;stop&nbsp;the&nbsp;run,&nbsp;I&nbsp;reincluded&nbsp;PLUME&nbsp;in&nbsp;global,&nbsp;did&nbsp;ALLOCATE,&nbsp;DEALLOCATE,&nbsp;excluded&nbsp;PLUME&nbsp;again&nbsp;and&nbsp;
+<br>
+then&nbsp;it&nbsp;worked&nbsp;normally&nbsp;(and&nbsp;PLUME_DAQ&nbsp;was&nbsp;finally&nbsp;excluded).</td>
+<td class="listatt">&nbsp;&nbsp;</td></table>
+</td></tr>
+<tr><td class="menuframe"><span class="menu3">
+Goto page 
+1, 
+<a href="page2">2</a>, 
+<a href="page3">3</a>&nbsp;...&nbsp;<a href="page411">411</a>, 
+<a href="page412">412</a>, 
+<a href="page413">413</a>&nbsp;&nbsp;
+<a href="page2">Next</a>&nbsp;&nbsp;</span></td></tr>
+</table>
+<p><center><a href="/">Select another LHCb Logbook</a></center></p></form></body></html>
