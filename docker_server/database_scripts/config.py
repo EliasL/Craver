@@ -1,16 +1,21 @@
 import os
-'''
-Use environment variables (eg. CLIENT_USER_PASSWORD) to
-configure instead of editing this file.
+# ---- Authentication settings
+# https://gitlab.cern.ch/authzsvc/docs/flask-oidc-api-example/-/blob/master/oidc_example/config.py
+DEBUG = False
 
-Default values are provided below as an example of what
-was used under development.
-'''
+CSRF_ENABLED = True
+
+# Use a secure, unique and absolutely secret key for
+# signing the data.
+CSRF_SESSION_KEY = os.getenv('CSRF_SESSION_KEY')
+
+# Secret key for signing cookies
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 
-if(os.getenv('SERVER_SECRET_KEY')):
-        SERVER_SECRET_KEY = os.getenv('SERVER_SECRET_KEY')
-else:
-        SERVER_SECRET_KEY = None
-        raise ValueError('No server key provided. Please set the SERVER_SECRET_KEY environment variable.')
+# OIDC configuration
+OIDC_CLIENT_ID = "craver"
+OIDC_JWKS_URL = "https://auth.cern.ch/auth/realms/cern/protocol/openid-connect/certs"
+OIDC_ISSUER = "https://auth.cern.ch/auth/realms/cern"
+
 
