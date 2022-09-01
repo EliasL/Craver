@@ -205,7 +205,7 @@ class _AuthenticationState extends State<Authentication> {
           AUTH0_REDIRECT_URI,
           issuer: AUTH0_ISSUER,
           scopes: <String>['openid', 'profile', 'offline_access'],
-          promptValues: ['log in'],
+          promptValues: ['login'],
         ),
       );
 
