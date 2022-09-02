@@ -69,11 +69,6 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // When testing, we need a way to get past the login
-    // The server api is still authentication protected, so this
-    // is not a security issue.
-    bool skipLogin = Platform.environment.containsKey('FLUTTER_TEST');
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -87,17 +82,6 @@ class Login extends StatelessWidget {
           loginError,
           style: TextStyle(color: Colors.red[800]),
         ),
-        Visibility(
-            visible: skipLogin,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const BottomNav()),
-                );
-              },
-              child: const Text('Sneak in'),
-            ))
       ],
     );
   }

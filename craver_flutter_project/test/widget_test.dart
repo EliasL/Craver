@@ -20,37 +20,29 @@ import 'package:craver/bottom_nav.dart';
 import 'moch_server.dart' as mochServer;
 
 void main() {
-  //TODO split into multiple tests
-  testWidgets('Test the entire app', (WidgetTester tester) async {
+  testWidgets('Test control panel', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MaterialApp(
+      home: ControlPanel(),
+    ));
 
-    // We are now at the login page
-    // We are going to try to cheat by getting past
-    // the login.
-    expect(find.text('Log in'), findsOneWidget);
-    print(find.byType(Text).first);
-    expect(find.byType(Text), findsNWidgets(2));
-    await tester.tap(find.text('Sneak in'));
-
-    // We are now in the control panel
+    //Check that we have some buttons
+    expect(find.text('LHCb: '), findsWidgets);
 
     // Fill the control values with random values
     mochServer.setControlValues('test', 1);
+    // Here we update the widget values
     ControlValues.updater.value += 1;
-
-    // if nothing has crashed, i'm happy
-    // Verify that our counter starts at 0.
-    //expect(find.text('LHCb: test'), findsOneWidget);
-    print(find.byType(Text).first);
-    expect(find.byType(Text), findsOneWidget);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // Here we tell the tester to update the widgets
     await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Now we should find that the button has an updated value
+    expect(find.text('LHCb: test'), findsOneWidget);
+    // Let's quickly check that the subdetector page also works
+    // We swipe to the left
+    await tester.drag(find.text('LHCb: test'), const Offset(-500.0, 0.0));
+    // Build the widget until the swipe animation ends.
+    await tester.pumpAndSettle();
+    // Check that the buttons here have also been updated
+    expect(find.textContaining('RICH1: test'), findsOneWidget);
   });
 }

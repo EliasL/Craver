@@ -1,8 +1,9 @@
 
-<div style="text-align:center; font-size:80pt;"> <img src="https://cernbox.cern.ch/index.php/s/iavcnlnKD41GpAf/download" style="width:250px; "/></div>
+<div style="text-align:center; font-size:80pt;">CRAVER <img src="https://cernbox.cern.ch/index.php/s/iavcnlnKD41GpAf/download" style="width:250px; "/></div>
 
-# CRAVER
 
+General overview
+===
 
 https://gitlab.cern.ch/lhcb-online/craver
 
@@ -10,7 +11,7 @@ https://gitlab.cern.ch/lhcb-online/craver
 
 Your phone -> App (Craver) -> Our server -> Select sources (Prometheus/DIM/LbLogbook)
 
-### App
+## App
 
 Main.dart
 https://gitlab.cern.ch/lhcb-online/craver/-/blob/main/craver_flutter_project/lib/main.dart
@@ -20,6 +21,23 @@ Pages are managed from bottom_nav, which also updates the header from a setting 
 1. VSC
 2. https://docs.flutter.dev/get-started/install
 3. Flutter dev tools extension
+
+#### How to install / set up project
+1. Install flutter
+2. Run ```git clone https://gitlab.cern.ch/lhcb-online/craver.git```
+3. Run ```flutter pub get``` (*VSCode will promt you to do this for you*)
+4. Now you should be ready to develop and test. Follow steps 5-7 for publishing.
+5. Get access to the ```craverKeystore.jks``` and the ```key.properties``` used for the app (Try asking Aristeidis Fkiaras), or make your own. See [how to create keys](#create_keys).
+6. Put the ```key.properties``` in the ```andorid folder```
+7. Put the ```craverKeystore.jks``` in the ```android/app``` folder
+
+
+#### Links
+*   [How to install VSCode and extention](https://docs.flutter.dev/development/tools/vs-code)
+*   [How to install Flutter](https://docs.flutter.dev/get-started/install)
+*   How to set up dev mode on your phone ([Android](https://developer.android.com/studio/debug/dev-options)/[iOS](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device))
+*   How to instal emulators of phones ([Android](https://docs.flutter.dev/get-started/install/windows#set-up-the-android-emulator)/[iOS](https://docs.flutter.dev/get-started/install/macos#set-up-the-ios-simulator))
+*   <a id="create_keys">[How to create keys](https://docs.flutter.dev/deployment/android#signing-the-app)</a>
 
 ##### How to build (To android)
 ```bash
@@ -56,11 +74,28 @@ You will get [deprication warnings](https://github.com/mogol/flutter_secure_stor
 
 The second problem you might encounter is flutter complaining that a widgets size is unconstrained. This often happens inside rows or columns, and I honestly don't understand it well enough to give any usefull tips. Look at what works in other places, and try similar combinations of widgets. Good luck. 
 
-### Server
+There still seems to be some problem with refreshing the token while the app is locked. (This bug happened once, and we haven't looked much into it.)
+
+## Server
 The server handles get requests from the applications by forwarding requests to various sources. These sources are specified by environment variables ```LBLOGBOOK_SOURCE```, ```CONTROL_PANEL_SOURCE``` and ```PROMETHEUS_SOURCE```. The server does not store any data except automatically caching data. The prometheus and logbook results update every 20 seconds, while the control panel updates every second.
 
+#### Deployment
+For deployment, some environment variables need to be set. In the ```docker_server``` directory, create a ```env_vars.env``` file and find values for these values
+
+    LBLOGBOOK_SOURCE=
+    CONTROL_PANEL_SOURCE=
+    PROMETHEUS_SOURCE=
+    CSRF_SESSION_KEY=
+    SECRET_KEY=
+
+Try asking Aristeidis Fkiaras. Then run ```./deployServer```.
+
+Make sure that the ```server``` variable in ```lib/support/data_getter.dart``` is set to the deployment location of your server. The value as of 01.09.22 is ```http://lbcraver.cern.ch:80```.
+
 #### Security
-The api of the server is very restrictive. The arguments in the get requests for prometheus and DIM are whitelisted. The lblogbook handler accepts any integer (page) number between 0 and 999 and is therefore also very restrictive.
+The important server functions are token protected. An unprotected page is the curent server version: http://lbcraver.cern.ch/version. Whereas a protected page will be inaccecable unless you also have a valid token in the header: http://lbcraver.cern.ch/control_panel?state=lbWeb/LHCb|LHCb_fsm_currentState.
+
+In addition to the token security, the api of the server is very restrictive. The arguments in the get requests for prometheus and DIM are whitelisted. The lblogbook handler accepts any integer (page) number between 0 and 999 and is therefore also very restrictive.
 
 The sources that the server communicates with are all inaccecable from outside the CERN network, so even if the apk of the app was decompiled and the adresses of the sources were extracted, it would be useless unless they already were inside the CERN network. 
 
@@ -72,3 +107,5 @@ If there are network issues, try to
 	export HTTP_PROXY=http://lbproxy01:8080
 	export HTTPS_PROXY=http://lbproxy01:8080
     
+## Sources
+These are usually small scripts that give us access to the data we want. Try asking Aristeidis Fkiaras.
