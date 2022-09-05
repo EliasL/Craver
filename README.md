@@ -1,9 +1,7 @@
 
-<div style="text-align:center; font-size:80pt;">CRAVER <img src="https://cernbox.cern.ch/index.php/s/iavcnlnKD41GpAf/download" style="width:250px; "/></div>
+<div style="text-align:center; font-size:80pt;"><img src="https://cernbox.cern.ch/index.php/s/iavcnlnKD41GpAf/download" style="width:250px; "/></div>
 
-
-General overview
-===
+# CRAVER 
 
 https://gitlab.cern.ch/lhcb-online/craver
 

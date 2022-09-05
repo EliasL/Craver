@@ -336,6 +336,7 @@ enum RunStates {
   ERROR,
   EMERGENCY_OFF,
   OFF,
+  DEAD,
   UNKNOWN,
 }
 
@@ -356,6 +357,7 @@ Map<String, Color> defaultColorStateMap(ColorScheme colorScheme) {
     RunStates.ERROR.name: colorScheme.abnomal,
     RunStates.EMERGENCY_OFF.name: colorScheme.abnomal,
     RunStates.OFF.name: colorScheme.off,
+    RunStates.DEAD.name: colorScheme.off,
     RunStates.UNKNOWN.name: colorScheme.unknown,
   };
 }

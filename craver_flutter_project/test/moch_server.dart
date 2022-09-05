@@ -23,7 +23,7 @@ void randomizeControlValues() {
   }
 }
 
-void setControlValues(String sValue, double numValue) {
+void setControlValues(String? sValue, double? numValue) {
   double maxNumValue = 1e12;
   for (ControlValue cv in ControlValues.allValues) {
     if (cv.type == String) {
