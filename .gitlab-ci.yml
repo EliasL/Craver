@@ -1,6 +1,8 @@
 stages:
   - test
-  - packageAppAndServer
+  - buildServer
+  - buildAndroid
+  - buildiOS
 
 .android_docker_image:
   image: cirrusci/flutter:3.3.0
@@ -34,8 +36,8 @@ testApp:
 #  stage: test
 
 build_android:
-  stage: packageAppAndServer
-  needs: []
+  stage: buildAndroid
+  needs: [test]
   extends: .android_key_store
   script:
     - cd $CI_PROJECT_DIR/craver_flutter_project 
@@ -46,8 +48,8 @@ build_android:
     expire_in: 1 day
 
 build_ios:
-  stage: packageAppAndServer
-  needs: []
+  stage: buildiOS
+  needs: [test]
   script:
     # although fastlane also is capable of building the ipa, we are doing it with flutter to ensure it has the same versioning like the Android app
     - cd $CI_PROJECT_DIR/craver_flutter_project 
@@ -61,7 +63,7 @@ build_ios:
     - master
 
 build_kaniko_command:
-    stage: packageAppAndServer
+    stage: buildServer
     needs: []
     variables:
       # To push to a specific docker tag other than latest(the default), amend the --destination parameter, e.g. --destination $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
