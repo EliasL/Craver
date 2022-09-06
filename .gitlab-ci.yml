@@ -31,8 +31,16 @@ testApp:
       - $CI_PROJECT_DIR/craver_flutter_project/coverage/
     expire_in: 5 days
 
-#testServer:
-#  stage: test
+testServer:
+  stage: test
+  needs: []
+  image: python:3.7.13-slim-buster
+  before_script:
+    - cd $CI_PROJECT_DIR/docker_server
+    - pip install -r requirements.txt
+
+  script:
+      - python3 -m unittest
 
 build_android:
   stage: buildAndroid
@@ -62,7 +70,7 @@ build_android:
 
 build_kaniko_command:
     stage: buildServer
-    needs: []
+    needs: [testServer]
     variables:
       # To push to a specific docker tag other than latest(the default), amend the --destination parameter, e.g. --destination $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
       # See https://docs.gitlab.com/ee/ci/variables/predefined_variables.html#variables-reference for available variables
