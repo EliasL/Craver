@@ -7,7 +7,9 @@ import 'package:html/parser.dart' show parse;
 import 'alert.dart';
 import 'settings.dart' as settings;
 
-const server = 'http://lbcraver.cern.ch:80';
+const server = settings.DEVELOPMENT
+    ? 'http://lbcraver-dev.cern.ch:80'
+    : 'http://lbcraver.cern.ch:80';
 //Local server for debuging
 //const server = 'http://10.128.124.104:8080';
 
