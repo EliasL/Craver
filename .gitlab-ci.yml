@@ -12,6 +12,7 @@ stages:
   before_script:
     #https://stackoverflow.com/questions/51725339/how-to-manage-signing-keystore-in-gitlab-ci-for-android
     # this will fetch the base64 encoded key store from our CI variables, decode it and place it underneath the path specified in build.gradle
+    - cd $CI_PROJECT_DIR/craver_flutter_project/
     - echo $KEYSTORE | base64 -d > android/app/craverKeystore.jks
     - echo "storeFile=../app/craverKeystore.jks" > android/key.properties
     - echo "keystorePassword=$KEYSTORE_PASSWORD" >> android/key.properties
@@ -57,8 +58,6 @@ build_ios:
     expire_in: 1 day
   tags:
     - ios
-  only:
-    - master
 
 build_kaniko_command:
     stage: buildServer
