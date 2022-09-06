@@ -15,7 +15,7 @@ stages:
     - cd $CI_PROJECT_DIR/craver_flutter_project/
     - echo $KEYSTORE | base64 -d > android/app/craverKeystore.jks
     - echo "storeFile=../app/craverKeystore.jks" > android/key.properties
-    - echo "keystorePassword=$KEYSTORE_PASSWORD" >> android/key.properties
+    - echo "storePassword=$KEYSTORE_PASSWORD" >> android/key.properties
     - echo "keyAlias=$ALIAS" >> android/key.properties
     - echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
 
@@ -46,18 +46,19 @@ build_android:
       - $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/apk/release/app-release.apk
     expire_in: 1 day
 
-build_ios:
-  stage: buildiOS
-  needs: [testApp]
-  script:
-    # although fastlane also is capable of building the ipa, we are doing it with flutter to ensure it has the same versioning like the Android app
-    - cd $CI_PROJECT_DIR/craver_flutter_project 
-    - flutter build ios --release --build-number=$CI_PIPELINE_ID
-  artifacts:
-    untracked: true
-    expire_in: 1 day
-  tags:
-    - ios
+# Building to iOS requires a iOS machine, and we don't have that right now
+# build_ios:
+#   stage: buildiOS
+#   needs: [testApp]
+#   script:
+#     # although fastlane also is capable of building the ipa, we are doing it with flutter to ensure it has the same versioning like the Android app
+#     - cd $CI_PROJECT_DIR/craver_flutter_project 
+#     - flutter build ios --release --build-number=$CI_PIPELINE_ID
+#   artifacts:
+#     untracked: true
+#     expire_in: 1 day
+#   tags:
+#     - ios
 
 build_kaniko_command:
     stage: buildServer
