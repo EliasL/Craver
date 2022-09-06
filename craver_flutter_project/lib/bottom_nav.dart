@@ -69,6 +69,10 @@ class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
+    // This checks if the phone is locked (Or the screen is off)
+    // We should stop updating data while the screen is off
+    // We should also refresh the athentication token in case
+    // it has expired
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.inactive) {
       ControlPanel.stopTimer();
@@ -114,7 +118,7 @@ class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
                         builder: (context) => const Preferences()),
                   );
                 },
-                child: Image.asset('assets/icon/craver_logo.png'))),
+                child: Image.asset('assets/icon/craver_logo_icon.png'))),
         centerTitle: true,
         title: ValueListenableBuilder(
             valueListenable: settings.title,

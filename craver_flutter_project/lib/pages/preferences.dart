@@ -116,18 +116,47 @@ class _PreferencesState extends State<Preferences> {
                 ),
               ],
             ),
+            ExpansionTile(
+              title: const Text('Credits'),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text('Main contributor:'),
+                        Text('Supervisor and co-contributor:'),
+                        Text('Second supervisor:'),
+                        SizedBox(
+                          height: 10,
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text('Elias Lundheim'),
+                        Text('Aristeidis Fkiaras'),
+                        Text('Niko Neufeld'),
+                        SizedBox(
+                          height: 10,
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
             ListTile(
               title: Center(child: Text('Logged in as: ${settings.userName}')),
             ),
             ElevatedButton(
                 onPressed: () {
-                  Authentication.logOut = true;
-                  Navigator.pop(context);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Authentication()),
-                  );
+                  Authentication.logout(context);
                 },
                 child: const Text('Log out'))
           ],

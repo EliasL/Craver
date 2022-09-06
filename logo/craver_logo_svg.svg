@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="18.520823mm"
+   height="18.52084mm"
+   viewBox="0 0 18.520823 18.520839"
+   version="1.1"
+   id="svg3801"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   sodipodi:docname="craver_logo.svg"
+   inkscape:export-filename="C:\Users\vlundhei\OneDrive - NTNU\Work\Sommerjobber\CERN\craver\craver\logo\craver_logo.png"
+   inkscape:export-xdpi="702.17114"
+   inkscape:export-ydpi="702.17114"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview3803"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:zoom="5.6568545"
+     inkscape:cx="48.525201"
+     inkscape:cy="45.254832"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4509"
+       originx="-119.0625"
+       originy="-96.572916" />
+  </sodipodi:namedview>
+  <defs
+     id="defs3798">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2728">
+      <stop
+         style="stop-color:#006eb5;stop-opacity:1;"
+         offset="0"
+         id="stop2724" />
+      <stop
+         style="stop-color:#0ca0ff;stop-opacity:1"
+         offset="1"
+         id="stop2726" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2728"
+       id="linearGradient2730"
+       x1="125.1479"
+       y1="103.18751"
+       x2="133.34999"
+       y2="123.56042"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.87499956,0,0,0.87500029,16.040417,13.229136)" />
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter4002"
+       x="-0.054828526"
+       y="-0.13917984"
+       width="1.1096571"
+       height="1.2783597">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.074467318"
+         id="feGaussianBlur4004" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter4348"
+       x="-0.042174995"
+       y="-0.030514799"
+       width="1.08435"
+       height="1.0610296">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.16970673"
+         id="feGaussianBlur4350" />
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Shadow and background"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-119.06249,-96.572922)"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:url(#linearGradient2730);fill-opacity:1;stroke:none;stroke-width:0.525001;stroke-linecap:round;stroke-linejoin:round"
+       id="rect1134"
+       width="18.520823"
+       height="18.52084"
+       x="119.06249"
+       y="96.572922"
+       inkscape:export-filename="C:\Users\vlundhei\OneDrive - NTNU\Work\Sommerjobber\CERN\craver\Craver logo.png"
+       inkscape:export-xdpi="819.20038"
+       inkscape:export-ydpi="819.20038" />
+    <path
+       style="opacity:0.478528;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke;filter:url(#filter4348)"
+       d="m 131.49792,99.21875 c -6.82687,-0.941928 -4.49792,3.96875 -9.26042,6.61458 4.7625,2.64584 2.6889,6.61459 9.26042,6.61459 0.52916,-1.32292 0.52916,-2.64584 0,-3.96875 -3.43959,0 -3.43959,0 -5.29167,-2.64584 1.85208,-2.64583 1.85208,-2.64583 5.29167,-2.64583 0.52916,-1.32292 0.52916,-2.64583 0,-3.96875 z"
+       id="path4544"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="C:\Users\vlundhei\OneDrive - NTNU\Work\Sommerjobber\CERN\craver\Craver logo.png"
+       inkscape:export-xdpi="819.20038"
+       inkscape:export-ydpi="819.20038" />
+    <path
+       style="opacity:0.51227;fill:none;stroke:#002726;stroke-width:0.6;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter4002)"
+       d="m 122.50207,110.06667 8.73125,-3.43959"
+       id="path4498"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\vlundhei\OneDrive - NTNU\Work\Sommerjobber\CERN\craver\Craver logo.png"
+       inkscape:export-xdpi="819.20038"
+       inkscape:export-ydpi="819.20038" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Logo"
+     sodipodi:insensitive="true"
+     style="display:inline"
+     transform="translate(-0.73957127,-0.73957725)">
+    <path
+       style="fill:#d6f2fa;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke"
+       d="m 13.31085,3.4383261 c -6.82687,-0.941928 -4.49792,3.96875 -9.26042,6.6145789 4.7625,2.645841 2.6889,6.614591 9.26042,6.614591 0.52916,-1.32292 0.52916,-2.64584 0,-3.96875 -3.4395897,0 -3.4395897,0 -5.29167,-2.645841 1.8520803,-2.6458289 1.8520803,-2.6458289 5.29167,-2.6458289 0.52916,-1.32292 0.52916,-2.64583 0,-3.96875 z"
+       id="path4544-7"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="C:\Users\vlundhei\OneDrive - NTNU\Work\Sommerjobber\CERN\craver\Craver logo.png"
+       inkscape:export-xdpi="1000"
+       inkscape:export-ydpi="1000" />
+    <path
+       style="fill:none;stroke:#db2726;stroke-width:0.6;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 4.315,14.286246 8.73125,-3.43959"
+       id="path4498-3"
+       sodipodi:nodetypes="cc" />
+  </g>
+</svg>

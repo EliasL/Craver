@@ -1,13 +1,68 @@
 stages:
-  - build
-#  - testing # Testing is for people who make mistakes.
+  - test
+  - package
+  - deployServer
+
+.android_docker_image:
+  image: cirrusci/flutter:3.3.0
+  tags:
+    - flutter-android
+
+.android_key_store:
+  extends: .android_docker_image
+  before_script:
+    #https://stackoverflow.com/questions/51725339/how-to-manage-signing-keystore-in-gitlab-ci-for-android
+    # this will fetch the base64 encoded key store from our CI variables, decode it and place it underneath the path specified in build.gradle
+    - echo $KEYSTORE | base64 -d > android/app/craverKeystore.jks
+    - echo "storeFile=../app/craverKeystore.jks" > android/key.properties
+    - echo "keystorePassword=$KEYSTORE_PASSWORD" >> android/key.properties
+    - echo "keyAlias=$ALIAS" >> android/key.properties
+    - echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
+  only:
+    - master
+
+testApp:
+  extends: .android_docker_image
+  stage: test
+  script:
+    - flutter test --coverage
+    - genhtml coverage/lcov.info --output=coverage
+  artifacts:
+    paths:
+      - coverage/
+    expire_in: 5 days
+
+#testServer:
+#  stage: test
+
+build_android:
+  stage: package
+  extends: .android_key_store
+  script: flutter build apk --release --build-number=$CI_PIPELINE_ID
+  artifacts:
+    paths:
+      - build/app/outputs/apk/release/app-release.apk
+    expire_in: 1 day
+
+build_ios:
+  stage: package
+  script:
+    # although fastlane also is capable of building the ipa, we are doing it with flutter to ensure it has the same versioning like the Android app
+    - flutter build ios --release --build-number=$CI_PIPELINE_ID
+  artifacts:
+    untracked: true
+    expire_in: 1 day
+  tags:
+    - ios
+  only:
+    - master
 
 build_kaniko_command:
-    stage: build
+    stage: deployServer
     variables:
       # To push to a specific docker tag other than latest(the default), amend the --destination parameter, e.g. --destination $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
       # See https://docs.gitlab.com/ee/ci/variables/predefined_variables.html#variables-reference for available variables
-      IMAGE_DESTINATION: ${CI_REGISTRY_IMAGE}:latest
+      IMAGE_DESTINATION: ${CI_REGISTRY_IMAGE}:dev
     image: 
         # We recommend using the CERN version of the Kaniko image: gitlab-registry.cern.ch/ci-tools/docker-image-builder
         name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
@@ -19,4 +74,3 @@ build_kaniko_command:
         - /kaniko/executor --context $CI_PROJECT_DIR/docker_server --dockerfile $CI_PROJECT_DIR/docker_server/Dockerfile_gitlab --destination $IMAGE_DESTINATION
         # Print the full registry path of the pushed image
         - echo "Image pushed successfully to ${IMAGE_DESTINATION}"
-

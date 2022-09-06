@@ -18,6 +18,7 @@ import 'bottom_nav.dart';
 import 'support/settings.dart' as settings;
 import 'dart:async';
 import 'dart:developer' as dev;
+import 'support/alert.dart';
 
 const FlutterAppAuth appAuth = FlutterAppAuth();
 const FlutterSecureStorage secureStorage = FlutterSecureStorage();
@@ -92,8 +93,19 @@ class Login extends StatelessWidget {
 /// -----------------------------------
 
 class Authentication extends StatefulWidget {
-  static bool logOut = false;
-  const Authentication({Key? key}) : super(key: key);
+  static Future<void> logout(context) async {
+    Navigator.pop(context);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Authentication(
+                logout_on_init: true,
+              )),
+    );
+  }
+
+  bool logout_on_init;
+  Authentication({Key? key, this.logout_on_init = false}) : super(key: key);
 
   @override
   State<Authentication> createState() => _AuthenticationState();
@@ -104,22 +116,27 @@ class Authentication extends StatefulWidget {
 /// -----------------------------------
 
 class _AuthenticationState extends State<Authentication> {
-  bool isBusy = false;
-  bool isLoggedIn = false;
+  static bool isBusy = false;
+  static bool isLoggedIn = false;
   String errorMessage = '';
   String name = '';
   String picture = '';
 
-  Timer? timer;
+  static Timer? timer;
 
+  // Timer to refresh the token
   void startTimer() {
+    // Only let there be one timer
+    timer?.cancel();
     timer = Timer.periodic(
-        const Duration(minutes: 15), (Timer t) => refreshToken());
+        // The token expires after 20 minutes
+        const Duration(minutes: 15),
+        (Timer t) => refreshToken());
   }
 
   @override
   void dispose() {
-    timer?.cancel();
+    //timer?.cancel();
     super.dispose();
   }
 
@@ -193,7 +210,8 @@ class _AuthenticationState extends State<Authentication> {
       return;
     } on Exception catch (e, s) {
       debugPrint('error on refresh token: $e - stack: $s');
-      await logoutAction();
+      showLogoutDialog('Authentication error!',
+          'Error trying to refresh token. Please log in again.');
     }
   }
 
@@ -235,7 +253,6 @@ class _AuthenticationState extends State<Authentication> {
 
   Future<void> logoutAction() async {
     await secureStorage.delete(key: 'refresh_token');
-    Authentication.logOut = false;
     setState(() {
       isLoggedIn = false;
       isBusy = false;
@@ -249,7 +266,7 @@ class _AuthenticationState extends State<Authentication> {
   }
 
   Future<void> initAction() async {
-    if (Authentication.logOut) {
+    if (widget.logout_on_init) {
       await logoutAction();
     }
     setState(() {

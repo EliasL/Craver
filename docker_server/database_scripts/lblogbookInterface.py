@@ -16,8 +16,10 @@ class LbLogbook:
     @functools.lru_cache(maxsize = None)
     def get(self, page):
         # Checks that all characters in page are numbers
-        if(sum([char in '0123456789' for char in page]) != len(page) or len(page)>3):
+        if(sum([char in '0123456789' for char in page]) != len(page)):
             return 'Not a number!'
+        elif len(page)>3:
+            return 'Number must be smaller than 1000!'
         url = f'{self.lblogbook_source}/Shift/page{page}/elog.rdf'
         # Perhaps this is silly, but I just prefer utf-8
         # There is some performance to be gained here, but I just want everyting

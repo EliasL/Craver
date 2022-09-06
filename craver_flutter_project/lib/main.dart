@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
               brightness: theme,
             ),
             debugShowCheckedModeBanner: false,
-            home: const Authentication(),
+            home: Authentication(),
           );
         });
   }

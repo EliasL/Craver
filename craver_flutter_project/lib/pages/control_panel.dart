@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'package:craver/support/alert.dart';
 import 'package:flutter/material.dart';
 import '../support/data_getter.dart';
 import '../support/control_values_and_color.dart';
 import '../support/gauge.dart';
 import '../support/settings.dart' as settings;
+import 'preferences.dart';
 
 void updateStates() async {
   // We generate a list of all the states

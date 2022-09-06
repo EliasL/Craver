@@ -4,6 +4,9 @@ import functools
 import time
 import os
 
+
+allowed_commands = ['up', 'up!=1', 'up==1']
+
 class Prometheus:
     def __init__(self) -> None:
         if 'PROMETHEUS_SOURCE' in os.environ:
@@ -21,14 +24,13 @@ class Prometheus:
         get('up', {'instance':'aseb03.lbdaq.cern.ch'}, 5)
         '''
 
-        allowed_commands = ['up', 'up!=1', 'up==1']
         if command not in allowed_commands:
             return {}
-        # Additional args is a dict. Cache doesn't like dicts because they are not
+        # Additional args is a dict. The Cache library doesn't like dicts because they are not
         # hashable, so the simplest solution is to not have additional args
         #additional_args = self._format_additional_args(additional_args)
         url = f"{self.prometheus_source}/api/v1/query?query={command}"
-        # time isn't used, so it is commented out
+        # time isn't used, so it is commented out also
         #if time:
         #    url += f"[{time}s]"
         contents = urllib.request.urlopen(url)

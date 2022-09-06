@@ -100,15 +100,15 @@ Future<Document?> getLbLogbook({int page = 1, int attempts = 0}) async {
 
 Future<http.Response?> _generalGet(String urlString,
     {int attempts = 0,
-    networkErrorType = 'NetworkError',
-    serverErrorType = 'ServerError'}) async {
+    String networkErrorType = 'NetworkError',
+    String serverErrorType = 'ServerError'}) async {
   final url = Uri.parse(urlString);
   final http.Response response;
   try {
     response = await http.get(url, headers: httpHeaders);
   } catch (e) {
     if (attempts > 5) {
-      networkError(urlString, e.toString(), networkErrorType);
+      defaultNetworkError(urlString, e.toString(), networkErrorType);
       return null;
     }
     await Future.delayed(const Duration(milliseconds: 50));
@@ -116,8 +116,11 @@ Future<http.Response?> _generalGet(String urlString,
   }
   if (response.statusCode == 200) {
     return response;
+  } else if (response.statusCode == 401) {
+    customServerError(
+        'Authorization Error\nTry logging in again.', 'Authorization Error');
   } else {
-    serverError(urlString, response, serverErrorType);
+    defaultServerError(urlString, response, serverErrorType);
 
     return null;
   }

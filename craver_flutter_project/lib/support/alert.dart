@@ -3,6 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'settings.dart' as settings;
 import 'data_getter.dart';
+import '../authentication.dart';
+
+String truncateWithEllipsis(String s, {int cutoff = 75}) {
+  return (s.length <= cutoff) ? s : '${s.substring(0, cutoff)}...';
+}
 
 void checkVersion() async {
   String? versions = await getServerVersions();
@@ -32,12 +37,15 @@ Future<void> incorrectVersion(String serverVersions, String localVersion) {
       'VersionCheck');
 }
 
-Future<void> networkError(String url, error, networkErrorType) {
+Future<void> defaultNetworkError(String url, error, networkErrorType) {
+  url = truncateWithEllipsis(url);
   return showOkayDontShowAgainDialog(
       'Network Error!', 'Unable to connect to: $url\n$error', networkErrorType);
 }
 
-Future<void> serverError(String url, http.Response response, serverErrorType) {
+Future<void> defaultServerError(
+    String url, http.Response response, serverErrorType) {
+  url = truncateWithEllipsis(url);
   return showOkayDontShowAgainDialog(
       'Server Error!',
       'Unable to connect to: $url\n'
@@ -48,6 +56,37 @@ Future<void> serverError(String url, http.Response response, serverErrorType) {
 
 Future<void> customServerError(String message, serverErrorType) {
   return showOkayDontShowAgainDialog('Server Error!', message, serverErrorType);
+}
+
+Future<void> showLogoutDialog(title, text) async {
+  //Flutter needs to know what context to show the message in
+  if (settings.messageContext == null) {
+    throw Exception('Message context must be set in order to show message!');
+  }
+  return showDialog<void>(
+    context: settings.messageContext!,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(title),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text(text),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Logout'),
+            onPressed: () {
+              Authentication.logout(context);
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
 
 Future<void> showOkayDialog(title, text) async {
