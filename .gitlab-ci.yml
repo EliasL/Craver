@@ -16,7 +16,7 @@ stages:
     - echo $KEYSTORE | base64 -d > android/app/craverKeystore.jks
     - echo "storeFile=../app/craverKeystore.jks" > android/key.properties
     - echo "storePassword=$KEYSTORE_PASSWORD" >> android/key.properties
-    - echo "keyAlias=$ALIAS" >> android/key.properties
+    - echo "keyAlias=$KEY_ALIAS" >> android/key.properties
     - echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
 
 testApp:
