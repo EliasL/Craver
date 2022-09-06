@@ -17,8 +17,6 @@ stages:
     - echo "keystorePassword=$KEYSTORE_PASSWORD" >> android/key.properties
     - echo "keyAlias=$ALIAS" >> android/key.properties
     - echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
-  only:
-    - master
 
 testApp:
   extends: .android_docker_image
