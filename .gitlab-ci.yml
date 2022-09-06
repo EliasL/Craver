@@ -34,7 +34,7 @@ testApp:
 
 build_android:
   stage: packageAppAndServer
-    needs: []
+  needs: []
   extends: .android_key_store
   script: flutter build apk --release --build-number=$CI_PIPELINE_ID
   artifacts:
@@ -44,7 +44,7 @@ build_android:
 
 build_ios:
   stage: packageAppAndServer
-    needs: []
+  needs: []
   script:
     # although fastlane also is capable of building the ipa, we are doing it with flutter to ensure it has the same versioning like the Android app
     - flutter build ios --release --build-number=$CI_PIPELINE_ID
