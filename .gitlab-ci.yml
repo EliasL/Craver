@@ -37,7 +37,7 @@ testApp:
 
 build_android:
   stage: buildAndroid
-  needs: [test]
+  needs: [testApp]
   extends: .android_key_store
   script:
     - cd $CI_PROJECT_DIR/craver_flutter_project 
@@ -49,7 +49,7 @@ build_android:
 
 build_ios:
   stage: buildiOS
-  needs: [test]
+  needs: [testApp]
   script:
     # although fastlane also is capable of building the ipa, we are doing it with flutter to ensure it has the same versioning like the Android app
     - cd $CI_PROJECT_DIR/craver_flutter_project 
