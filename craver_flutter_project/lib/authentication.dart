@@ -141,7 +141,7 @@ class _AuthenticationState extends State<Authentication> {
     timer?.cancel();
     timer = Timer.periodic(
         // The token expires after 20 minutes
-        const Duration(minutes: 15),
+        const Duration(seconds: 5),
         (Timer t) => refreshToken());
   }
 
