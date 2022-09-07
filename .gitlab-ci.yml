@@ -4,6 +4,7 @@ stages:
   - buildAndroid
   - buildiOS
   - deployDevServer
+  - publishDevAPK
 
 .android_docker_image:
   image: cirrusci/flutter:3.3.0
@@ -98,3 +99,10 @@ deploy_dev_server:
     - export KUBECONFIG=$kubeconfig
   script:
     - kubectl -n playground rollout restart deployment craver-dev
+
+publish_dev_apk:
+  stage: publishDevAPK
+  needs: [build_android]
+  script:
+    - chmod 400 $LBCRAVER_SSH
+    - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $LBCRAVER_SSH $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/apk/release/app-release.apk lbcraver@lxplus.cern.ch:/eos/user/l/lbcraver/apk
