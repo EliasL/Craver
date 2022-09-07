@@ -105,6 +105,6 @@ publish_dev_apk:
   needs: [build_android]
   variables:
     APK_PATH: $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/apk/release/app-release.apk
-    EOS_PATH: cernbox.cern.ch/cernbox/webdav/eos/user/l/lbcraver/apk/
+    EOS_PATH: cernbox.cern.ch/cernbox/webdav/eos/user/l/lbcraver/apk/app-${CI_PIPELINE_ID}.apk
   script:
     - curl -T ${APK_PATH} https://lbcraver:${LBCRAVER_ACCOUNT_PASSWORD}@${EOS_PATH}
