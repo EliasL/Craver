@@ -193,10 +193,16 @@ class StatusText extends StatelessWidget {
 
 class StatusBox extends StatelessWidget {
   final ControlValue cv;
-  final bool useBorder;
-  const StatusBox(this.cv, {Key? key, this.useBorder = false})
-      : super(key: key);
+  final bool pressed;
+  final VoidCallback onPressed;
+  const StatusBox(
+    this.cv, {
+    Key? key,
+    this.pressed = true,
+    this.onPressed = _doNothing,
+  }) : super(key: key);
 
+  static void _doNothing() {}
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -209,24 +215,24 @@ class StatusBox extends StatelessWidget {
         return Flexible(
           child: Card(
             child: Container(
+              // This attempts to make the buttons look pressed so people
+              // Don't try to press them
               decoration: BoxDecoration(
                 color: color,
                 boxShadow: [
                   BoxShadow(
-                    offset: Offset(-20, -20),
-                    blurRadius: 60,
-                    color: lighten(color, 0.1),
-                    inset: true,
-                  ),
-                  BoxShadow(
-                    offset: Offset(20, 20),
-                    blurRadius: 60,
-                    color: darken(color, 0.12),
+                    offset: Offset(3, 3),
+                    blurRadius: 5,
+                    color: pressed
+                        ? Colors.black87
+                        : Colors
+                            .transparent, //darken(color, pressed ? 0.2 : 0),
                     inset: true,
                   ),
                 ],
               ),
               child: ListTile(
+                onTap: onPressed,
                 title: Text(
                   '${cv.shortName}: ${cv.sValue ?? ''}',
                   textAlign: ui.TextAlign.center,
@@ -294,7 +300,10 @@ class _StatusPageState extends State<StatusPage> {
                       ControlValues.LHCbState,
                       //useBorder: true,
                     ),
-                    StatusBox(ControlValues.DAQState),
+                    StatusBox(ControlValues.DAQState,
+                        pressed: false,
+                        onPressed: () =>
+                            DefaultTabController.of(context)?.animateTo(1)),
                     StatusBox(ControlValues.DAIState),
                     StatusBox(ControlValues.DCSState),
                   ],

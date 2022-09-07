@@ -119,8 +119,8 @@ Future<http.Response?> _generalGet(String urlString,
   if (response.statusCode == 200) {
     return response;
   } else if (response.statusCode == 401) {
-    customServerError(
-        'Authorization Error\nTry logging in again.', 'Authorization Error');
+    showLogoutDialog('Authentication error!',
+        'There was an error in the authentication process. Please log in again.');
   } else {
     defaultServerError(urlString, response, serverErrorType);
 

@@ -49,7 +49,7 @@ build_android:
   extends: .android_key_store
   script:
     - cd $CI_PROJECT_DIR/craver_flutter_project 
-    - flutter build apk --release --build-number=$CI_PIPELINE_ID
+    - flutter build apk --release --build-number=$CI_PIPELINE_ID --dart-define="DEVELOPMENT=true/false" #TODO set false or true
   artifacts:
     paths:
       - $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/apk/release/app-release.apk

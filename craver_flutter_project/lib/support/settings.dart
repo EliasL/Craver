@@ -4,7 +4,8 @@ library craver.globals;
 
 import 'package:flutter/cupertino.dart';
 
-const bool DEVELOPMENT = true;
+const bool DEVELOPMENT =
+    bool.fromEnvironment("DEVELOPMENT", defaultValue: true);
 const String VERSION = '1.0';
 const String SUPPORT_EMAIL = 'lbonsupp@cern.ch';
 
