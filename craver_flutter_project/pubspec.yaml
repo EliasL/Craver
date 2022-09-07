@@ -84,6 +84,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icon/craver_logo_icon.png
+    - assets/cernLogoBlue.png
+    - assets/cernLogoWhite.png
     - google_fonts/Source_Code_Pro/static/
 
   # An image asset can refer to one or more resolution-specific "variants", see

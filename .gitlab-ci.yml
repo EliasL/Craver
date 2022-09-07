@@ -44,7 +44,7 @@ testServer:
   script:
       - python3 -m unittest
 
-build_android:
+build_android_apk:
   stage: buildAndroid
   needs: [testApp]
   extends: .android_key_store
@@ -54,6 +54,18 @@ build_android:
   artifacts:
     paths:
       - $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/apk/release/app-release.apk
+    expire_in: 1 day
+
+build_android_bundle:
+  stage: buildAndroid
+  needs: [testApp]
+  extends: .android_key_store
+  script:
+    - cd $CI_PROJECT_DIR/craver_flutter_project 
+    - flutter build appbundle --release --build-number=$CI_PIPELINE_ID --dart-define="DEVELOPMENT=true/false" #TODO set false or true
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/bundle/release/app-release.aab
     expire_in: 1 day
 
 # Building to iOS requires a iOS machine, and we don't have that right now
@@ -102,7 +114,14 @@ deploy_dev_server:
 
 publish_dev_apk:
   stage: publishDevAPK
-  needs: [build_android]
+  needs: [build_android_apk]
   script:
     - chmod 400 $LBCRAVER_SSH
     - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $LBCRAVER_SSH $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/apk/release/app-release.apk lbcraver@lxplus.cern.ch:/eos/user/l/lbcraver/apk
+
+publish_dev_bundle:
+  stage: publishDevAPK
+  needs: [build_android_bundle]
+  script:
+    - chmod 400 $LBCRAVER_SSH
+    - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $LBCRAVER_SSH $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/bundle/release/app-release.aab lbcraver@lxplus.cern.ch:/eos/user/l/lbcraver/bundle

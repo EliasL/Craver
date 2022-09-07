@@ -70,9 +70,9 @@ When creating a new page, some of the problems i found the most frustrating to d
 
 You will get [deprication warnings](https://github.com/mogol/flutter_secure_storage/issues/162), but that is the fault of the library we use, not our code. Future work could look into finding an alternative library or seeing if the current library (flutter_secure_storage) has finally fixed the issue. 
 
-The second problem you might encounter is flutter complaining that a widgets size is unconstrained. This often happens inside rows or columns, and I honestly don't understand it well enough to give any usefull tips. Look at what works in other places, and try similar combinations of widgets. Good luck. 
+The second problem you might encounter is flutter complaining that a widgets size is unconstrained. This often happens inside rows or columns, and I honestly don't understand it well enough to give any usefull tips. That was at least true until now! I belive that if this happens, you should set the mainAxizSize to MainAxisSize.min. There are many places in this project where this should be done, but I don't have time to fix it. 
 
-There still seems to be some problem with refreshing the token while the app is locked. (This bug happened once, and we haven't looked much into it.)
+The third issue I'd like to point out is that the app uses a constant context for displaying messages. This was okay when there only was pages from the main bottom navigator view, but now that there is a login page, a preferences page and a help page, the app can crash if messages are displayed on those pages. This should be done differently, but as an inexperienced flutter developer, I wasn't sure how. 
 
 ## Server
 The server handles get requests from the applications by forwarding requests to various sources. These sources are specified by environment variables ```LBLOGBOOK_SOURCE```, ```CONTROL_PANEL_SOURCE``` and ```PROMETHEUS_SOURCE```. The server does not store any data except automatically caching data. The prometheus and logbook results update every 20 seconds, while the control panel updates every second.

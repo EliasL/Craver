@@ -6,6 +6,7 @@ import 'pages/lb_logbook.dart';
 import 'pages/instances.dart';
 //import 'pages/alarms.dart';
 import 'pages/preferences.dart';
+import 'pages/help.dart';
 import 'support/settings.dart' as settings;
 import 'support/alert.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
@@ -104,18 +105,6 @@ class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
     settings.messageContext = context;
     checkVersion();
 
-    Color selectedItemColor;
-    switch (settings.theme.value) {
-      case Brightness.dark:
-        selectedItemColor = Colors.amberAccent;
-        break;
-      case Brightness.light:
-        selectedItemColor = Colors.teal;
-        break;
-      default:
-        selectedItemColor = Colors.amberAccent;
-    }
-
     return Scaffold(
       appBar: AppBar(
         leading: FractionallySizedBox(
@@ -135,38 +124,77 @@ class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
             builder: (context, String title, widget) {
               return Text(title);
             }),
-        elevation: 0,
+        actions: [
+          GestureDetector(
+            child: const Icon(Icons.help),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Help()),
+              );
+            },
+          ),
+          // If people press to the left of the help button, they should also be
+          // brought to the help page
+          GestureDetector(
+            child: const SizedBox(
+              width: 15,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Help()),
+              );
+            },
+          ),
+        ],
+        titleSpacing: 10,
       ),
       body: IndexedStack(
         index: selectedPage.index,
         children: _pages,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedFontSize: 20,
-        selectedIconTheme: IconThemeData(color: selectedItemColor),
-        selectedItemColor: selectedItemColor,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.speed),
-            label: 'Status',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book),
-            label: 'Logbook',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.cloud),
-            label: 'Servers',
-          ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.alarm),
-          //   label: 'Alarms',
-          // ),
-        ],
-        currentIndex: selectedPage.index,
-        onTap: _onItemTapped,
-      ),
+      bottomNavigationBar: ValueListenableBuilder(
+          valueListenable: settings.theme,
+          builder: (context, _, Widget? child) {
+            Color selectedItemColor;
+            switch (settings.theme.value) {
+              case Brightness.dark:
+                selectedItemColor = Colors.amberAccent;
+                break;
+              case Brightness.light:
+                selectedItemColor = Colors.teal;
+                break;
+              default:
+                selectedItemColor = Colors.amberAccent;
+            }
+            return BottomNavigationBar(
+              selectedFontSize: 20,
+              selectedIconTheme: IconThemeData(color: selectedItemColor),
+              selectedItemColor: selectedItemColor,
+              selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.speed),
+                  label: 'Status',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.menu_book),
+                  label: 'Logbook',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.cloud),
+                  label: 'Servers',
+                ),
+                // BottomNavigationBarItem(
+                //   icon: Icon(Icons.alarm),
+                //   label: 'Alarms',
+                // ),
+              ],
+              currentIndex: selectedPage.index,
+              onTap: _onItemTapped,
+            );
+          }),
     );
   }
 }

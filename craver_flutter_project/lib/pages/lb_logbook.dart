@@ -121,6 +121,7 @@ class LbLogbook extends StatefulWidget {
   }
 
   static void refresh({updateData = true, keepScroll = false}) async {
+    debugPrint('Refreshing logbook');
     if (updateData) {
       data.value = await _getData(LbLogbook.currentPage);
     }

@@ -163,46 +163,47 @@ class ControlValues {
 
   static final runNumber = ControlValue(
       dimPath: "lbWeb/LHCb_RunInfo_general_runNumber",
-      shortName: 'runNumber',
+      shortName: 'Run number',
       type: double);
 
   static final partId = ControlValue(
       dimPath: "lbWeb/LHCb_RunInfo_general_partId",
-      shortName: 'partId',
+      shortName: 'Particle ID',
       type: double);
 
   static final odinData = ControlValue(
       dimPath: "lbWeb/LHCb_RunInfo_TFC_odinData",
-      shortName: 'odinData',
+      shortName: 'Odin Data',
+      longName: 'Readout Supervisor',
       type: double);
 
   static final nrOfEvents = ControlValue(
       dimPath: "lbWeb/LHCb_RunInfo_TFC_nTriggers",
-      shortName: 'nTriggers',
-      longName: 'Number of events',
+      shortName: 'Number of events',
+      longName: 'nTriggers',
       type: double);
 
   static final inputRate = ControlValue(
-      dimPath: "lbWeb/LHCb_RunInfo_TFC_triggerRate", //What Does
-      shortName: 'triggerRate',
-      longName: 'Input rate',
+      dimPath: "lbWeb/LHCb_RunInfo_TFC_triggerRate",
+      shortName: 'Input rate',
+      longName: 'triggerRate',
       type: double);
 
   static final hltNTriggers = ControlValue(
-      dimPath: "lbWeb/LHCb_RunInfo_HLTFarm_hltNTriggers", //This stuff
-      shortName: 'hltNTriggers',
-      longName: 'Number of high level triggers',
+      dimPath: "lbWeb/LHCb_RunInfo_HLTFarm_hltNTriggers",
+      shortName: 'Number of high level triggers',
+      longName: 'hltNTriggers',
       type: double);
 
   static final outputRate = ControlValue(
-      dimPath: "lbWeb/LHCb_RunInfo_HLTFarm_hltRate", //Mean?
-      shortName: 'hltRate',
-      longName: 'Output rate',
+      dimPath: "lbWeb/LHCb_RunInfo_HLTFarm_hltRate",
+      shortName: 'Output rate',
+      longName: 'hltRate',
       type: double);
 
   static final architecture = ControlValue(
       dimPath: "lbWeb/LHCb_RunInfo_EB_architecture",
-      shortName: 'architecture',
+      shortName: 'Architecture',
       longName: 'Event builder architecture');
 
   static final List<ControlValue> allValues = [
@@ -321,7 +322,7 @@ ColorScheme craverColorScheme = ColorScheme(
     notReady: Colors.amber[200]!,
     abnomal: const ui.Color.fromARGB(255, 197, 28, 53),
     off: Colors.blueGrey,
-    unknown: Colors.purple);
+    unknown: Colors.orange);
 
 enum RunStates {
   RUNNING,
@@ -377,6 +378,7 @@ class ColorPreview extends StatelessWidget {
       cs.unknown,
     ];
     return Row(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: List<Container>.generate(colors.length, (index) {
         return Container(

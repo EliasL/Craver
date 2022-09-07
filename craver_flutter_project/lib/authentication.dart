@@ -13,6 +13,7 @@ import 'package:craver/pages/control_panel.dart';
 import 'package:craver/pages/lb_logbook.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:http/http.dart' as http;
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -75,9 +76,21 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Image cernLogo = settings.theme.value == ui.Brightness.light
+        ? Image.asset(
+            'assets/cernLogoBlue.png',
+            width: 100,
+          )
+        : Image.asset(
+            'assets/cernLogoWhite.png',
+            width: 100,
+          );
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        cernLogo,
+        SizedBox(height: 50),
         ElevatedButton(
           onPressed: () async {
             await loginAction();
@@ -157,7 +170,7 @@ class _AuthenticationState extends State<Authentication> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: const Text('Log in')),
+        title: const Center(child: Text('Log in')),
       ),
       body: Center(
         child: isBusy
@@ -214,6 +227,7 @@ class _AuthenticationState extends State<Authentication> {
   }
 
   Future<void> refreshToken() async {
+    debugPrint('Refreshing token');
     if (!settings.loggedIn) {
       //The user is not loged in, so there is no token to refresh
       timer?.cancel();
@@ -262,6 +276,7 @@ class _AuthenticationState extends State<Authentication> {
       await handleToken(result);
 
       settings.loggedIn = true;
+      startTimer();
 
       Navigator.pushReplacement(
         context,
@@ -308,7 +323,6 @@ class _AuthenticationState extends State<Authentication> {
     setState(() {
       isBusy = true;
     });
-    startTimer();
     await refreshToken();
     setState(() {
       isBusy = false;

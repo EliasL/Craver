@@ -384,6 +384,10 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
+    //I don't know if they actually are copied here, but i don't think it matters
+    List<ControlValue> values = ControlValues.allValues;
+    values.sort(((a, b) =>
+        a.shortName.toLowerCase().compareTo(b.shortName.toLowerCase())));
     return ListView.builder(
       // Let the ListView know how many items it needs to build.
       controller: ScrollController(),
@@ -392,7 +396,7 @@ class _DetailsPageState extends State<DetailsPage> {
       // Provide a builder function. This is where the magic happens.
       // Convert each item into a widget based on the type of item it is.
       itemBuilder: (context, index) {
-        ControlValue value = ControlValues.allValues[index];
+        ControlValue value = values[index];
         Icon icon;
 
         //Choose what icon to use depending on data type
@@ -410,12 +414,15 @@ class _DetailsPageState extends State<DetailsPage> {
             ListTile(
               title: SelectableText(value.longName ?? value.shortName),
             ),
+            // ListTile(
+            //   title: SelectableText('Dim path: ${value.dimPath}'),
+            // ),
             ListTile(
-              title: SelectableText('Dim path: ${value.dimPath}'),
-            ),
-            ListTile(
-              title: SelectableText('Current value: ${value.sValue}'),
-            ),
+                title: ValueListenableBuilder(
+                    valueListenable: ControlValues.updater,
+                    builder: (BuildContext context, _, Widget? child) {
+                      return SelectableText('Current value: ${value.sValue}');
+                    })),
           ],
         );
       },
