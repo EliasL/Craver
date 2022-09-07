@@ -4,7 +4,7 @@ stages:
   - buildAndroid
   - buildiOS
   - deployDevServer
-  - publishDevAPK
+  - publishDev
 
 .android_docker_image:
   image: cirrusci/flutter:3.3.0
@@ -21,7 +21,7 @@ stages:
     - echo "keyAlias=$KEY_ALIAS" >> android/key.properties
     - echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
 
-testApp:
+test_app:
   extends: .android_docker_image
   stage: test
   script:
@@ -33,7 +33,7 @@ testApp:
       - $CI_PROJECT_DIR/craver_flutter_project/coverage/
     expire_in: 5 days
 
-testServer:
+test_server:
   stage: test
   needs: []
   image: python:3.7.13-slim-buster
@@ -46,7 +46,7 @@ testServer:
 
 build_android_apk:
   stage: buildAndroid
-  needs: [testApp]
+  needs: [test_app]
   extends: .android_key_store
   script:
     - cd $CI_PROJECT_DIR/craver_flutter_project 
@@ -58,7 +58,7 @@ build_android_apk:
 
 build_android_bundle:
   stage: buildAndroid
-  needs: [testApp]
+  needs: [test_app]
   extends: .android_key_store
   script:
     - cd $CI_PROJECT_DIR/craver_flutter_project 
@@ -71,7 +71,7 @@ build_android_bundle:
 # Building to iOS requires a iOS machine, and we don't have that right now
 # build_ios:
 #   stage: buildiOS
-#   needs: [testApp]
+#   needs: [test_app]
 #   script:
 #     # although fastlane also is capable of building the ipa, we are doing it with flutter to ensure it has the same versioning like the Android app
 #     - cd $CI_PROJECT_DIR/craver_flutter_project 
@@ -84,7 +84,7 @@ build_android_bundle:
 
 build_server:
     stage: buildServer
-    needs: [testServer]
+    needs: [test_server]
     variables:
       # To push to a specific docker tag other than latest(the default), amend the --destination parameter, e.g. --destination $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
       # See https://docs.gitlab.com/ee/ci/variables/predefined_variables.html#variables-reference for available variables
@@ -113,15 +113,19 @@ deploy_dev_server:
     - kubectl -n playground rollout restart deployment craver-dev
 
 publish_dev_apk:
-  stage: publishDevAPK
+  stage: publishDev
   needs: [build_android_apk]
+  variables:
+    APK_PATH: $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/apk/release/app-release.apk
+    EOS_APK_PATH: cernbox.cern.ch/cernbox/webdav/eos/user/l/lbcraver/apk/app-${CI_PIPELINE_ID}.apk
   script:
-    - chmod 400 $LBCRAVER_SSH
-    - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $LBCRAVER_SSH $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/apk/release/app-release.apk lbcraver@lxplus.cern.ch:/eos/user/l/lbcraver/apk
+    - curl -T ${APK_PATH} https://lbcraver:${LBCRAVER_ACCOUNT_PASSWORD}@${EOS_APK_PATH}
 
 publish_dev_bundle:
-  stage: publishDevAPK
+  stage: publishDev
   needs: [build_android_bundle]
+  variables:
+    BUNDLE_PATH: $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/bundle/release/app-release.aab
+    EOS_BUNDLE_PATH: cernbox.cern.ch/cernbox/webdav/eos/user/l/lbcraver/bundle/app-${CI_PIPELINE_ID}.aab
   script:
-    - chmod 400 $LBCRAVER_SSH
-    - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $LBCRAVER_SSH $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/bundle/release/app-release.aab lbcraver@lxplus.cern.ch:/eos/user/l/lbcraver/bundle
+    - curl -T ${BUNDLE_PATH} https://lbcraver:${LBCRAVER_ACCOUNT_PASSWORD}@${EOS_BUNDLE_PATH}
