@@ -58,10 +58,21 @@ Future<void> customServerError(String message, serverErrorType) {
   return showOkayDontShowAgainDialog('Server Error!', message, serverErrorType);
 }
 
-Future<void> showLogoutDialog(title, text) async {
+/// From here on there is a lot of copy paste.
+/// It would be nice to fix this somehow TODO
+
+Future<void> showLogoutDialog(title, text,
+    {messageType = 'GenericMessage'}) async {
   //Flutter needs to know what context to show the message in
   if (settings.messageContext == null) {
     throw Exception('Message context must be set in order to show message!');
+  }
+  if (settings.showMessage[messageType] ?? true) {
+    // We dissable this message in case another one wants to be shown
+    // before the user has had time to respond
+    settings.showMessage[messageType] = false;
+  } else {
+    return;
   }
   return showDialog<void>(
     context: settings.messageContext!,
@@ -81,6 +92,7 @@ Future<void> showLogoutDialog(title, text) async {
             child: const Text('Logout'),
             onPressed: () {
               Authentication.logout(context);
+              settings.showMessage[messageType] = true;
             },
           ),
         ],
@@ -89,10 +101,18 @@ Future<void> showLogoutDialog(title, text) async {
   );
 }
 
-Future<void> showOkayDialog(title, text) async {
+Future<void> showOkayDialog(title, text,
+    {messageType = 'GenericMessage'}) async {
   //Flutter needs to know what context to show the message in
   if (settings.messageContext == null) {
     throw Exception('Message context must be set in order to show message!');
+  }
+  if (settings.showMessage[messageType] ?? true) {
+    // We dissable this message in case another one wants to be shown
+    // before the user has had time to respond
+    settings.showMessage[messageType] = false;
+  } else {
+    return;
   }
   return showDialog<void>(
     context: settings.messageContext!,
@@ -111,6 +131,7 @@ Future<void> showOkayDialog(title, text) async {
           TextButton(
             child: const Text('Okay'),
             onPressed: () {
+              settings.showMessage[messageType] = true;
               Navigator.of(context).pop();
             },
           ),

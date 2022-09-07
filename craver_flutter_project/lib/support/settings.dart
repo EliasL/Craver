@@ -49,5 +49,6 @@ Map<String, bool> showMessage = {};
 /// always use this context, it should be fine i think.
 BuildContext? messageContext;
 
+bool loggedIn = false;
 String userName = 'Not logged in';
 String idToken = '';

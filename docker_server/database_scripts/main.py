@@ -51,6 +51,8 @@ def cache_clearing(clear_counter):
     threading.Timer(1, cache_clearing, args=((clear_counter,))).start()
 
 def badArgs(*args):
+    # Honestly, i dont remember why this is here, but
+    # maybe it's useful
     return None in args
 
 
@@ -95,7 +97,8 @@ def get_lblogbook_data():
     return L.get(page)
 
 @app.route("/control_panel", methods = ['GET'])
-@oidc_validate
+# To reenable token requirement for the DIM values, uncomment the line below
+#@oidc_validate
 def get_control_panel_data():
     
     args = request.args.to_dict()

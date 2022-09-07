@@ -9,6 +9,7 @@
 
 import 'dart:convert';
 
+import 'package:craver/pages/control_panel.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -64,9 +65,12 @@ class Profile extends StatelessWidget {
 
 class Login extends StatelessWidget {
   final Future<void> Function() loginAction;
+  final VoidCallback loginAsGuestAction;
   final String loginError;
 
-  const Login(this.loginAction, this.loginError, {Key? key}) : super(key: key);
+  const Login(this.loginAction, this.loginAsGuestAction, this.loginError,
+      {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +81,17 @@ class Login extends StatelessWidget {
           onPressed: () async {
             await loginAction();
           },
-          child: const Text('Log in'),
+          child: const Text('Log in with CERN account'),
         ),
         Text(
           loginError,
           style: TextStyle(color: Colors.red[800]),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            loginAsGuestAction();
+          },
+          child: const Text('Continue as guest'),
         ),
       ],
     );
@@ -94,6 +104,7 @@ class Login extends StatelessWidget {
 
 class Authentication extends StatefulWidget {
   static Future<void> logout(context) async {
+    ControlPanel.stopTimer();
     Navigator.pop(context);
     Navigator.pushReplacement(
       context,
@@ -151,7 +162,7 @@ class _AuthenticationState extends State<Authentication> {
             ? const CircularProgressIndicator()
             : isLoggedIn
                 ? Profile(logoutAction, name, picture)
-                : Login(loginAction, errorMessage),
+                : Login(loginAction, loginAsGuestAction, errorMessage),
       ),
     );
   }
@@ -189,6 +200,14 @@ class _AuthenticationState extends State<Authentication> {
     settings.userName = idToken['name'] as String;
     settings.idToken = token.idToken!;
     isLoggedIn = true;
+    isBusy = false;
+  }
+
+  Future<void> deleteToken() async {
+    await secureStorage.delete(key: 'refresh_token');
+    settings.userName = 'Guest';
+    settings.idToken = '';
+    isLoggedIn = false;
     isBusy = false;
   }
 
@@ -235,6 +254,8 @@ class _AuthenticationState extends State<Authentication> {
 
       await handleToken(result);
 
+      settings.loggedIn = true;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const BottomNav()),
@@ -245,13 +266,21 @@ class _AuthenticationState extends State<Authentication> {
 
       setState(() {
         isBusy = false;
-        isLoggedIn = false;
         errorMessage = 'Log in failed. Please try again';
       });
     }
   }
 
+  Future<void> loginAsGuestAction() async {
+    await deleteToken();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const BottomNav()),
+    );
+  }
+
   Future<void> logoutAction() async {
+    settings.loggedIn = false;
     await secureStorage.delete(key: 'refresh_token');
     setState(() {
       isLoggedIn = false;
