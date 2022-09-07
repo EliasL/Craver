@@ -212,6 +212,11 @@ class _AuthenticationState extends State<Authentication> {
   }
 
   Future<void> refreshToken() async {
+    if (!settings.loggedIn) {
+      //The user is not loged in, so there is no token to refresh
+      timer?.cancel();
+      return;
+    }
     dev.log('refreshing token');
     final String? storedRefreshToken =
         await secureStorage.read(key: 'refresh_token');

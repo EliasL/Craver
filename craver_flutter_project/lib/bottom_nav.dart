@@ -31,6 +31,15 @@ class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
   ];
 
   void _onItemTapped(int index) {
+    // We only allow users that have logged in to go to
+    // other pages than the control panel
+    if (!settings.loggedIn) {
+      // Since the control panel is the defautl page, we just
+      // don't let them change at all
+      showOkayDialog('Not logged in!',
+          'Guests are not allowed to view other pages. Please login with your CERN account.');
+      return;
+    }
     selectedPage = PAGES.values[index];
     //_pages[index];
     settings.title.value = settings.defaultTitle;
