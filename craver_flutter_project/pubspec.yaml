@@ -51,6 +51,7 @@ dependencies:
   flutter_appauth: ^4.2.0
   flutter_secure_storage: ^6.0.0
   is_lock_screen: ^2.0.0
+  flutter_inset_box_shadow: ^1.0.8
   
 dev_dependencies:
   flutter_test:

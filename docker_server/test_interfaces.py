@@ -16,6 +16,8 @@ class TestControlPanelInterface(unittest.TestCase):
         #This requires a real responce
         self.assertEqual(list(CP.get(state).keys())[0], state)
 
+    # The environment tests have been removed because the environment is not set 
+    # when the testing phase occurs
     #def test_environment(self):
         # The error message of assertIn was too long because it printed out
         # the os.environ. It was too annoying.

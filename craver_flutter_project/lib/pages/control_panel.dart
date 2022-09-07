@@ -1,12 +1,31 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:craver/support/alert.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
+import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
 import '../support/data_getter.dart';
 import '../support/control_values_and_color.dart';
 import '../support/gauge.dart';
 import '../support/settings.dart' as settings;
 import 'preferences.dart';
+
+Color darken(Color color, [double amount = .1]) {
+  assert(amount >= 0 && amount <= 1);
+
+  final hsl = HSLColor.fromColor(color);
+  final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+
+  return hslDark.toColor();
+}
+
+Color lighten(Color color, [double amount = .1]) {
+  assert(amount >= 0 && amount <= 1);
+
+  final hsl = HSLColor.fromColor(color);
+  final hslLight = hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+
+  return hslLight.toColor();
+}
 
 void updateStates() async {
   // We generate a list of all the states
@@ -180,11 +199,6 @@ class StatusBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ShapeBorder? border;
-    if (useBorder) {
-      border = const ContinuousRectangleBorder(
-          side: BorderSide(width: 2, color: Colors.blue));
-    }
     return ValueListenableBuilder(
       valueListenable: ControlValues.updater,
       builder: (BuildContext context, _, Widget? child) {
@@ -194,13 +208,30 @@ class StatusBox extends StatelessWidget {
         //settings.title.value = '${cv.shortName}${ControlValues.updater.value}';
         return Flexible(
           child: Card(
-            color: color,
-            child: ListTile(
-              shape: border,
-              title: Text(
-                '${cv.shortName}: ${cv.sValue ?? ''}',
-                textAlign: ui.TextAlign.center,
-                style: TextStyle(color: textColor),
+            child: Container(
+              decoration: BoxDecoration(
+                color: color,
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(-20, -20),
+                    blurRadius: 60,
+                    color: lighten(color, 0.1),
+                    inset: true,
+                  ),
+                  BoxShadow(
+                    offset: Offset(20, 20),
+                    blurRadius: 60,
+                    color: darken(color, 0.12),
+                    inset: true,
+                  ),
+                ],
+              ),
+              child: ListTile(
+                title: Text(
+                  '${cv.shortName}: ${cv.sValue ?? ''}',
+                  textAlign: ui.TextAlign.center,
+                  style: TextStyle(color: textColor),
+                ),
               ),
             ),
           ),

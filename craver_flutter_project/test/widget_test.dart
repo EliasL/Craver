@@ -11,10 +11,8 @@ import 'package:craver/support/control_values_and_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// Uh oh I tink i put Craver somewhere where maybe
-// there should have been craver_flutter_project, but everything
-// still works... so not a problem!
-// ignore: depend_on_referenced_packages
+// Maybe this would make a better moch server
+// https://blog.logrocket.com/unit-testing-flutter-code-mockito/
 import 'package:craver/pages/control_panel.dart';
 import 'moch_server.dart' as mochServer;
 
