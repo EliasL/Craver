@@ -10,6 +10,7 @@
 import 'dart:convert';
 
 import 'package:craver/pages/control_panel.dart';
+import 'package:craver/pages/lb_logbook.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -105,6 +106,7 @@ class Login extends StatelessWidget {
 class Authentication extends StatefulWidget {
   static Future<void> logout(context) async {
     ControlPanel.stopTimer();
+    LbLogbook.stopTimer();
     Navigator.pop(context);
     Navigator.pushReplacement(
       context,
@@ -141,7 +143,7 @@ class _AuthenticationState extends State<Authentication> {
     timer?.cancel();
     timer = Timer.periodic(
         // The token expires after 20 minutes
-        const Duration(seconds: 5),
+        const Duration(minutes: 15),
         (Timer t) => refreshToken());
   }
 

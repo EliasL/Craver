@@ -111,8 +111,13 @@ class LbLogbook extends StatefulWidget {
   }
 
   static void startTimer() {
+    timer?.cancel();
     timer = Timer.periodic(const Duration(minutes: 1),
         (Timer t) => refresh(updateData: true, keepScroll: true));
+  }
+
+  static void stopTimer() {
+    timer?.cancel();
   }
 
   static void refresh({updateData = true, keepScroll = false}) async {
@@ -127,7 +132,6 @@ class LbLogbook extends StatefulWidget {
     }
 
     // Reset automatic timer
-    timer?.cancel();
     startTimer();
   }
 

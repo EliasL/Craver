@@ -65,6 +65,7 @@ class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    settings.title.value = settings.defaultTitle;
     if (selectedPage == PAGES.controllPanel) {
       ControlPanel.startTimer();
     }
