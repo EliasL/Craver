@@ -34,7 +34,7 @@ class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
   void _onItemTapped(int index) {
     // We only allow users that have logged in to go to
     // other pages than the control panel
-    if (!settings.loggedIn) {
+    if (!settings.loggedIn && index != 0) {
       // Since the control panel is the defautl page, we just
       // don't let them change at all
       showOkayDialog('Not logged in!',

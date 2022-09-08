@@ -12,7 +12,7 @@ import config as c
 
 # These are all the versions of the app that this server is 
 # compatible with. It is a comma separated value. Eg. '0.6,1.2,0.01'
-SERVER_VERSIONS = '1.0' 
+SERVER_VERSIONS = '1.0,1.1' 
 
 app = Flask(__name__)
 app.config.update(

@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 
 const bool DEVELOPMENT =
     bool.fromEnvironment("DEVELOPMENT", defaultValue: true);
-const String VERSION = '1.0';
+const String VERSION = '1.1';
 const String SUPPORT_EMAIL = 'lbonsupp@cern.ch';
 
 /// Local Preferences

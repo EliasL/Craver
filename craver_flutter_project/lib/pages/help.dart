@@ -54,6 +54,7 @@ class Help extends StatelessWidget {
                               getColorScheme(settings.ColorSchemes.Craver)),
                         ]),
                   ),
+                  const SizedBox(height: 5),
                 ],
               ),
             ),
@@ -76,6 +77,7 @@ class Help extends StatelessWidget {
                     title: SelectableText(
                         'Especially take a look at the details tab of the control panel. If you know of information that you think would be useful to have here, send a suggestion!'),
                   ),
+                  SizedBox(height: 5),
                 ],
               ),
             ),

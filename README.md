@@ -77,7 +77,10 @@ The third issue I'd like to point out is that the app uses a constant context fo
 ## Server
 The server handles get requests from the applications by forwarding requests to various sources. These sources are specified by environment variables ```LBLOGBOOK_SOURCE```, ```CONTROL_PANEL_SOURCE``` and ```PROMETHEUS_SOURCE```. The server does not store any data except automatically caching data. The prometheus and logbook results update every 20 seconds, while the control panel updates every second.
 
-#### Deployment
+#### Continuous integration
+When a new comitt is published to the respository, the development server is updated and an apk and bundle is built and published to cernbox. If you want to compile and depoy the project on your own, see the section below.
+
+#### Manual deployment
 For deployment, some environment variables need to be set. In the ```docker_server``` directory, create a ```env_vars.env``` file and find values for these values
 
     LBLOGBOOK_SOURCE=
@@ -91,11 +94,10 @@ Try asking Aristeidis Fkiaras. Then run ```./deployServer```.
 Make sure that the ```server``` variable in ```lib/support/data_getter.dart``` is set to the deployment location of your server. The value as of 01.09.22 is ```http://lbcraver.cern.ch:80```.
 
 #### Security
-The important server functions are token protected. An unprotected page is the curent server version: http://lbcraver.cern.ch/version. Whereas a protected page will be inaccecable unless you also have a valid token in the header: http://lbcraver.cern.ch/control_panel?state=lbWeb/LHCb|LHCb_fsm_currentState.
+The important server functions are token protected. A protected page will be inaccecable unless you also have a valid token in the header.
 
 In addition to the token security, the api of the server is very restrictive. The arguments in the get requests for prometheus and DIM are whitelisted. The lblogbook handler accepts any integer (page) number between 0 and 999 and is therefore also very restrictive.
 
-The sources that the server communicates with are all inaccecable from outside the CERN network, so even if the apk of the app was decompiled and the adresses of the sources were extracted, it would be useless unless they already were inside the CERN network. 
 
 #### Development notes
 If there are network issues, try to 
