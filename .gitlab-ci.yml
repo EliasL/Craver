@@ -24,7 +24,7 @@ stages:
 test_app:
   extends: .android_docker_image
   stage: test
-  coverage: '(\d+.\d+)%'
+  coverage: /(\d+.\d+)%/
   script:
     - cd $CI_PROJECT_DIR/craver_flutter_project
     - flutter test --coverage
