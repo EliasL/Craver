@@ -3,6 +3,11 @@
 
 # CRAVER 
 
+
+[![pipeline status](https://gitlab.cern.ch/lhcb-online/craver/badges/main/pipeline.svg)](https://gitlab.cern.ch/lhcb-online/craver/-/commits/main) 
+[![coverage report](https://gitlab.cern.ch/lhcb-online/craver/badges/main/coverage.svg)](https://gitlab.cern.ch/lhcb-online/craver/-/commits/main)
+
+
 https://gitlab.cern.ch/lhcb-online/craver
 
 ## Project
@@ -68,11 +73,11 @@ You need to aquire the keystore that I have used. It is not included in the resp
 #### Development notes
 When creating a new page, some of the problems i found the most frustrating to deal with were futures and sizeconstraints of ui widgets. Futures are used when a variable will store data from an asyncronous source, ie. it will store data in the *future*. This is useful when you build your widget, but you don't want the build function to wait for the server. You would then use a Future builder that automatically updates your widget once the future is resolved. I initially used this in the Instances and Logbook pages, but decided to use simpler notification values instead. 
 
-You will get [deprication warnings](https://github.com/mogol/flutter_secure_storage/issues/162), but that is the fault of the library we use, not our code. Future work could look into finding an alternative library or seeing if the current library (flutter_secure_storage) has finally fixed the issue. 
-
 The second problem you might encounter is flutter complaining that a widgets size is unconstrained. This often happens inside rows or columns, and I honestly don't understand it well enough to give any usefull tips. That was at least true until now! I belive that if this happens, you should set the mainAxizSize to MainAxisSize.min. There are many places in this project where this should be done, but I don't have time to fix it. 
 
-The third issue I'd like to point out is that the app uses a constant context for displaying messages. This was okay when there only was pages from the main bottom navigator view, but now that there is a login page, a preferences page and a help page, the app can crash if messages are displayed on those pages. This should be done differently, but as an inexperienced flutter developer, I wasn't sure how. 
+The third, and perhaps *most important issue* I'd like to point out is that the app uses a constant context for displaying messages. This was okay when there only was pages from the main bottom navigator view, but now that there is a login page, a preferences page and a help page, the app can crash if messages are displayed on those pages. This should be done differently, but as an inexperienced flutter developer, I wasn't sure how. 
+
+You will get [deprication warnings](https://github.com/mogol/flutter_secure_storage/issues/162), but that is the fault of the library we use, not our code. Future work could look into finding an alternative library or seeing if the current library (flutter_secure_storage) has finally fixed the issue. 
 
 ## Server
 The server handles get requests from the applications by forwarding requests to various sources. These sources are specified by environment variables ```LBLOGBOOK_SOURCE```, ```CONTROL_PANEL_SOURCE``` and ```PROMETHEUS_SOURCE```. The server does not store any data except automatically caching data. The prometheus and logbook results update every 20 seconds, while the control panel updates every second.
