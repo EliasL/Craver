@@ -38,7 +38,6 @@ test_server:
   stage: test
   needs: []
   image: python:3.7.13-slim-buster
-  coverage: '/TOTAL.*\s+(\d+\%)/'
   before_script:
     - cd $CI_PROJECT_DIR/docker_server
     - pip install -r requirements.txt
