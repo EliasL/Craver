@@ -45,6 +45,7 @@ test_server:
   script:
       - python3 -m unittest
 
+
 build_android_apk:
   stage: buildAndroid
   needs: [test_app]

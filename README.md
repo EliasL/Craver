@@ -2,6 +2,9 @@
 <div style="text-align:center; font-size:80pt;"><img src="https://cernbox.cern.ch/index.php/s/iavcnlnKD41GpAf/download" style="width:250px; "/></div>
 
 # CRAVER 
+[![pipeline status](https://gitlab.cern.ch/lhcb-online/craver/badges/main/pipeline.svg)](https://gitlab.cern.ch/lhcb-online/craver/-/commits/main)
+
+[![coverage report](https://gitlab.cern.ch/lhcb-online/craver/badges/main/coverage.svg)](https://gitlab.cern.ch/lhcb-online/craver/-/commits/main)
 
 https://gitlab.cern.ch/lhcb-online/craver
 
