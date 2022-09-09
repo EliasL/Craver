@@ -5,7 +5,8 @@
 [![pipeline status](https://gitlab.cern.ch/lhcb-online/craver/badges/main/pipeline.svg)](https://gitlab.cern.ch/lhcb-online/craver/-/commits/main) 
 [![coverage report](https://gitlab.cern.ch/lhcb-online/craver/badges/main/coverage.svg)](https://gitlab.cern.ch/lhcb-online/craver/-/commits/main)
 
-
+This was the latest state of the respository:
+<div style="text-align:center; font-size:80pt;"><img src="https://i.imgur.com/TFMFibx.png" style="width:250px; "/></div>
 https://gitlab.cern.ch/lhcb-online/craver
 
 ## Project
