@@ -9,7 +9,7 @@
 https://gitlab.cern.ch/lhcb-online/craver
 
 ## Project
-
+This respository is a mirror of a CERN protected gitLab respository
 Your phone -> App (Craver) -> Our server -> Select sources (Prometheus/DIM/LbLogbook)
 
 #### Project development notes
