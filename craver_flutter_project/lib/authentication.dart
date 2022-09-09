@@ -320,6 +320,7 @@ class _AuthenticationState extends State<Authentication> {
     if (widget.logout_on_init) {
       await logoutAction();
     }
+
     setState(() {
       isBusy = true;
     });

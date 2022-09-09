@@ -32,10 +32,8 @@ class Instances extends StatefulWidget {
 class _InstancesState extends State<Instances> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      // Center is a layout widget. It takes a single child and positions it
-      // in the middle of the parent.
-      child: Column(
+    return Scaffold(
+      body: Column(
         children: [
           const SizedBox(height: 10),
           Row(

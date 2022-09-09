@@ -104,7 +104,6 @@ class _BottomNavState extends State<BottomNav> with WidgetsBindingObserver {
     /// always use this messageContext, it should be fine i think.
     settings.messageContext = context;
     checkVersion();
-
     return Scaffold(
       appBar: AppBar(
         leading: FractionallySizedBox(
