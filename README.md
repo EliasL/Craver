@@ -9,9 +9,12 @@ This was the latest state of the respository:
 <div style="text-align:center; font-size:80pt;"><img src="https://i.imgur.com/TFMFibx.png" style="width:250px; "/></div>
 https://gitlab.cern.ch/lhcb-online/craver
 
+CERN repport: https://cds.cern.ch/record/2826634/?ln=en
+
 ## Project
 This respository is a mirror of a CERN protected gitLab respository
 Your phone -> App (Craver) -> Our server -> Select sources (Prometheus/DIM/LbLogbook)
+
 
 #### Project development notes
 When everything works as it should, gitlab will build an apk and bundle for you, as well as update a development server. When you want to publish a new version to the app store, you use the bundle. The bundle uses a production server. If you want to test, you can use the apk, which uses the development server. The builds are automatically uploaded to cernbox and can be accessed here:
