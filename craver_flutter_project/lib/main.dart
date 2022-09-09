@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav.dart';
 import 'authentication.dart';
-//import 'pages/alarms.dart';
 import 'support/settings.dart' as settings;
 import 'pages/preferences.dart';
 import 'support/control_values_and_color.dart';

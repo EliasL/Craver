@@ -52,7 +52,7 @@ build_android_apk:
   extends: .android_key_store
   script:
     - cd $CI_PROJECT_DIR/craver_flutter_project 
-    - flutter build apk --release --build-number=$CI_PIPELINE_ID --dart-define="DEVELOPMENT=true/false" #TODO set false or true
+    - flutter build apk --release --build-number=$CI_PIPELINE_ID --dart-define="DEVELOPMENT=true"
   artifacts:
     paths:
       - $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/apk/release/app-release.apk
@@ -64,7 +64,7 @@ build_android_bundle:
   extends: .android_key_store
   script:
     - cd $CI_PROJECT_DIR/craver_flutter_project 
-    - flutter build appbundle --release --build-number=$CI_PIPELINE_ID --dart-define="DEVELOPMENT=true/false" #TODO set false or true
+    - flutter build appbundle --release --build-number=$CI_PIPELINE_ID --dart-define="DEVELOPMENT=false"
   artifacts:
     paths:
       - $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/bundle/release/app-release.aab
@@ -119,7 +119,7 @@ publish_dev_apk:
   needs: [build_android_apk]
   variables:
     APK_PATH: $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/apk/release/app-release.apk
-    EOS_APK_PATH: cernbox.cern.ch/cernbox/webdav/eos/user/l/lbcraver/apk/app-${CI_PIPELINE_ID}.apk
+    EOS_APK_PATH: cernbox.cern.ch/cernbox/webdav/eos/user/l/lbcraver/builds/apk/app-${CI_PIPELINE_ID}.apk
   script:
     - curl -T ${APK_PATH} https://lbcraver:${LBCRAVER_ACCOUNT_PASSWORD}@${EOS_APK_PATH}
 
@@ -128,6 +128,6 @@ publish_dev_bundle:
   needs: [build_android_bundle]
   variables:
     BUNDLE_PATH: $CI_PROJECT_DIR/craver_flutter_project/build/app/outputs/bundle/release/app-release.aab
-    EOS_BUNDLE_PATH: cernbox.cern.ch/cernbox/webdav/eos/user/l/lbcraver/bundle/app-${CI_PIPELINE_ID}.aab
+    EOS_BUNDLE_PATH: cernbox.cern.ch/cernbox/webdav/eos/user/l/lbcraver/builds/bundle/app-${CI_PIPELINE_ID}.aab
   script:
     - curl -T ${BUNDLE_PATH} https://lbcraver:${LBCRAVER_ACCOUNT_PASSWORD}@${EOS_BUNDLE_PATH}

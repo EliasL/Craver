@@ -46,7 +46,7 @@ class _PreferencesState extends State<Preferences> {
         appBar: AppBar(
           title: const Text('Preferences'),
         ),
-        body: Column(
+        body: ListView(
           children: [
             ExpansionTile(
               title: const Text('Control panel color scheme'),
