@@ -2,11 +2,6 @@
 <div style="text-align:center; font-size:80pt;"><img src="https://cernbox.cern.ch/index.php/s/iavcnlnKD41GpAf/download" style="width:250px; "/></div>
 
 # CRAVER 
-[![pipeline status](https://gitlab.cern.ch/lhcb-online/craver/badges/main/pipeline.svg)](https://gitlab.cern.ch/lhcb-online/craver/-/commits/main)
-
-[![coverage report](https://gitlab.cern.ch/lhcb-online/craver/badges/main/coverage.svg)](https://gitlab.cern.ch/lhcb-online/craver/-/commits/main)
-
-
 [![pipeline status](https://gitlab.cern.ch/lhcb-online/craver/badges/main/pipeline.svg)](https://gitlab.cern.ch/lhcb-online/craver/-/commits/main) 
 [![coverage report](https://gitlab.cern.ch/lhcb-online/craver/badges/main/coverage.svg)](https://gitlab.cern.ch/lhcb-online/craver/-/commits/main)
 
@@ -25,9 +20,6 @@ https://cernbox.cern.ch/index.php/s/UHvUavrgSyxNbPG
 If you want to update the production server, you need to do something else which has not been implemented yet. 
 
 ## App
-
-Main.dart
-https://gitlab.cern.ch/lhcb-online/craver/-/blob/main/craver_flutter_project/lib/main.dart
 
 Pages are managed from bottom_nav, which also updates the header from a setting variable.
 ##### Tools
